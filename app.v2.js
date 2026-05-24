@@ -185,6 +185,15 @@
     ].includes(v);
   }
 
+
+  function statusClass(status, soldOut){
+    const s = String(status || "").trim();
+    if(soldOut || /售完|暫不|不可|停售|保留|休養/.test(s)) return "status-unavailable";
+    if(/觀察|適應|檢疫|未穩/.test(s)) return "status-watch";
+    if(/穩定|可詢問|可私訊|已開口/.test(s)) return "status-ready";
+    return "status-neutral";
+  }
+
   function splitTags(value){
     return String(value || "").split(/[，,、|]/).map(s => s.trim()).filter(Boolean);
   }
@@ -235,7 +244,13 @@
   }
 
   function productCard(p){
-    const inquiry = `您好，我想詢問「${p.name}」目前是否還有庫存與可出貨狀態。`;
+    const inquiry = [
+      `您好，我想詢問：${p.name}`,
+      p.size ? `尺寸：${p.size}` : "",
+      p.price ? `價格：NT$ ${p.price}` : "",
+      p.status ? `目前狀態：${p.status}` : "",
+      "想確認目前是否可詢問，以及適合的取魚／出貨安排。"
+    ].filter(Boolean).join("\n");
     const infoRows = [
       ["尺寸", p.size],
       p.hasStock ? ["庫存", p.stock && p.stock !== "詢問" ? `${p.stock} 隻` : p.stock] : null,
@@ -245,7 +260,7 @@
     return `<article class="product-card ${p.soldOut ? "soldout" : ""}">
       <div class="product-image">
         <img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name)}">
-        <span class="badge ${p.soldOut ? "sold" : ""}">${escapeHtml(p.status)}</span>
+        <span class="badge ${statusClass(p.status, p.soldOut)}">${escapeHtml(p.status)}</span>
       </div>
       <div class="product-body">
         <div class="meta"><span>${escapeHtml(p.category)}</span><span>${p.soldOut ? "暫不出貨" : "可私訊確認"}</span></div>
@@ -284,7 +299,7 @@
       ${showSize ? `<td>${escapeHtml(p.size || "—")}</td>` : ""}
       <td>${escapeHtml(formatPrice(p.price))}</td>
       ${showStock ? `<td>${escapeHtml(p.hasStock ? (p.stock && p.stock !== "詢問" ? `${p.stock} 隻` : p.stock) : "—")}</td>` : ""}
-      <td>${escapeHtml(p.status)}</td>
+      <td><span class="status-pill ${statusClass(p.status, p.soldOut)}">${escapeHtml(p.status)}</span></td>
     </tr>`).join("");
   }
 
