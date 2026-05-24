@@ -1,0 +1,11 @@
+<svg width="900" height="650" viewBox="0 0 900 650" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="650" fill="#EDE5D7"/>
+  <circle cx="720" cy="120" r="110" fill="#D5E7DC" opacity="0.8"/>
+  <circle cx="190" cy="520" r="140" fill="#D8B37B" opacity="0.35"/>
+  <path d="M120 440C210 365 300 365 390 440C480 515 570 515 660 440C706 402 752 385 800 388" stroke="#8BB7A0" stroke-width="22" stroke-linecap="round"/>
+  <path d="M250 245C322 181 452 190 510 255C443 329 319 327 250 245Z" fill="#183C35"/>
+  <path d="M251 245L185 200L200 290L251 245Z" fill="#C99052"/>
+  <circle cx="460" cy="240" r="10" fill="#F8F2E6"/>
+  <path d="M355 290C340 325 300 338 265 330" stroke="#F8F2E6" stroke-width="9" stroke-linecap="round" opacity=".75"/>
+  <text x="450" y="570" text-anchor="middle" font-size="36" font-weight="700" fill="#183C35" font-family="serif">河憩寮</text>
+</svg>

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 100" role="img" aria-label="河憩寮 logo">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#123f39"/>
+      <stop offset="1" stop-color="#1e5a52"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="236" height="96" rx="20" fill="url(#g)"/>
+  <path d="M34 67c20-10 39-11 58-3 14 6 28 7 44 2 9-3 17-8 27-9 8-1 17 1 27 9" fill="none" stroke="#d8c6a0" stroke-width="7" stroke-linecap="round"/>
+  <path d="M94 42c15-11 39-8 52 7-10 6-24 10-38 9-10-1-17-7-14-16z" fill="#f2ebdd"/>
+  <circle cx="129" cy="41" r="2.6" fill="#123f39"/>
+  <path d="M90 43l-12-7 6 14z" fill="#c89a57"/>
+  <path d="M104 52c-3 6-5 10-5 15" fill="none" stroke="#f2ebdd" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+  <path d="M155 29c6 0 11 5 11 11 0 4-2 6-3 8h-16c-1-2-3-4-3-8 0-6 5-11 11-11z" fill="none" stroke="#d8c6a0" stroke-width="3"/>
+  <path d="M147 48h16" stroke="#d8c6a0" stroke-width="3"/>
+  <path d="M155 48v13" stroke="#d8c6a0" stroke-width="3"/>
+  <path d="M149 61h12" stroke="#d8c6a0" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="86" cy="70" r="2" fill="#9fc2b6"/>
+  <circle cx="164" cy="67" r="2" fill="#9fc2b6"/>
+</svg>

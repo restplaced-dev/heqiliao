@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="河憩寮｜淡水觀賞魚、鼠魚、異型魚、小型魚與狀態說明的活體資訊。">
+  <title>河憩寮｜淡水觀賞魚</title>
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="stylesheet" href="styles.v2.css?v=20260524-v21">
+</head>
+<body>
+  <header class="header">
+    <div class="wrap nav">
+      <a class="brand" href="#top" aria-label="河憩寮首頁"><img src="assets/logo-official-transparent.png" alt="河憩寮官方 Logo"></a>
+      <nav class="nav-links" aria-label="主選單">
+        <a href="#stock">本週名單</a>
+        <a href="#principles">飼養原則</a>
+        <a href="#shipping">訂購方式</a>
+        <a class="btn" data-line-link href="https://lin.ee/p9wkJW2">LINE 詢問</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">Freshwater Aquarium Studio</p>
+          <h1>把魚養穩，<br>陪你養得長久。</h1>
+          <p class="lead">河憩寮以淡水觀賞魚為主，整理每週可詢問活體、目前觀察到的狀態，以及詢問前的注意事項。比起把魚賣出去，我們更在意你帶回去之後，能不能養得長久、養得安心。</p>
+          <div class="hero-actions">
+            <a class="btn gold" href="#stock">查看本週名單</a>
+            <a class="btn secondary" data-line-link href="https://lin.ee/p9wkJW2">加入 LINE 官方帳號</a>
+          </div>
+          <div class="notice">下單前請先透過 LINE 確認庫存、狀態與可出貨日。新設缸、混養缸或特殊環境，建議先描述缸況，再評估是否適合。</div>
+        </div>
+        <aside class="hero-card">
+          <div class="hero-logo-mark"><img src="assets/logo-official-transparent.png" alt="河憩寮官方 Logo"></div>
+          <img src="assets/hero-illustration-v18.jpg" alt="河憩寮淡水觀賞魚品牌插畫">
+          <div class="hero-card-body">
+            <h2>帶回去之後，也能養得長久。</h2>
+            <p>我們更在意飼主把魚帶回去之後，能不能穩定飼養、慢慢上手，並從養魚這件事裡獲得安心與樂趣。</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="promise">
+      <div class="wrap promise-grid">
+        <div class="promise-card"><b>狀態先於銷售</b><p>明顯不穩、剛到貨尚未觀察完成，或目前不適合移動的個體，不急著放上名單。</p></div>
+        <div class="promise-card"><b>狀態盡量如實說明</b><p>餵食反應、目前狀態與名單資訊，會盡量依觀察情況如實說明。</p></div>
+        <div class="promise-card"><b>不主動硬推混養</b><p>混養沒有標準答案，需先評估魚種、體型、食性、活動層、水質需求與個體性格。</p></div>
+      </div>
+    </section>
+
+    <section id="stock" class="section alt">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="section-title">
+            <p class="eyebrow">Current List</p>
+            <h2>本週可詢問活體</h2>
+            <p>以下名單依試算表資料更新。實際庫存、魚況與可出貨日，請以 LINE 確認為準。</p>
+          </div>
+          <div class="small-note" id="stockStatus">資料讀取中</div>
+        </div>
+        <div class="toolbar">
+          <label class="search" aria-label="搜尋品項"><input id="searchInput" type="search" placeholder="輸入品名、學名、分類、標籤"></label>
+          <div class="filters" id="categoryFilters"></div>
+        </div>
+        <div class="grid" id="productGrid"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="section-title">
+            <p class="eyebrow">Quick List</p>
+            <h2>文字版快速清單</h2>
+            <p>老客人可快速查看分類、品名、尺寸、價格與狀態。</p>
+          </div>
+        </div>
+        <div class="quick-table" id="quickTableWrap">
+          <table id="quickTable">
+            <thead><tr><th>分類</th><th>品名</th><th>尺寸</th><th>價格</th><th>狀態</th></tr></thead>
+            <tbody id="quickListBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="principles" class="section alt">
+      <div class="wrap principles">
+        <div class="principle-panel">
+          <p class="eyebrow">Our Principles</p>
+          <h2>河憩寮的飼養觀點</h2>
+          <p>飼養建議不是背一組固定答案，而是先看魚的反應，再依照個體、環境與飼主操作節奏調整。以下是河憩寮看待活體狀態的幾個重點。</p>
+        </div>
+        <div class="principle-list">
+          <div class="principle-item"><b>營養</b><p>觀察魚隻是否有穩定進食反應，並說明目前較能接受的餌料類型。</p></div>
+          <div class="principle-item"><b>環境</b><p>條件不是死背數字；重點是觀察魚在環境中的反應。看牠是否願意探索、安心躲藏、穩定進食，再調整水流、遮蔽、空間與維護節奏。</p></div>
+          <div class="principle-item"><b>健康</b><p>觀察體態、活動力、呼吸、進食與恢復狀況；若評估仍不穩，會先暫停販售。</p></div>
+          <div class="principle-item"><b>行為與心理狀態</b><p>重視魚是否願意探索、能安心躲藏與休息，並在環境中逐步恢復穩定，而不只是維持存活。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="shipping" class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="section-title">
+            <p class="eyebrow">Order & Shipping</p>
+            <h2>訂購流程與到貨提醒</h2>
+            <p>活體安排需要確認魚隻狀態、收件安排與當批狀況。請勿直接假設今天能出貨。</p>
+          </div>
+        </div>
+        <div class="shipping-grid">
+          <div class="shipping-card"><h3>1. LINE 確認</h3><p>告知想詢問的魚種、數量、收件縣市與目前缸況。若是新設缸、混養缸或近期有異常，請先說明。</p></div>
+          <div class="shipping-card"><h3>2. 確認狀態</h3><p>確認名單狀態、餵食反應、可出貨日與相關細節；若該批個體尚未穩定，會先暫緩安排。</p></div>
+          <div class="shipping-card"><h3>3. 到貨檢疫與適應</h3><p>收到後建議先檢疫觀察。重點不只是找病，更是讓魚恢復運輸壓力、重新穩定狀態，並逐步習慣飼主操作；穩定後再評估是否進主缸。</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-grid">
+      <div>
+        <strong>河憩寮</strong>
+        <p>淡水觀賞魚｜鼠魚｜異型魚｜小型魚｜狀態說明與飼養觀點</p>
+      </div>
+      <a class="btn gold" data-line-link href="https://lin.ee/p9wkJW2">LINE 官方帳號</a>
+    </div>
+  </footer>
+
+  <a class="btn gold mobile-line" data-line-link href="https://lin.ee/p9wkJW2">LINE</a>
+  <script src="config.js?v=20260524-v21"></script>
+  <script src="app.v2.js?v=20260524-v21"></script>
+</body>
+</html>
