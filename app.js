@@ -1,6 +1,6 @@
 (function(){
   const CONFIG = window.HEQILIAO_CONFIG || {};
-  const PLACEHOLDER = "assets/card-placeholder.svg";
+  const PLACEHOLDER = "card-placeholder.svg";
   const el = (id) => document.getElementById(id);
   const state = { products: [], filtered: [], category: "全部", query: "" };
 

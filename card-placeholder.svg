@@ -1,20 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 100" role="img" aria-label="河憩寮 logo">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#123f39"/>
-      <stop offset="1" stop-color="#1e5a52"/>
-    </linearGradient>
-  </defs>
-  <rect x="2" y="2" width="236" height="96" rx="20" fill="url(#g)"/>
-  <path d="M34 67c20-10 39-11 58-3 14 6 28 7 44 2 9-3 17-8 27-9 8-1 17 1 27 9" fill="none" stroke="#d8c6a0" stroke-width="7" stroke-linecap="round"/>
-  <path d="M94 42c15-11 39-8 52 7-10 6-24 10-38 9-10-1-17-7-14-16z" fill="#f2ebdd"/>
-  <circle cx="129" cy="41" r="2.6" fill="#123f39"/>
-  <path d="M90 43l-12-7 6 14z" fill="#c89a57"/>
-  <path d="M104 52c-3 6-5 10-5 15" fill="none" stroke="#f2ebdd" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
-  <path d="M155 29c6 0 11 5 11 11 0 4-2 6-3 8h-16c-1-2-3-4-3-8 0-6 5-11 11-11z" fill="none" stroke="#d8c6a0" stroke-width="3"/>
-  <path d="M147 48h16" stroke="#d8c6a0" stroke-width="3"/>
-  <path d="M155 48v13" stroke="#d8c6a0" stroke-width="3"/>
-  <path d="M149 61h12" stroke="#d8c6a0" stroke-width="3" stroke-linecap="round"/>
-  <circle cx="86" cy="70" r="2" fill="#9fc2b6"/>
-  <circle cx="164" cy="67" r="2" fill="#9fc2b6"/>
+<svg width="900" height="650" viewBox="0 0 900 650" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="650" fill="#EDE5D7"/>
+  <circle cx="720" cy="120" r="110" fill="#D5E7DC" opacity="0.8"/>
+  <circle cx="190" cy="520" r="140" fill="#D8B37B" opacity="0.35"/>
+  <path d="M120 440C210 365 300 365 390 440C480 515 570 515 660 440C706 402 752 385 800 388" stroke="#8BB7A0" stroke-width="22" stroke-linecap="round"/>
+  <path d="M250 245C322 181 452 190 510 255C443 329 319 327 250 245Z" fill="#183C35"/>
+  <path d="M251 245L185 200L200 290L251 245Z" fill="#C99052"/>
+  <circle cx="460" cy="240" r="10" fill="#F8F2E6"/>
+  <path d="M355 290C340 325 300 338 265 330" stroke="#F8F2E6" stroke-width="9" stroke-linecap="round" opacity=".75"/>
+  <text x="450" y="570" text-anchor="middle" font-size="36" font-weight="700" fill="#183C35" font-family="serif">河憩寮</text>
 </svg>
