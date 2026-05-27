@@ -74,3 +74,11 @@ img{display:block;max-width:100%}
 .flow-grid .featured-step{grid-column:auto}
 @media(max-width:900px){.flow-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){.flow-grid{grid-template-columns:1fr}}
+
+
+/* v31 prominent quarantine record link */
+.record-callout{margin-top:22px;background:#fffaf1;border:1px solid rgba(201,144,82,.85);border-radius:22px;padding:18px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;box-shadow:0 12px 30px rgba(201,144,82,.12)}
+.record-callout b{display:block;font-size:18px;color:var(--ink);margin-bottom:4px}
+.record-callout span{display:block;color:var(--ink-2);font-size:14px;line-height:1.65}
+.record-btn{white-space:nowrap}
+@media(max-width:620px){.record-callout{grid-template-columns:1fr}.record-btn{width:100%}}
