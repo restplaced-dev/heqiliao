@@ -359,7 +359,6 @@
     if(!modal || !content) return;
 
     const infoRows = [
-      ["分類", p.category],
       ["尺寸", p.size],
       p.hasStock ? ["庫存", p.stock && p.stock !== "詢問" ? `${p.stock} 隻` : p.stock] : null,
       ["餵食", p.feeding],
@@ -379,8 +378,11 @@
         <span class="badge ${statusClass(p.status, p.soldOut)}">${escapeHtml(p.status)}</span>
       </div>
       <div class="preview-body">
-        <div class="meta"><span>${escapeHtml(p.category)}</span><span>${p.soldOut ? "暫不出貨" : "可私訊確認"}</span></div>
-        <h3>${escapeHtml(p.name)}</h3>
+        <div class="meta meta-right"><span>${p.soldOut ? "暫不出貨" : "可私訊確認"}</span></div>
+        <div class="preview-title-row">
+          <h3>${escapeHtml(p.name)}</h3>
+          <span class="category-chip">${escapeHtml(p.category)}</span>
+        </div>
         ${p.scientific ? `<p class="sci">${escapeHtml(p.scientific)}</p>` : ""}
         ${p.price ? `<div class="price">${escapeHtml(p.price)}</div>` : ""}
         <div class="preview-info">${infoRows.map(([k,v]) => `<div><span>${escapeHtml(k)}</span><span>${escapeHtml(v)}</span></div>`).join("")}</div>
