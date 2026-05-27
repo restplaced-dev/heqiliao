@@ -14,7 +14,7 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260524-v39">
+  <link rel="stylesheet" href="styles.v2.css?v=20260524-v40">
 </head>
 <body>
   <header class="header">
@@ -46,8 +46,8 @@
         <aside class="hero-card">
           <img src="hero-illustration-v18.jpg" alt="河憩寮淡水觀賞魚品牌插畫">
           <div class="hero-card-body">
-            <h2>帶回去之後，也能慢慢養穩。</h2>
-            <p>魚交到飼主手上後，真正的飼養才開始。河憩寮希望提供的不只是名單，而是讓飼主更容易判斷、準備與長期照顧。</p>
+            <h2>狀態穩定後，適應才更順利。</h2>
+            <p>妥善照顧與觀察，是替牠接下來的適應多留一點餘裕。</p>
           </div>
         </aside>
       </div>
@@ -130,12 +130,17 @@
           <label class="search" aria-label="搜尋品項"><input id="searchInput" type="search" placeholder="輸入品名、學名、分類、標籤"></label>
           <div class="filters" id="categoryFilters"></div>
         </div>
-        <div class="inline-quick-list">
+        <div class="view-switch" aria-label="名單顯示方式">
+          <span>顯示方式</span>
+          <button class="view-btn active" type="button" data-view-mode="text">文字版</button>
+          <button class="view-btn" type="button" data-view-mode="photo">圖文版</button>
+        </div>
+        <div class="inline-quick-list" id="quickListSection">
           <div class="section-head compact-head">
             <div class="section-title">
               <p class="eyebrow">Quick List</p>
               <h2>文字版快速清單</h2>
-              <p>先用文字版快速查看分類、品名、尺寸、價格與狀態；下方再看圖文商品卡。</p>
+              <p>預設以文字版快速查看分類、品名、尺寸、價格與狀態；也可切換成圖文版查看照片。</p>
             </div>
           </div>
           <div class="quick-table" id="quickTableWrap">
@@ -145,7 +150,7 @@
             </table>
           </div>
         </div>
-        <div class="section-title card-list-title">
+        <div class="section-title card-list-title hidden-view" id="photoListTitle">
           <p class="eyebrow">Photo List</p>
           <h2>圖文版名單</h2>
           <p>請先選擇「全部」或特定分類，再展開圖文卡片。</p>
@@ -182,8 +187,8 @@
   </footer>
 
   <a class="btn gold mobile-line" data-line-link href="https://lin.ee/p9wkJW2">LINE</a>
-  <script src="config.js?v=20260524-v39"></script>
-  <script src="app.v2.js?v=20260524-v39"></script>
+  <script src="config.js?v=20260524-v40"></script>
+  <script src="app.v2.js?v=20260524-v40"></script>
 
   <div class="preview-modal" id="productPreviewModal" aria-hidden="true">
     <div class="preview-backdrop" data-preview-close></div>

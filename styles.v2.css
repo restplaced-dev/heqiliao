@@ -174,3 +174,12 @@ body.modal-open{overflow:hidden}
   color:var(--ink-2);
   max-width:640px;
 }
+
+
+/* v40 text/photo view switch */
+.view-switch{margin:20px 0 6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:var(--ink-2)}
+.view-switch span{font-size:14px;letter-spacing:.08em}
+.view-btn{border:1px solid var(--line);background:#fffaf1;color:var(--ink);border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;transition:background .16s ease,color .16s ease,border-color .16s ease,transform .16s ease}
+.view-btn:hover{transform:translateY(-1px)}
+.view-btn.active{background:var(--ink);border-color:var(--ink);color:var(--white)}
+.hidden-view[hidden],#quickListSection[hidden],#productGrid[hidden]{display:none!important}

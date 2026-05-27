@@ -2,7 +2,7 @@
   const CONFIG = window.HEQILIAO_CONFIG || {};
   const PLACEHOLDER = "card-placeholder.svg";
   const el = (id) => document.getElementById(id);
-  const state = { products: [], filtered: [], category: "全部", query: "", categoryChosen: false };
+  const state = { products: [], filtered: [], category: "全部", query: "", categoryChosen: false, viewMode: "text" };
 
   document.addEventListener("DOMContentLoaded", init);
 
@@ -10,6 +10,7 @@
     setLineLinks();
     bindSearch();
     bindPreviewModal();
+    bindViewSwitch();
     resetQuickTableHeader(false, false);
     await loadProducts();
   }
@@ -35,6 +36,30 @@
         if(placeholderText) a.title = placeholderText;
       }
     });
+  }
+
+  function bindViewSwitch(){
+    document.querySelectorAll("[data-view-mode]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.viewMode = btn.dataset.viewMode || "text";
+        updateViewSwitch();
+        applyFilters();
+      });
+    });
+    updateViewSwitch();
+  }
+
+  function updateViewSwitch(){
+    document.querySelectorAll("[data-view-mode]").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.viewMode === state.viewMode);
+    });
+    const quick = el("quickListSection");
+    const photoTitle = el("photoListTitle");
+    const grid = el("productGrid");
+    const showPhoto = state.viewMode === "photo";
+    if(quick) quick.hidden = showPhoto;
+    if(photoTitle) photoTitle.hidden = !showPhoto;
+    if(grid) grid.hidden = !showPhoto;
   }
 
   function bindSearch(){
@@ -255,6 +280,11 @@
   function renderProducts(){
     const grid = el("productGrid");
     if(!grid) return;
+    updateViewSwitch();
+    if(state.viewMode !== "photo"){
+      grid.innerHTML = "";
+      return;
+    }
     if(!state.categoryChosen && !state.query){
       grid.innerHTML = `<div class="empty choose-list-prompt">請先選擇上方的「全部」或特定分類，再查看圖文版名單。</div>`;
       return;
@@ -387,6 +417,7 @@
   }
 
   function renderQuickList(){
+    updateViewSwitch();
     const showStock = state.filtered.some(p => p.hasStock);
     const showSize = state.filtered.some(p => p.size);
     resetQuickTableHeader(showStock, showSize);
