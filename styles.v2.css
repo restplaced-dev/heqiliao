@@ -526,3 +526,140 @@ body.modal-open{overflow:hidden}
   .preview-body .price{font-size:26px}
   .preview-actions{grid-template-columns:1fr}
 }
+
+
+/* v46 tablet landscape preview: use compact layout on iPad landscape */
+@media (min-width:621px) and (max-width:1180px) and (orientation:landscape){
+  .preview-modal{
+    padding:calc(10px + env(safe-area-inset-top, 0px)) 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+  .preview-panel{
+    width:min(760px, calc(100vw - 36px));
+    max-height:calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    border-radius:22px;
+    overflow:auto;
+  }
+  .preview-close{
+    position:absolute;
+    top:12px;
+    right:12px;
+    width:50px;
+    height:50px;
+    margin:0;
+    font-size:33px;
+    z-index:5;
+  }
+  .preview-image{
+    height:220px;
+    aspect-ratio:auto;
+    border-radius:22px 22px 0 0;
+  }
+  .preview-body{
+    padding:22px 28px 24px;
+  }
+  .preview-title-row{
+    align-items:center;
+    gap:12px;
+  }
+  .preview-title-row h3{
+    font-size:34px;
+    line-height:1.15;
+    margin:0;
+  }
+  .preview-body .sci{
+    display:none;
+  }
+  .preview-body .price{
+    font-size:34px;
+    margin:8px 0 12px;
+  }
+  .preview-info{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin:12px 0;
+    border-top:0;
+  }
+  .preview-info div{
+    display:grid;
+    grid-template-columns:62px 1fr;
+    gap:10px;
+    align-items:start;
+    min-width:0;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:rgba(255,250,241,.58);
+  }
+  .preview-info div span:first-child{
+    font-size:13px;
+    margin:0;
+  }
+  .preview-info div span:last-child{
+    font-size:16px;
+    line-height:1.38;
+  }
+  .preview-info div:nth-child(2),
+  .preview-info div:nth-child(3){
+    grid-column:1 / -1;
+  }
+  .preview-actions{
+    margin-top:12px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  .preview-actions .btn,
+  .preview-actions .copy-btn{
+    min-height:48px;
+    padding:10px 14px;
+    font-size:16px;
+  }
+}
+
+/* Also compact any short-height screen, including tablet browser with toolbars */
+@media (min-width:621px) and (max-height:760px){
+  .preview-panel{
+    max-height:calc(100dvh - 22px);
+  }
+  .preview-image{
+    height:200px;
+    aspect-ratio:auto;
+  }
+  .preview-body{
+    padding:20px 28px 22px;
+  }
+  .preview-title-row h3{
+    font-size:32px;
+  }
+  .preview-body .price{
+    font-size:32px;
+    margin:7px 0 10px;
+  }
+  .preview-info{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+    margin:10px 0;
+    border-top:0;
+  }
+  .preview-info div{
+    display:grid;
+    grid-template-columns:60px 1fr;
+    gap:10px;
+    padding:9px 11px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:rgba(255,250,241,.58);
+  }
+  .preview-info div:nth-child(2),
+  .preview-info div:nth-child(3){
+    grid-column:1 / -1;
+  }
+  .preview-body .sci{
+    display:none;
+  }
+  .preview-actions{
+    margin-top:10px;
+  }
+}
