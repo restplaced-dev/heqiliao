@@ -2,7 +2,7 @@
   const CONFIG = window.HEQILIAO_CONFIG || {};
   const PLACEHOLDER = "card-placeholder.svg";
   const el = (id) => document.getElementById(id);
-  const state = { products: [], filtered: [], category: "全部", query: "" };
+  const state = { products: [], filtered: [], category: "全部", query: "", categoryChosen: false };
 
   document.addEventListener("DOMContentLoaded", init);
 
@@ -232,9 +232,10 @@
     const container = el("categoryFilters");
     if(!container) return;
     const categories = ["全部", ...Array.from(new Set(state.products.map(p => p.category).filter(Boolean)))];
-    container.innerHTML = categories.map(cat => `<button class="filter-btn ${cat === state.category ? "active" : ""}" data-category="${escapeAttr(cat)}">${escapeHtml(cat)}</button>`).join("");
+    container.innerHTML = categories.map(cat => `<button class="filter-btn ${state.categoryChosen && cat === state.category ? "active" : ""}" data-category="${escapeAttr(cat)}">${escapeHtml(cat)}</button>`).join("");
     container.querySelectorAll("button").forEach(btn => btn.addEventListener("click", () => {
       state.category = btn.dataset.category;
+      state.categoryChosen = true;
       renderCategories();
       applyFilters();
     }));
@@ -254,6 +255,10 @@
   function renderProducts(){
     const grid = el("productGrid");
     if(!grid) return;
+    if(!state.categoryChosen && !state.query){
+      grid.innerHTML = `<div class="empty choose-list-prompt">請先選擇上方的「全部」或特定分類，再查看圖文版名單。</div>`;
+      return;
+    }
     if(!state.filtered.length){
       grid.innerHTML = `<div class="empty">目前沒有符合條件的品項。可清除搜尋，或直接透過 LINE 詢問本週名單。</div>`;
       return;

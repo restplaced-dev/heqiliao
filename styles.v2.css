@@ -162,3 +162,15 @@ body.modal-open{overflow:hidden}
   .preview-body h3{font-size:30px}
   .preview-info div{grid-template-columns:76px 1fr}
 }
+
+
+/* v39 photo list starts collapsed until a filter choice */
+.choose-list-prompt{
+  text-align:center;
+  padding:34px 24px;
+  font-size:18px;
+}
+.card-list-title p{
+  color:var(--ink-2);
+  max-width:640px;
+}
