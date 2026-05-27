@@ -73,9 +73,9 @@
 
   async function loadProducts(){
     updateStatus("資料讀取中");
-    const urls = [CONFIG.sheetCsvUrl, CONFIG.fallbackCsvUrl].filter(Boolean);
     let lastError = null;
-    for(const url of urls){
+    const url = CONFIG.sheetCsvUrl;
+    if(url){
       try{
         const csv = await fetchTextNoCache(url, 9000);
         const rows = csvToObjects(csv);
@@ -85,20 +85,19 @@
           state.filtered = products;
           renderCategories();
           applyFilters();
-          const source = url === CONFIG.sheetCsvUrl ? "Google 試算表" : "內建備援資料";
-          updateStatus(`已讀取：${source}｜${new Date().toLocaleTimeString("zh-TW", {hour:"2-digit", minute:"2-digit"})}`);
+          updateStatus(`已讀取：Google 試算表｜${new Date().toLocaleTimeString("zh-TW", {hour:"2-digit", minute:"2-digit"})}`);
           return;
         }
       }catch(error){
         lastError = error;
-        console.warn("讀取資料失敗：", url, error);
+        console.warn("Google 試算表讀取失敗：", url, error);
       }
     }
     state.products = [];
     state.filtered = [];
     renderCategories();
     applyFilters();
-    updateStatus("沒有讀到商品資料，請檢查試算表發布連結與欄位名稱");
+    updateStatus("Google 試算表讀取失敗，請稍後重新整理，或直接透過 LINE 詢問本週名單");
     if(lastError) console.warn(lastError);
   }
 
