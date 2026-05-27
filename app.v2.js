@@ -308,7 +308,6 @@
     ].filter(Boolean).join("\n");
     const infoRows = [
       ["尺寸", p.size],
-      p.hasStock ? ["庫存", p.stock && p.stock !== "詢問" ? `${p.stock} 隻` : p.stock] : null,
       ["餵食", p.feeding],
       ["備註", p.note]
     ].filter(row => row && row[1]);
@@ -360,7 +359,6 @@
 
     const infoRows = [
       ["尺寸", p.size],
-      p.hasStock ? ["庫存", p.stock && p.stock !== "詢問" ? `${p.stock} 隻` : p.stock] : null,
       ["餵食", p.feeding],
       ["備註", p.note]
     ].filter(row => row && row[1]);
@@ -378,7 +376,6 @@
         <span class="badge ${statusClass(p.status, p.soldOut)}">${escapeHtml(p.status)}</span>
       </div>
       <div class="preview-body">
-        <div class="meta meta-right"><span>${p.soldOut ? "暫不出貨" : "可私訊確認"}</span></div>
         <div class="preview-title-row">
           <h3>${escapeHtml(p.name)}</h3>
           <span class="category-chip">${escapeHtml(p.category)}</span>
@@ -386,7 +383,6 @@
         ${p.scientific ? `<p class="sci">${escapeHtml(p.scientific)}</p>` : ""}
         ${p.price ? `<div class="price">${escapeHtml(p.price)}</div>` : ""}
         <div class="preview-info">${infoRows.map(([k,v]) => `<div><span>${escapeHtml(k)}</span><span>${escapeHtml(v)}</span></div>`).join("")}</div>
-        ${p.tags.length ? `<div class="tags">${p.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>` : ""}
         <div class="card-actions preview-actions">
           <button class="copy-btn" data-copy="${escapeAttr(inquiry)}">複製詢問文字</button>
           ${p.soldOut ? `<button class="btn" disabled>${escapeHtml(p.status || "暫不販售")}</button>` : `<a class="btn" href="${escapeAttr(CONFIG.lineUrl || "#")}">LINE 詢問</a>`}

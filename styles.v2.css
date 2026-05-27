@@ -417,3 +417,112 @@ body.modal-open{overflow:hidden}
     font-size:14px;
   }
 }
+
+
+/* v44 mobile preview: feeding row full width like note */
+@media(max-width:620px){
+  .preview-info div:nth-child(3),
+  .preview-info div:nth-child(4){
+    grid-column:1 / -1;
+  }
+  .preview-info div:nth-child(3) span:last-child,
+  .preview-info div:nth-child(4) span:last-child{
+    white-space:normal;
+  }
+}
+
+
+/* v45 ultra compact mobile preview */
+@media(max-width:620px){
+  .preview-modal{
+    padding:calc(6px + env(safe-area-inset-top, 0px)) 8px calc(6px + env(safe-area-inset-bottom, 0px));
+  }
+  .preview-panel{
+    width:calc(100vw - 16px);
+    max-height:calc(100dvh - 12px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    border-radius:18px;
+  }
+  .preview-image{
+    height:138px;
+    border-radius:18px 18px 0 0;
+  }
+  .preview-close{
+    top:8px;
+    right:8px;
+    width:46px;
+    height:46px;
+    font-size:31px;
+  }
+  .preview-image .badge{
+    left:8px;
+    top:8px;
+    font-size:12px;
+    padding:7px 11px;
+  }
+  .preview-body{
+    padding:14px 16px 16px;
+  }
+  .preview-title-row{
+    gap:8px;
+    align-items:center;
+  }
+  .preview-title-row h3{
+    font-size:25px;
+    line-height:1.15;
+  }
+  .category-chip{
+    min-height:28px;
+    padding:5px 10px;
+    font-size:13px;
+  }
+  .preview-body .sci{
+    display:none;
+  }
+  .preview-body .price{
+    font-size:29px;
+    margin:7px 0 10px;
+  }
+  .preview-info{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:7px;
+    margin:10px 0;
+  }
+  .preview-info div{
+    display:grid;
+    grid-template-columns:58px 1fr;
+    align-items:start;
+    gap:8px;
+    min-width:0;
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:rgba(255,250,241,.58);
+  }
+  .preview-info div span:first-child{
+    font-size:12px;
+    margin:0;
+  }
+  .preview-info div span:last-child{
+    font-size:15px;
+    line-height:1.38;
+  }
+  .preview-actions{
+    margin-top:10px;
+    gap:8px;
+    grid-template-columns:1fr 1fr;
+  }
+  .preview-actions .btn,
+  .preview-actions .copy-btn{
+    min-height:44px;
+    padding:9px 10px;
+    font-size:15px;
+  }
+}
+@media(max-width:380px){
+  .preview-image{height:122px}
+  .preview-title-row h3{font-size:23px}
+  .preview-body{padding:12px 14px 14px}
+  .preview-body .price{font-size:26px}
+  .preview-actions{grid-template-columns:1fr}
+}
