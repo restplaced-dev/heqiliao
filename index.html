@@ -14,7 +14,7 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260524-v31">
+  <link rel="stylesheet" href="styles.v2.css?v=20260524-v33">
 </head>
 <body>
   <header class="header">
@@ -82,8 +82,9 @@
             <p>檢視單回覆會寄到填寫人留下的 Gmail。若缸況、混養或飼養條件需要調整，會先提出建議；確認沒有明顯問題後，再討論訂購。</p>
           </div>
           <div class="shipping-card">
-            <h3>3. LINE 討論品項</h3>
-            <p>通過檢視後，再透過 LINE 確認想詢問的魚種、數量、收件縣市與補充狀況。</p>
+            <h3>3. LINE 官方帳號討論品項</h3>
+            <p>收到 Email 回覆、確認沒有明顯問題後，再透過 LINE 官方帳號討論想詢問的魚種、數量、收件縣市與補充狀況。</p>
+            <a class="btn inline-card-btn line-card-btn" data-line-link href="https://lin.ee/p9wkJW2">加入 LINE 官方帳號</a>
           </div>
           <div class="shipping-card">
             <h3>4. 確認狀態與安排</h3>
@@ -94,29 +95,22 @@
             <p>收到後建議先檢疫觀察。重點不只是找病，更是讓魚恢復運輸壓力、重新穩定狀態，並逐步習慣飼主操作；穩定後再評估是否進主缸。</p>
           </div>
         </div>
+        <div class="flow-final-cta">
+          <span>收到檢視單 Email 回覆後，再到 LINE 官方帳號討論品項與安排。</span>
+          <a class="btn secondary" data-line-link href="https://lin.ee/p9wkJW2">前往 LINE 官方帳號</a>
+        </div>
       </div>
     </section>
 
-    <section class="section buyer-note">
-      <div class="wrap buyer-grid">
-        <div class="section-title compact">
-          <p class="eyebrow">Before Asking</p>
-          <h2>詢問前，可以先確認幾件事</h2>
-          <p>不是要把門檻拉高，而是讓魚到新環境後比較容易穩下來，也讓飼主少走一些冤枉路。</p>
-          <div class="record-callout">
-            <div>
-              <b>近期檢疫紀錄</b>
-              <span>可查看近期批次、觀察狀態與可詢問名單補充。</span>
-            </div>
-            <a class="btn gold record-btn" data-quarantine-link href="#">查看檢疫紀錄</a>
+    <section class="section record-section">
+      <div class="wrap">
+        <div class="record-callout compact-record">
+          <div>
+            <p class="eyebrow">Quarantine Record</p>
+            <b>近期檢疫紀錄</b>
+            <span>查看近期批次、觀察狀態與可詢問名單補充。</span>
           </div>
-          <p class="link-note">想訂購魚隻前，請先依訂購流程填寫檢視單並等待 Email 回覆；檢疫紀錄可作為了解近期狀態的輔助參考。</p>
-        </div>
-        <div class="buyer-list">
-          <div><b>魚缸是否已穩定運作</b><span>新設缸或近期水質波動，建議先說明。</span></div>
-          <div><b>是否有檢疫空間</b><span>新魚到家後建議先觀察與適應，不急著進主缸。</span></div>
-          <div><b>混養條件是否清楚</b><span>請先告知現有魚種、體型、缸況與餵食方式。</span></div>
-          <div><b>是否了解基本需求</b><span>水流、底床、躲避處、食性與活動層都會影響長期狀態。</span></div>
+          <a class="btn gold record-btn" data-quarantine-link href="#">查看檢疫紀錄</a>
         </div>
       </div>
     </section>
@@ -136,29 +130,29 @@
           <label class="search" aria-label="搜尋品項"><input id="searchInput" type="search" placeholder="輸入品名、學名、分類、標籤"></label>
           <div class="filters" id="categoryFilters"></div>
         </div>
+        <div class="inline-quick-list">
+          <div class="section-head compact-head">
+            <div class="section-title">
+              <p class="eyebrow">Quick List</p>
+              <h2>文字版快速清單</h2>
+              <p>先用文字版快速查看分類、品名、尺寸、價格與狀態；下方再看圖文商品卡。</p>
+            </div>
+          </div>
+          <div class="quick-table" id="quickTableWrap">
+            <table id="quickTable">
+              <thead><tr><th>分類</th><th>品名</th><th>尺寸</th><th>價格</th><th>狀態</th></tr></thead>
+              <tbody id="quickListBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="section-title card-list-title">
+          <p class="eyebrow">Photo List</p>
+          <h2>圖文版名單</h2>
+        </div>
         <div class="grid" id="productGrid"></div>
       </div>
     </section>
-
-    <section class="section">
-      <div class="wrap">
-        <div class="section-head">
-          <div class="section-title">
-            <p class="eyebrow">Quick List</p>
-            <h2>文字版快速清單</h2>
-            <p>老客人可快速查看分類、品名、尺寸、價格與狀態。</p>
-          </div>
-        </div>
-        <div class="quick-table" id="quickTableWrap">
-          <table id="quickTable">
-            <thead><tr><th>分類</th><th>品名</th><th>尺寸</th><th>價格</th><th>狀態</th></tr></thead>
-            <tbody id="quickListBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <section id="principles" class="section alt">
+<section id="principles" class="section alt">
       <div class="wrap principles">
         <div class="principle-panel">
           <p class="eyebrow">Our Principles</p>
@@ -187,7 +181,7 @@
   </footer>
 
   <a class="btn gold mobile-line" data-line-link href="https://lin.ee/p9wkJW2">LINE</a>
-  <script src="config.js?v=20260524-v31"></script>
-  <script src="app.v2.js?v=20260524-v31"></script>
+  <script src="config.js?v=20260524-v33"></script>
+  <script src="app.v2.js?v=20260524-v33"></script>
 </body>
 </html>

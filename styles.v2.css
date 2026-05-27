@@ -82,3 +82,25 @@ img{display:block;max-width:100%}
 .record-callout span{display:block;color:var(--ink-2);font-size:14px;line-height:1.65}
 .record-btn{white-space:nowrap}
 @media(max-width:620px){.record-callout{grid-template-columns:1fr}.record-btn{width:100%}}
+
+
+/* v32 simplified record section and quick-list-before-cards */
+.record-section{padding:44px 0;background:#f8f2e6}
+.compact-record{max-width:920px;margin:0 auto}
+.compact-record .eyebrow{margin-bottom:6px}
+.inline-quick-list{margin-top:26px;margin-bottom:34px}
+.compact-head{margin-bottom:16px}
+.compact-head .section-title h2{font-size:32px}
+.card-list-title{margin:34px 0 18px}
+.card-list-title h2{font-size:32px}
+@media(max-width:620px){
+  .record-section{padding:34px 0}
+  .compact-head .section-title h2,.card-list-title h2{font-size:28px}
+}
+
+
+/* v33 LINE official account reminder in order flow */
+.line-card-btn{margin-top:16px}
+.flow-final-cta{margin-top:18px;background:rgba(255,250,241,.76);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:16px;color:var(--ink-2)}
+.flow-final-cta span{line-height:1.7}
+@media(max-width:620px){.flow-final-cta{display:grid;grid-template-columns:1fr}.flow-final-cta .btn,.line-card-btn{width:100%}}
