@@ -104,3 +104,16 @@ img{display:block;max-width:100%}
 .flow-final-cta{margin-top:18px;background:rgba(255,250,241,.76);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:16px;color:var(--ink-2)}
 .flow-final-cta span{line-height:1.7}
 @media(max-width:620px){.flow-final-cta{display:grid;grid-template-columns:1fr}.flow-final-cta .btn,.line-card-btn{width:100%}}
+
+
+/* v35 prominent official LINE buttons */
+.btn.line-emphasis{
+  background:var(--ink);
+  border-color:var(--ink);
+  color:var(--white);
+  box-shadow:0 10px 24px rgba(24,60,53,.18);
+}
+.btn.line-emphasis:hover{
+  transform:translateY(-1px);
+  box-shadow:0 14px 30px rgba(24,60,53,.24);
+}
