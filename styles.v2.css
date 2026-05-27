@@ -117,3 +117,19 @@ img{display:block;max-width:100%}
   transform:translateY(-1px);
   box-shadow:0 14px 30px rgba(24,60,53,.24);
 }
+
+
+/* v37 fixed hero title wrapping */
+.hero-title{
+  font-size:clamp(52px,7vw,92px);
+  line-height:1.16;
+  letter-spacing:.02em;
+  word-break:keep-all;
+  overflow-wrap:normal;
+}
+@media(max-width:900px){
+  .hero-title{font-size:clamp(42px,10vw,68px);line-height:1.18}
+}
+@media(max-width:520px){
+  .hero-title{font-size:42px;line-height:1.2}
+}
