@@ -663,3 +663,29 @@ body.modal-open{overflow:hidden}
     margin-top:10px;
   }
 }
+
+
+/* v47 preview photo no-crop */
+.preview-image{
+  background:#10201d;
+}
+.preview-image img{
+  object-fit:contain;
+  object-position:center;
+  background:#10201d;
+}
+@media(max-width:620px){
+  .preview-image img{
+    object-fit:contain;
+  }
+}
+@media (min-width:621px) and (max-width:1180px) and (orientation:landscape){
+  .preview-image img{
+    object-fit:contain;
+  }
+}
+@media (min-width:621px) and (max-height:760px){
+  .preview-image img{
+    object-fit:contain;
+  }
+}
