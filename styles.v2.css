@@ -59,3 +59,18 @@ img{display:block;max-width:100%}
 .disabled-link{opacity:.48;pointer-events:none;filter:saturate(.5)}
 #shipping.section{padding-top:64px}
 @media(max-width:620px){.buyer-actions .btn{width:100%}.list-note{font-size:13px}}
+
+
+/* v29 order flow: inspection form first */
+.shipping-grid{grid-template-columns:repeat(2,1fr)}
+.shipping-card.featured-step{background:#fffaf1;border-color:rgba(201,144,82,.75);box-shadow:0 14px 34px rgba(201,144,82,.12)}
+.inline-card-btn{margin-top:16px;min-height:40px;padding:8px 16px}
+@media(max-width:900px){.shipping-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.shipping-grid{grid-template-columns:1fr}.inline-card-btn{width:100%}}
+
+
+/* v30 inspection review before ordering */
+.flow-grid{grid-template-columns:repeat(2,1fr)}
+.flow-grid .featured-step{grid-column:auto}
+@media(max-width:900px){.flow-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.flow-grid{grid-template-columns:1fr}}
