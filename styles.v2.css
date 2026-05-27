@@ -707,3 +707,31 @@ body.modal-open{overflow:hidden}
     background:#10201d;
   }
 }
+
+
+/* v49 phone preview: no crop, but keep photo large */
+@media(max-width:620px){
+  .preview-image{
+    height:auto;
+    aspect-ratio:16/9;
+    max-height:215px;
+    min-height:190px;
+    background:#10201d;
+  }
+  .preview-image img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    object-position:center;
+    background:#10201d;
+  }
+}
+
+/* very small phones keep it a little shorter */
+@media(max-width:380px){
+  .preview-image{
+    min-height:168px;
+    max-height:190px;
+    aspect-ratio:16/9;
+  }
+}
