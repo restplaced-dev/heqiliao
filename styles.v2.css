@@ -689,3 +689,21 @@ body.modal-open{overflow:hidden}
     object-fit:contain;
   }
 }
+
+
+/* v48: phone photo fills frame; tablet keeps no-crop */
+@media(max-width:620px){
+  .preview-image img{
+    object-fit:cover;
+    object-position:center;
+  }
+}
+
+/* Keep iPad / tablet landscape from cropping too much */
+@media (min-width:621px) and (max-width:1180px) and (orientation:landscape){
+  .preview-image img{
+    object-fit:contain;
+    object-position:center;
+    background:#10201d;
+  }
+}
