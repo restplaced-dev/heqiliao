@@ -735,3 +735,14 @@ body.modal-open{overflow:hidden}
     aspect-ratio:16/9;
   }
 }
+
+
+/* v50 hero quick-list jump button */
+.quick-list-jump{
+  background:rgba(255,250,241,.72);
+}
+@media(max-width:720px){
+  .hero-actions .quick-list-jump{
+    width:100%;
+  }
+}
