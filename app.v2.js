@@ -291,8 +291,8 @@
         <div class="info-list">${infoRows.map(([k,v]) => `<div><span>${escapeHtml(k)}</span><span>${escapeHtml(v)}</span></div>`).join("")}</div>
         ${p.tags.length ? `<div class="tags">${p.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>` : ""}
         <div class="card-actions">
-          ${p.soldOut ? `<button class="btn" disabled>${escapeHtml(p.status || "暫不販售")}</button>` : `<a class="btn" href="${escapeAttr(CONFIG.lineUrl || "#")}">LINE 詢問</a>`}
           <button class="copy-btn" data-copy="${escapeAttr(inquiry)}">複製詢問文字</button>
+          ${p.soldOut ? `<button class="btn" disabled>${escapeHtml(p.status || "暫不販售")}</button>` : `<a class="btn" href="${escapeAttr(CONFIG.lineUrl || "#")}">LINE 詢問</a>`}
         </div>
       </div>
     </article>`;
