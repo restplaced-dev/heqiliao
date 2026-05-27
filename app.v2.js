@@ -9,6 +9,7 @@
   async function init(){
     setLineLinks();
     bindSearch();
+    bindPreviewModal();
     resetQuickTableHeader(false, false);
     await loadProducts();
   }
@@ -298,6 +299,80 @@
     </article>`;
   }
 
+
+  function bindPreviewModal(){
+    document.addEventListener("click", (event) => {
+      const close = event.target.closest("[data-preview-close]");
+      if(close){
+        closePreview();
+        return;
+      }
+      const row = event.target.closest("[data-preview-id]");
+      if(row){
+        const product = state.products.find(p => String(p.id) === String(row.dataset.previewId));
+        if(product) openPreview(product);
+      }
+    });
+    document.addEventListener("keydown", (event) => {
+      if(event.key === "Escape") closePreview();
+    });
+  }
+
+  function openPreview(p){
+    const modal = el("productPreviewModal");
+    const content = el("previewContent");
+    if(!modal || !content) return;
+
+    const infoRows = [
+      ["分類", p.category],
+      ["尺寸", p.size],
+      p.hasStock ? ["庫存", p.stock && p.stock !== "詢問" ? `${p.stock} 隻` : p.stock] : null,
+      ["餵食", p.feeding],
+      ["備註", p.note]
+    ].filter(row => row && row[1]);
+
+    const inquiry = [
+      `您好，我想詢問：${p.name}`,
+      p.size ? `尺寸：${p.size}` : "",
+      p.price ? `價格：NT$ ${p.price}` : "",
+      p.status ? `目前狀態：${p.status}` : "",
+      "想確認目前是否可詢問，以及適合的取魚／出貨安排。"
+    ].filter(Boolean).join("\n");
+
+    content.innerHTML = `<div class="preview-image">
+        <img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name)}">
+        <span class="badge ${statusClass(p.status, p.soldOut)}">${escapeHtml(p.status)}</span>
+      </div>
+      <div class="preview-body">
+        <div class="meta"><span>${escapeHtml(p.category)}</span><span>${p.soldOut ? "暫不出貨" : "可私訊確認"}</span></div>
+        <h3>${escapeHtml(p.name)}</h3>
+        ${p.scientific ? `<p class="sci">${escapeHtml(p.scientific)}</p>` : ""}
+        ${p.price ? `<div class="price">${escapeHtml(p.price)}</div>` : ""}
+        <div class="preview-info">${infoRows.map(([k,v]) => `<div><span>${escapeHtml(k)}</span><span>${escapeHtml(v)}</span></div>`).join("")}</div>
+        ${p.tags.length ? `<div class="tags">${p.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>` : ""}
+        <div class="card-actions preview-actions">
+          <button class="copy-btn" data-copy="${escapeAttr(inquiry)}">複製詢問文字</button>
+          ${p.soldOut ? `<button class="btn" disabled>${escapeHtml(p.status || "暫不販售")}</button>` : `<a class="btn" href="${escapeAttr(CONFIG.lineUrl || "#")}">LINE 詢問</a>`}
+        </div>
+      </div>`;
+
+    const img = content.querySelector("img");
+    if(img) img.addEventListener("error", () => { img.src = PLACEHOLDER; });
+    content.querySelectorAll("[data-copy]").forEach(btn => btn.addEventListener("click", () => copyInquiry(btn.dataset.copy, btn)));
+
+    modal.classList.add("show");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+  }
+
+  function closePreview(){
+    const modal = el("productPreviewModal");
+    if(!modal) return;
+    modal.classList.remove("show");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
+  }
+
   function resetQuickTableHeader(showStock, showSize){
     const table = el("quickTable") || document.querySelector(".quick-table table");
     if(!table) return;
@@ -312,7 +387,7 @@
     resetQuickTableHeader(showStock, showSize);
     const body = el("quickListBody");
     if(!body) return;
-    body.innerHTML = state.filtered.map(p => `<tr>
+    body.innerHTML = state.filtered.map(p => `<tr class="preview-row" data-preview-id="${escapeAttr(p.id)}" title="點擊查看圖文預覽">
       <td>${escapeHtml(p.category)}</td>
       <td><strong>${escapeHtml(p.name)}</strong>${p.scientific ? `<br><small><em>${escapeHtml(p.scientific)}</em></small>` : ""}</td>
       ${showSize ? `<td>${escapeHtml(p.size || "—")}</td>` : ""}
