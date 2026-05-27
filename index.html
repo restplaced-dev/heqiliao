@@ -14,16 +14,16 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260524-v22">
+  <link rel="stylesheet" href="styles.v2.css?v=20260524-v23">
 </head>
 <body>
   <header class="header">
     <div class="wrap nav">
       <a class="brand" href="#top" aria-label="河憩寮首頁"><img src="logo-official-transparent.png" alt="河憩寮官方 Logo"></a>
       <nav class="nav-links" aria-label="主選單">
+        <a href="#shipping">訂購流程</a>
         <a href="#stock">本週名單</a>
         <a href="#principles">飼養原則</a>
-        <a href="#shipping">訂購方式</a>
         <a class="btn" data-line-link href="https://lin.ee/p9wkJW2">LINE 詢問</a>
       </nav>
     </div>
@@ -37,10 +37,10 @@
           <h1>把魚養穩，<br>陪你養得長久。</h1>
           <p class="lead">河憩寮以淡水觀賞魚為主，整理每週可詢問活體、目前觀察到的狀態，以及詢問前的注意事項。比起把魚賣出去，我們更在意你帶回去之後，能不能養得長久、養得安心。</p>
           <div class="hero-actions">
-            <a class="btn gold" href="#stock">查看本週名單</a>
+            <a class="btn gold" href="#shipping">先看訂購流程</a>
             <a class="btn secondary" data-line-link href="https://lin.ee/p9wkJW2">加入 LINE 官方帳號</a>
           </div>
-          <div class="notice">下單前請先透過 LINE 確認庫存、狀態與可出貨日。新設缸、混養缸或特殊環境，建議先描述缸況，再評估是否適合。</div>
+          <div class="notice">詢問前請先透過 LINE 確認庫存、狀態與可安排日期。新設缸、混養缸或特殊環境，建議先描述缸況，再評估是否適合。</div>
         </div>
         <aside class="hero-card">
           <img src="hero-illustration-v18.jpg" alt="河憩寮淡水觀賞魚品牌插畫">
@@ -61,12 +61,34 @@
     </section>
 
 
+    <section id="shipping" class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="section-title">
+            <p class="eyebrow">Order & Shipping</p>
+            <h2>訂購流程與到貨提醒</h2>
+            <p>活體安排需要確認魚隻狀態、收件安排與當批狀況。請勿直接假設今天能出貨。</p>
+          </div>
+        </div>
+        <div class="shipping-grid">
+          <div class="shipping-card"><h3>1. LINE 確認</h3><p>告知想詢問的魚種、數量、收件縣市與目前缸況。若是新設缸、混養缸或近期有異常，請先說明。</p></div>
+          <div class="shipping-card"><h3>2. 確認狀態</h3><p>確認名單狀態、餵食反應、可出貨日與相關細節；若該批個體尚未穩定，會先暫緩安排。</p></div>
+          <div class="shipping-card"><h3>3. 到貨檢疫與適應</h3><p>收到後建議先檢疫觀察。重點不只是找病，更是讓魚恢復運輸壓力、重新穩定狀態，並逐步習慣飼主操作；穩定後再評估是否進主缸。</p></div>
+        </div>
+      </div>
+    </section>
+
     <section class="section buyer-note">
       <div class="wrap buyer-grid">
         <div class="section-title compact">
           <p class="eyebrow">Before Asking</p>
           <h2>詢問前，可以先確認幾件事</h2>
           <p>不是要把門檻拉高，而是讓魚到新環境後比較容易穩下來，也讓飼主少走一些冤枉路。</p>
+          <div class="buyer-actions">
+            <a class="btn gold" data-questionnaire-link href="#">填寫詢問問卷</a>
+            <a class="btn secondary" data-quarantine-link href="#">查看檢疫紀錄</a>
+          </div>
+          <p class="link-note">問卷可用來整理缸況與需求；檢疫紀錄可放近期批次、觀察狀態與可詢問名單補充。</p>
         </div>
         <div class="buyer-list">
           <div><b>魚缸是否已穩定運作</b><span>新設缸或近期水質波動，建議先說明。</span></div>
@@ -83,10 +105,11 @@
           <div class="section-title">
             <p class="eyebrow">Current List</p>
             <h2>本週可詢問活體</h2>
-            <p>以下名單依試算表資料更新。實際庫存、魚況與可出貨日，請以 LINE 確認為準。</p>
+            <p>以下名單依試算表資料更新。實際庫存、魚況與可安排日期，請以 LINE 確認為準。</p>
           </div>
           <div class="small-note" id="stockStatus">資料讀取中</div>
         </div>
+        <div class="list-note">「可詢問」不代表一定能立即安排，仍會依當下魚況、收件安排與批次狀態確認。</div>
         <div class="toolbar">
           <label class="search" aria-label="搜尋品項"><input id="searchInput" type="search" placeholder="輸入品名、學名、分類、標籤"></label>
           <div class="filters" id="categoryFilters"></div>
@@ -129,22 +152,6 @@
       </div>
     </section>
 
-    <section id="shipping" class="section">
-      <div class="wrap">
-        <div class="section-head">
-          <div class="section-title">
-            <p class="eyebrow">Order & Shipping</p>
-            <h2>訂購流程與到貨提醒</h2>
-            <p>活體安排需要確認魚隻狀態、收件安排與當批狀況。請勿直接假設今天能出貨。</p>
-          </div>
-        </div>
-        <div class="shipping-grid">
-          <div class="shipping-card"><h3>1. LINE 確認</h3><p>告知想詢問的魚種、數量、收件縣市與目前缸況。若是新設缸、混養缸或近期有異常，請先說明。</p></div>
-          <div class="shipping-card"><h3>2. 確認狀態</h3><p>確認名單狀態、餵食反應、可出貨日與相關細節；若該批個體尚未穩定，會先暫緩安排。</p></div>
-          <div class="shipping-card"><h3>3. 到貨檢疫與適應</h3><p>收到後建議先檢疫觀察。重點不只是找病，更是讓魚恢復運輸壓力、重新穩定狀態，並逐步習慣飼主操作；穩定後再評估是否進主缸。</p></div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer class="footer">
@@ -158,7 +165,7 @@
   </footer>
 
   <a class="btn gold mobile-line" data-line-link href="https://lin.ee/p9wkJW2">LINE</a>
-  <script src="config.js?v=20260524-v22"></script>
-  <script src="app.v2.js?v=20260524-v22"></script>
+  <script src="config.js?v=20260524-v23"></script>
+  <script src="app.v2.js?v=20260524-v23"></script>
 </body>
 </html>

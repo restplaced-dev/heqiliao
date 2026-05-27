@@ -15,6 +15,25 @@
 
   function setLineLinks(){
     document.querySelectorAll("[data-line-link]").forEach(a => a.href = CONFIG.lineUrl || "#");
+    applyOptionalLink("[data-questionnaire-link]", CONFIG.questionnaireUrl, "問卷連結準備中");
+    applyOptionalLink("[data-quarantine-link]", CONFIG.quarantineRecordUrl, "檢疫紀錄準備中");
+  }
+
+  function applyOptionalLink(selector, url, placeholderText){
+    document.querySelectorAll(selector).forEach(a => {
+      if(url && String(url).trim()){
+        a.href = url;
+        a.removeAttribute("aria-disabled");
+        a.classList.remove("disabled-link");
+        a.target = "_blank";
+        a.rel = "noopener";
+      }else{
+        a.href = "#";
+        a.setAttribute("aria-disabled", "true");
+        a.classList.add("disabled-link");
+        if(placeholderText) a.title = placeholderText;
+      }
+    });
   }
 
   function bindSearch(){
