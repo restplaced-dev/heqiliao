@@ -320,14 +320,29 @@
     };
   }
 
-  function productCard(p){
-    const inquiry = [
+  function buildInquiryText(p){
+    if(isScapeProduct(p)){
+      const title = String(p.name || "").includes("造景") ? p.name : `${p.category} ${p.name}`.trim();
+      return [
+        `您好，我想詢問：${title}`,
+        p.size ? `適用缸型：${p.size}` : "",
+        p.price ? `價格：NT$ ${p.price}` : "",
+        p.status ? `目前狀態：${p.status}` : "",
+        "想確認這組造景目前是否仍可詢問，以及實際庫存、款式與出貨安排。"
+      ].filter(Boolean).join("\n");
+    }
+
+    return [
       `您好，我想詢問：${p.name}`,
       p.size ? `尺寸：${p.size}` : "",
       p.price ? `價格：NT$ ${p.price}` : "",
       p.status ? `目前狀態：${p.status}` : "",
       "想確認目前是否可詢問，以及適合的取魚／出貨安排。"
     ].filter(Boolean).join("\n");
+  }
+
+  function productCard(p){
+    const inquiry = buildInquiryText(p);
     const labels = previewLabels(p);
     const infoRows = [
       [labels.size, p.size],
@@ -387,13 +402,7 @@
       [labels.note, p.note]
     ].filter(row => row && row[1]);
 
-    const inquiry = [
-      `您好，我想詢問：${p.name}`,
-      p.size ? `尺寸：${p.size}` : "",
-      p.price ? `價格：NT$ ${p.price}` : "",
-      p.status ? `目前狀態：${p.status}` : "",
-      "想確認目前是否可詢問，以及適合的取魚／出貨安排。"
-    ].filter(Boolean).join("\n");
+    const inquiry = buildInquiryText(p);
 
     content.innerHTML = `<div class="preview-image">
         <img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name)}">
