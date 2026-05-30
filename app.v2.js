@@ -206,8 +206,6 @@
   function formatStock(value, sold){
     const raw = String(value ?? "").trim();
     if(!raw) return sold ? "0" : "詢問";
-    const n = parseStockNumber(raw);
-    if(n !== null) return String(n);
     return raw;
   }
 
@@ -285,7 +283,7 @@
       return;
     }
     if(!state.categoryChosen && !state.query){
-      grid.innerHTML = `<div class="empty choose-list-prompt">請先選擇上方的「全部」或特定分類，再查看圖文版名單。</div>`;
+      grid.innerHTML = `<div class="empty choose-list-prompt">請先選擇上方分類。想快速瀏覽可選「全部」；想找特定魚種或造景，可直接選分類。</div>`;
       return;
     }
     if(!state.filtered.length){
@@ -297,6 +295,31 @@
     grid.querySelectorAll("[data-copy]").forEach(btn => btn.addEventListener("click", () => copyInquiry(btn.dataset.copy, btn)));
   }
 
+
+  function isScapeProduct(p){
+    const text = [
+      p.category,
+      p.name,
+      p.tags ? p.tags.join(" ") : ""
+    ].join(" ");
+    return /造景|沉木|石材|硬景|水草|缸/.test(text);
+  }
+
+  function previewLabels(p){
+    if(isScapeProduct(p)){
+      return {
+        size: "適用缸型",
+        feeding: "內容",
+        note: "造景說明"
+      };
+    }
+    return {
+      size: "尺寸",
+      feeding: "餵食",
+      note: "備註"
+    };
+  }
+
   function productCard(p){
     const inquiry = [
       `您好，我想詢問：${p.name}`,
@@ -305,10 +328,11 @@
       p.status ? `目前狀態：${p.status}` : "",
       "想確認目前是否可詢問，以及適合的取魚／出貨安排。"
     ].filter(Boolean).join("\n");
+    const labels = previewLabels(p);
     const infoRows = [
-      ["尺寸", p.size],
-      ["餵食", p.feeding],
-      ["備註", p.note]
+      [labels.size, p.size],
+      [labels.feeding, p.feeding],
+      [labels.note, p.note]
     ].filter(row => row && row[1]);
     return `<article class="product-card ${p.soldOut ? "soldout" : ""}">
       <div class="product-image">
@@ -356,10 +380,11 @@
     const content = el("previewContent");
     if(!modal || !content) return;
 
+    const labels = previewLabels(p);
     const infoRows = [
-      ["尺寸", p.size],
-      ["餵食", p.feeding],
-      ["備註", p.note]
+      [labels.size, p.size],
+      [labels.feeding, p.feeding],
+      [labels.note, p.note]
     ].filter(row => row && row[1]);
 
     const inquiry = [
@@ -423,7 +448,7 @@
     const colSpan = 4 + (showSize ? 1 : 0) + (showStock ? 1 : 0);
 
     if(!state.categoryChosen && !state.query){
-      body.innerHTML = `<tr class="quick-prompt-row"><td colspan="${colSpan}">請先選擇上方的「全部」或特定分類，再查看文字版快速清單。</td></tr>`;
+      body.innerHTML = `<tr class="quick-prompt-row"><td colspan="${colSpan}">請先選擇上方分類。想快速瀏覽可選「全部」；想找特定魚種或造景，可直接選分類。</td></tr>`;
       return;
     }
 
