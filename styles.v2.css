@@ -807,3 +807,13 @@ body.modal-open{overflow:hidden}
 body.modal-open .floating-line{
   display:none;
 }
+
+
+/* v57 quick list starts collapsed until a filter choice */
+.quick-prompt-row td{
+  text-align:center;
+  padding:28px 18px!important;
+  color:var(--ink-2);
+  font-weight:700;
+  background:rgba(255,250,241,.54);
+}

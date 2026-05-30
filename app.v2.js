@@ -415,11 +415,23 @@
 
   function renderQuickList(){
     updateViewSwitch();
-    const showStock = state.filtered.some(p => p.hasStock);
-    const showSize = state.filtered.some(p => p.size);
+    const showStock = state.products.some(p => p.hasStock);
+    const showSize = state.products.some(p => p.size);
     resetQuickTableHeader(showStock, showSize);
     const body = el("quickListBody");
     if(!body) return;
+    const colSpan = 4 + (showSize ? 1 : 0) + (showStock ? 1 : 0);
+
+    if(!state.categoryChosen && !state.query){
+      body.innerHTML = `<tr class="quick-prompt-row"><td colspan="${colSpan}">請先選擇上方的「全部」或特定分類，再查看文字版快速清單。</td></tr>`;
+      return;
+    }
+
+    if(!state.filtered.length){
+      body.innerHTML = `<tr class="quick-prompt-row"><td colspan="${colSpan}">目前沒有符合條件的品項。可清除搜尋，或直接透過 LINE 詢問本週名單。</td></tr>`;
+      return;
+    }
+
     body.innerHTML = state.filtered.map(p => `<tr class="preview-row" data-preview-id="${escapeAttr(p.id)}" title="點擊查看圖文預覽">
       <td>${escapeHtml(p.category)}</td>
       <td><strong>${escapeHtml(p.name)}</strong>${p.scientific ? `<br><small><em>${escapeHtml(p.scientific)}</em></small>` : ""}</td>
