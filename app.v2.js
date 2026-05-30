@@ -425,7 +425,7 @@
       <td><strong>${escapeHtml(p.name)}</strong>${p.scientific ? `<br><small><em>${escapeHtml(p.scientific)}</em></small>` : ""}</td>
       ${showSize ? `<td>${escapeHtml(p.size || "—")}</td>` : ""}
       <td>${escapeHtml(formatPrice(p.price))}</td>
-      ${showStock ? `<td>${escapeHtml(p.hasStock ? (p.stock && p.stock !== "詢問" ? `${p.stock} 隻` : p.stock) : "—")}</td>` : ""}
+      ${showStock ? `<td>${escapeHtml(p.hasStock ? p.stock : "—")}</td>` : ""}
       <td><span class="status-pill ${statusClass(p.status, p.soldOut)}">${escapeHtml(p.status)}</span></td>
     </tr>`).join("");
   }
