@@ -8,6 +8,7 @@
 
   async function init(){
     setLineLinks();
+    updateListUpdatedText();
     bindSearch();
     bindPreviewModal();
     bindViewSwitch();
@@ -351,7 +352,10 @@
     ].filter(row => row && row[1]);
     return `<article class="product-card ${p.soldOut ? "soldout" : ""}">
       <div class="product-image">
-        <img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name)}">
+        <button class="image-zoom-trigger" type="button" data-image-zoom="${escapeAttr(p.image)}" data-image-alt="${escapeAttr(p.name)}" aria-label="放大 ${escapeAttr(p.name)} 圖片">
+          <img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name)}">
+          <span class="image-zoom-hint">點圖看大圖</span>
+        </button>
         <span class="badge ${statusClass(p.status, p.soldOut)}">${escapeHtml(p.status)}</span>
       </div>
       <div class="product-body">
@@ -374,11 +378,26 @@
 
   function bindPreviewModal(){
     document.addEventListener("click", (event) => {
+      const imageClose = event.target.closest("[data-image-close]");
+      if(imageClose){
+        closeImageZoom();
+        return;
+      }
+
+      const zoom = event.target.closest("[data-image-zoom]");
+      if(zoom){
+        event.preventDefault();
+        event.stopPropagation();
+        openImageZoom(zoom.dataset.imageZoom, zoom.dataset.imageAlt || "");
+        return;
+      }
+
       const close = event.target.closest("[data-preview-close]");
       if(close){
         closePreview();
         return;
       }
+
       const row = event.target.closest("[data-preview-id]");
       if(row){
         const product = state.products.find(p => String(p.id) === String(row.dataset.previewId));
@@ -386,7 +405,10 @@
       }
     });
     document.addEventListener("keydown", (event) => {
-      if(event.key === "Escape") closePreview();
+      if(event.key === "Escape"){
+        closeImageZoom();
+        closePreview();
+      }
     });
   }
 
@@ -405,7 +427,10 @@
     const inquiry = buildInquiryText(p);
 
     content.innerHTML = `<div class="preview-image">
-        <img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name)}">
+        <button class="image-zoom-trigger" type="button" data-image-zoom="${escapeAttr(p.image)}" data-image-alt="${escapeAttr(p.name)}" aria-label="放大 ${escapeAttr(p.name)} 圖片">
+          <img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name)}">
+          <span class="image-zoom-hint">點圖看大圖</span>
+        </button>
         <span class="badge ${statusClass(p.status, p.soldOut)}">${escapeHtml(p.status)}</span>
       </div>
       <div class="preview-body">
@@ -437,6 +462,33 @@
     modal.classList.remove("show");
     modal.setAttribute("aria-hidden", "true");
     document.body.classList.remove("modal-open");
+  }
+
+  function openImageZoom(src, alt){
+    const modal = el("imageZoomModal");
+    const img = el("imageZoomImg");
+    const caption = el("imageZoomCaption");
+    if(!modal || !img) return;
+
+    img.src = src || PLACEHOLDER;
+    img.alt = alt || "品項圖片";
+    img.onerror = () => { img.src = PLACEHOLDER; };
+    if(caption) caption.textContent = alt || "";
+
+    modal.classList.add("show");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+  }
+
+  function closeImageZoom(){
+    const modal = el("imageZoomModal");
+    const img = el("imageZoomImg");
+    if(!modal) return;
+    modal.classList.remove("show");
+    modal.setAttribute("aria-hidden", "true");
+    if(img) img.src = "";
+    const previewOpen = el("productPreviewModal")?.classList.contains("show");
+    if(!previewOpen) document.body.classList.remove("modal-open");
   }
 
   function resetQuickTableHeader(showStock, showSize){

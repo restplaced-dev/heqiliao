@@ -817,3 +817,120 @@ body.modal-open .floating-line{
   font-weight:700;
   background:rgba(255,250,241,.54);
 }
+
+
+/* v64 manual update note and image zoom */
+.list-updated-note{
+  display:inline-flex;
+  align-items:center;
+  width:auto;
+  margin:-6px 0 14px;
+  padding:7px 12px;
+  border:1px solid rgba(201,144,82,.42);
+  border-radius:999px;
+  background:rgba(255,255,255,.52);
+  color:#47635d;
+  font-size:13px;
+  letter-spacing:.04em;
+}
+.list-updated-note[hidden]{display:none}
+
+.image-zoom-trigger{
+  display:block;
+  width:100%;
+  height:100%;
+  border:0;
+  padding:0;
+  margin:0;
+  background:transparent;
+  cursor:zoom-in;
+  position:relative;
+  overflow:hidden;
+  border-radius:inherit;
+  font:inherit;
+}
+.image-zoom-trigger img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.image-zoom-hint{
+  position:absolute;
+  right:10px;
+  bottom:10px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:rgba(22,54,48,.76);
+  color:#fff;
+  font-size:12px;
+  letter-spacing:.04em;
+  opacity:.92;
+  pointer-events:none;
+}
+.image-zoom-modal{
+  position:fixed;
+  inset:0;
+  z-index:1200;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+.image-zoom-modal.show{display:flex}
+.image-zoom-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(5,14,14,.86);
+  backdrop-filter:blur(6px);
+}
+.image-zoom-panel{
+  position:relative;
+  z-index:1;
+  width:min(980px,100%);
+  max-height:calc(100vh - 48px);
+  margin:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+}
+.image-zoom-panel img{
+  display:block;
+  max-width:100%;
+  max-height:calc(100vh - 112px);
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  border-radius:22px;
+  box-shadow:0 28px 90px rgba(0,0,0,.45);
+  background:#102621;
+}
+.image-zoom-panel figcaption{
+  color:#f8f2e6;
+  font-size:14px;
+  letter-spacing:.04em;
+}
+.image-zoom-close{
+  position:absolute;
+  right:8px;
+  top:8px;
+  z-index:2;
+  width:44px;
+  height:44px;
+  border:0;
+  border-radius:999px;
+  background:rgba(248,242,230,.94);
+  color:#183c35;
+  font-size:28px;
+  line-height:1;
+  cursor:pointer;
+  box-shadow:0 10px 30px rgba(0,0,0,.28);
+}
+@media(max-width:560px){
+  .list-updated-note{font-size:12px;margin-top:-2px}
+  .image-zoom-modal{padding:12px}
+  .image-zoom-panel img{max-height:calc(100vh - 96px);border-radius:16px}
+  .image-zoom-close{right:2px;top:2px}
+  .image-zoom-hint{font-size:11px;right:8px;bottom:8px}
+}

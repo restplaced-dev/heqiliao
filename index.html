@@ -14,7 +14,7 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260524-v63">
+  <link rel="stylesheet" href="styles.v2.css?v=20260524-v64">
 </head>
 <body>
   <header class="header">
@@ -119,6 +119,7 @@
           </div>
           <div class="small-note" id="stockStatus">資料讀取中</div>
         </div>
+        <div class="list-updated-note" id="listUpdatedNote"></div>
         <div class="list-note">「可詢問」不代表一定能立即安排，仍會依當下狀態、收件安排與批次確認。</div>
         <div class="toolbar">
           <label class="search" aria-label="搜尋品項"><input id="searchInput" type="search" placeholder="輸入品名、學名、分類、標籤"></label>
@@ -147,7 +148,7 @@
         <div class="section-title card-list-title hidden-view" id="photoListTitle">
           <p class="eyebrow">Photo List</p>
           <h2>圖文版名單</h2>
-          <p>請先選擇上方分類。想快速瀏覽可選「全部」；想找特定魚種或造景，可直接選分類。</p>
+          <p>請先選擇上方分類。想快速瀏覽可選「全部」；想找特定魚種或造景，可直接選分類。照片可點開查看大圖。</p>
         </div>
         <div class="grid" id="productGrid"></div>
       </div>
@@ -181,8 +182,8 @@
   </footer>
 
   <a class="floating-line" data-line-link href="https://lin.ee/p9wkJW2" aria-label="前往 LINE 官方帳號詢問"><span class="line-dot"></span><span class="line-label">LINE 詢問</span></a>
-  <script src="config.js?v=20260524-v63"></script>
-  <script src="app.v2.js?v=20260524-v63"></script>
+  <script src="config.js?v=20260524-v64"></script>
+  <script src="app.v2.js?v=20260524-v64"></script>
 
   <div class="preview-modal" id="productPreviewModal" aria-hidden="true">
     <div class="preview-backdrop" data-preview-close></div>
@@ -190,6 +191,15 @@
       <button class="preview-close" type="button" data-preview-close aria-label="關閉預覽">×</button>
       <div id="previewContent"></div>
     </article>
+  </div>
+
+  <div class="image-zoom-modal" id="imageZoomModal" aria-hidden="true">
+    <div class="image-zoom-backdrop" data-image-close></div>
+    <figure class="image-zoom-panel" role="dialog" aria-modal="true" aria-label="圖片大圖">
+      <button class="image-zoom-close" type="button" data-image-close aria-label="關閉大圖">×</button>
+      <img id="imageZoomImg" src="" alt="">
+      <figcaption id="imageZoomCaption"></figcaption>
+    </figure>
   </div>
 
 </body>
