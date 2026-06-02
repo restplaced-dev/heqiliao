@@ -15,6 +15,13 @@
     resetQuickTableHeader(false, false);
     await loadProducts();
   }
+  function updateListUpdatedText(){
+  const note = el("listUpdatedNote");
+  if(!note) return;
+
+  const text = CONFIG.listUpdatedText || "";
+  note.textContent = text ? `名單更新：${text}` : "";
+}
 
   function setLineLinks(){
     document.querySelectorAll("[data-line-link]").forEach(a => a.href = CONFIG.lineUrl || "#");
@@ -160,34 +167,64 @@
     }).filter(item => item["品名"] || item.name);
   }
 
-  function normalizeProducts(rows){
-    return rows.map((p, index) => {
-      const stockRaw = firstValue(p["庫存"], p["數量"], p.stock, p.quantity);
-      const hasStock = String(stockRaw ?? "").trim() !== "";
-      const stockNumber = parseStockNumber(stockRaw);
-      const manualUnavailable = isUnavailable(p["是否售完"] || p.soldOut || p["暫不販售"] || p.unavailable);
-      const stockSoldOut = hasStock && stockNumber !== null && stockNumber <= 0;
-      const statusUnavailable = isUnavailable(p["狀態"] || p.status);
-      const sold = manualUnavailable || stockSoldOut || statusUnavailable;
-      const statusText = manualUnavailable ? "暫不販售" : (stockSoldOut ? "售完" : (statusUnavailable ? "暫不販售" : (p["狀態"] || p.status || "可詢問")));
-      return {
-        id: p.id || `item-${index}`,
-        name: p["品名"] || p.name || "未命名品項",
-        scientific: p["學名"] || p.scientific || "",
-        category: p["分類"] || p.category || "其他",
-        price: cleanPrice(p["價格"] || p.price || ""),
-        size: p["尺寸"] || p.size || "",
-        status: statusText,
-        hasStock,
-        stock: hasStock ? formatStock(stockRaw, sold) : "",
-        tags: splitTags(p["標籤"] || p.tags || ""),
-        feeding: p["餵食"] || p.feeding || "",
-        image: normalizeImageUrl(p["照片網址"] || p.image || ""),
-        note: p["備註"] || p.note || "",
-        soldOut: sold
-      };
-    });
-  }
+ function normalizeProducts(rows){
+  return rows.map((p, index) => {
+    const stockRaw = firstValue(
+      p["目前庫存"],
+      p["庫存"],
+      p["數量"],
+      p.stock,
+      p.quantity
+    );
+
+    const hasStock = String(stockRaw ?? "").trim() !== "";
+    const stockNumber = parseStockNumber(stockRaw);
+
+    const manualUnavailable = isUnavailable(
+      firstValue(
+        p["是否售完"],
+        p["暫不販售"],
+        p.soldOut,
+        p.unavailable
+      )
+    );
+
+    const statusRaw = firstValue(
+      p["狀態"],
+      p["販售狀態"],
+      p.status
+    );
+
+    const stockSoldOut = hasStock && stockNumber !== null && stockNumber <= 0;
+    const statusUnavailable = isUnavailable(statusRaw);
+    const sold = manualUnavailable || stockSoldOut || statusUnavailable;
+
+    const statusText = manualUnavailable
+      ? "暫不販售"
+      : stockSoldOut
+        ? "售完"
+        : statusUnavailable
+          ? "暫不販售"
+          : statusRaw || "可詢問";
+
+    return {
+      id: firstValue(p.id, p["ID"]) || `item-${index}`,
+      name: firstValue(p["品名"], p["魚種"], p["名稱"], p.name) || "未命名品項",
+      scientific: firstValue(p["學名"], p.scientific),
+      category: firstValue(p["分類"], p["類別"], p.category) || "其他",
+      price: cleanPrice(firstValue(p["售價"], p["價格"], p.price)),
+      size: firstValue(p["尺寸"], p.size),
+      status: statusText,
+      hasStock,
+      stock: hasStock ? formatStock(stockRaw, sold) : "",
+      tags: splitTags(firstValue(p["標籤"], p.tags)),
+      feeding: firstValue(p["餵食"], p.feeding),
+      image: normalizeImageUrl(firstValue(p["圖片網址"], p["照片網址"], p["圖片"], p.image)),
+      note: firstValue(p["簡介"], p["備註"], p.note, p.intro),
+      soldOut: sold
+    };
+  }).filter(p => p.name && p.name !== "未命名品項");
+}
 
   function firstValue(...values){
     for(const value of values){
