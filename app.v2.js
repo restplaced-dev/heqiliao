@@ -2,7 +2,7 @@
   const CONFIG = window.HEQILIAO_CONFIG || {};
   const PLACEHOLDER = "card-placeholder.svg";
   const el = (id) => document.getElementById(id);
-  const state = { products: [], filtered: [], category: "全部", query: "", categoryChosen: false, viewMode: "text" };
+  const state = { products: [], filtered: [], scapes: [], category: "全部", query: "", categoryChosen: false, viewMode: "text" };
 
   document.addEventListener("DOMContentLoaded", init);
 
@@ -14,6 +14,7 @@
     bindViewSwitch();
     resetQuickTableHeader(false, false);
     await loadProducts();
+    await loadScapeGallery();
   }
   function updateListUpdatedText(){
   const note = el("listUpdatedNote");
@@ -109,6 +110,130 @@
     if(lastError) console.warn(lastError);
   }
 
+  async function loadScapeGallery(){
+    const list = el("scapeGalleryList");
+    if(!list) return;
+
+    updateScapeStatus("造景資料讀取中");
+
+    const url = CONFIG.scapeCsvUrl;
+    if(!url || !String(url).trim()){
+      state.scapes = [];
+      list.innerHTML = `<div class="empty scape-empty">造景介紹資料尚未設定。請先在 Google Sheets 建立「造景介紹」分頁，發布 CSV 後填入 config.js 的 scapeCsvUrl。</div>`;
+      updateScapeStatus("尚未設定造景資料表");
+      return;
+    }
+
+    try{
+      const csv = await fetchTextNoCache(url, 9000);
+      const rows = csvToObjects(csv);
+      const scapes = normalizeScapes(rows);
+
+      state.scapes = scapes;
+
+      if(!scapes.length){
+        list.innerHTML = `<div class="empty scape-empty">目前沒有可顯示的造景介紹。可確認「狀態」是否為顯示，或是否已有資料列。</div>`;
+        updateScapeStatus("目前沒有可顯示的造景資料");
+        return;
+      }
+
+      renderScapeGallery(scapes);
+      updateScapeStatus(`已讀取：造景介紹｜${new Date().toLocaleTimeString("zh-TW", {hour:"2-digit", minute:"2-digit"})}`);
+    }catch(error){
+      console.warn("造景介紹讀取失敗：", url, error);
+      state.scapes = [];
+      list.innerHTML = `<div class="empty scape-empty">造景介紹讀取失敗。請確認 Google Sheets 是否已發布為 CSV，或稍後重新整理。</div>`;
+      updateScapeStatus("造景介紹讀取失敗");
+    }
+  }
+
+  function normalizeScapes(rows){
+    return rows.map((p, index) => {
+      const title = firstValue(
+        p["類型名稱"],
+        p["造景名稱"],
+        p["名稱"],
+        p["品名"],
+        p.title,
+        p.name
+      );
+
+      const orderRaw = firstValue(p["排序"], p.order, p["順序"]);
+      const orderNumber = Number(orderRaw);
+      const status = firstValue(p["狀態"], p.status);
+
+      return {
+        id: firstValue(p.id, p["ID"]) || `scape-${index}`,
+        order: Number.isFinite(orderNumber) ? orderNumber : index + 1,
+        status,
+        title: title || "未命名造景",
+        date: firstValue(p["日期"], p.date),
+        fish: firstValue(p["適合魚種"], p["適合對象"], p["適合"], p.fish),
+        description: firstValue(p["介紹文字"], p["介紹"], p["說明"], p.description),
+        image: normalizeImageUrl(firstValue(p["圖片網址"], p["照片網址"], p["圖片"], p.image)),
+        size: firstValue(p["尺寸"], p["缸型"], p.size),
+        note: firstValue(p["備註"], p.note)
+      };
+    })
+    .filter(item => item.title && item.title !== "未命名造景")
+    .filter(item => !isHidden(item.status))
+    .sort((a, b) => a.order - b.order);
+  }
+
+  function isHidden(value){
+    const v = String(value || "").trim().toLowerCase();
+    return ["隱藏", "不顯示", "下架", "停售", "hide", "hidden", "false", "0", "no"].includes(v);
+  }
+
+  function renderScapeGallery(scapes){
+    const list = el("scapeGalleryList");
+    if(!list) return;
+
+    list.innerHTML = scapes.map((scape, index) => {
+      const meta = [scape.date, scape.size].filter(Boolean).join("｜");
+      const imgHtml = scape.image
+        ? `<div class="scape-photo-wrap"><img class="scape-photo" src="${escapeAttr(scape.image)}" alt="${escapeAttr(scape.title)}" loading="lazy"></div>`
+        : "";
+
+      const fishHtml = scape.fish
+        ? `<div class="scape-row"><span>適合方向</span><p>${escapeHtml(scape.fish)}</p></div>`
+        : "";
+
+      const sizeHtml = scape.size
+        ? `<div class="scape-row"><span>參考尺寸</span><p>${escapeHtml(scape.size)}</p></div>`
+        : "";
+
+      const noteHtml = scape.note
+        ? `<div class="scape-row"><span>備註</span><p>${escapeHtml(scape.note)}</p></div>`
+        : "";
+
+      return `<details class="scape-item" ${index === 0 ? "" : ""}>
+        <summary>
+          <span>
+            <b>${escapeHtml(scape.title)}</b>
+            ${meta ? `<small>${escapeHtml(meta)}</small>` : `<small>點開查看作品介紹</small>`}
+          </span>
+        </summary>
+        <div class="scape-content">
+          ${imgHtml}
+          ${scape.description ? `<p>${escapeHtml(scape.description)}</p>` : ""}
+          <div class="scape-meta-list">
+            ${fishHtml}
+            ${sizeHtml}
+            ${noteHtml}
+          </div>
+        </div>
+      </details>`;
+    }).join("");
+
+    list.querySelectorAll("img").forEach(img => img.addEventListener("error", () => { img.src = PLACEHOLDER; }));
+  }
+
+  function updateScapeStatus(text){
+    const s = el("scapeGalleryStatus");
+    if(s) s.textContent = text;
+  }
+
   async function fetchTextNoCache(url, timeoutMs){
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs || 9000);
@@ -164,7 +289,7 @@
       const obj = {};
       headers.forEach((header, index) => obj[header] = String(row[index] ?? "").trim());
       return obj;
-    }).filter(item => item["品名"] || item.name);
+    }).filter(item => Object.values(item).some(value => String(value || "").trim() !== ""));
   }
 
  function normalizeProducts(rows){
