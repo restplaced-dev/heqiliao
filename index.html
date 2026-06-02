@@ -14,7 +14,7 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260602-v7">
+  <link rel="stylesheet" href="styles.v2.css?v=20260602-v9">
 
   <style>
     .scape-accordion {
@@ -147,6 +147,15 @@
       margin: 0;
     }
 
+
+    .equipment-filters {
+      margin: 0 0 16px;
+    }
+
+    .equipment-item summary small {
+      letter-spacing: 0.02em;
+    }
+
     @media (max-width: 640px) {
       .scape-item summary {
         padding: 16px;
@@ -176,7 +185,8 @@
       <nav class="nav-links" aria-label="主選單">
         <a href="#shipping">訂購流程</a>
         <a href="#scape-types">造景介紹</a>
-        <a href="#stock">本週名單</a>
+                <a href="#equipment-guide">設備介紹</a>
+<a href="#stock">本週名單</a>
         <a href="#principles">飼養原則</a>
         <a data-quarantine-link href="#">檢疫紀錄</a>
       </nav>
@@ -278,6 +288,21 @@
       </div>
     </section>
 
+    <section id="equipment-guide" class="section alt">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="section-title">
+            <p class="eyebrow">Equipment Guide</p>
+            <h2>設備介紹</h2>
+          </div>
+          <div class="small-note" id="equipmentGuideStatus">設備介紹整理中</div>
+        </div>
+
+        <div class="filters equipment-filters" id="equipmentCategoryFilters"></div>
+        <div class="scape-accordion equipment-accordion" id="equipmentGuideList"></div>
+      </div>
+    </section>
+
     <section id="stock" class="section alt">
       <div class="wrap">
         <div class="section-head">
@@ -352,8 +377,8 @@
   </footer>
 
   <a class="floating-line" data-line-link href="https://lin.ee/p9wkJW2" aria-label="前往 LINE 官方帳號詢問"><span class="line-dot"></span><span class="line-label">LINE 詢問</span></a>
-  <script src="config.js?v=20260602-v6"></script>
-  <script src="app.v2.js?v=20260602-v6"></script>
+  <script src="config.js?v=20260602-v8"></script>
+  <script src="app.v2.js?v=20260602-v8"></script>
 
   <div class="preview-modal" id="productPreviewModal" aria-hidden="true">
     <div class="preview-backdrop" data-preview-close></div>

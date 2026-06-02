@@ -2,7 +2,7 @@
   const CONFIG = window.HEQILIAO_CONFIG || {};
   const PLACEHOLDER = "card-placeholder.svg";
   const el = (id) => document.getElementById(id);
-  const state = { products: [], filtered: [], scapes: [], category: "全部", query: "", categoryChosen: false, viewMode: "text" };
+  const state = { products: [], filtered: [], scapes: [], equipments: [], equipmentCategory: "全部", category: "全部", query: "", categoryChosen: false, viewMode: "text" };
 
   document.addEventListener("DOMContentLoaded", init);
 
@@ -119,7 +119,7 @@
     const url = CONFIG.scapeCsvUrl;
     if(!url || !String(url).trim()){
       state.scapes = [];
-      list.innerHTML = `<div class="empty scape-empty">造景介紹資料尚未設定。請先在 Google Sheets 建立「造景介紹」分頁，發布 CSV 後填入 config.js 的 scapeCsvUrl。</div>`;
+      list.innerHTML = `<div class="empty scape-empty">造景介紹整理中。</div>`;
       updateScapeStatus("尚未設定造景資料表");
       return;
     }
@@ -132,17 +132,17 @@
       state.scapes = scapes;
 
       if(!scapes.length){
-        list.innerHTML = `<div class="empty scape-empty">目前沒有可顯示的造景介紹。可確認「狀態」是否為顯示，或是否已有資料列。</div>`;
+        list.innerHTML = `<div class="empty scape-empty">目前尚無造景介紹。</div>`;
         updateScapeStatus("目前沒有可顯示的造景資料");
         return;
       }
 
       renderScapeGallery(scapes);
-      updateScapeStatus(`已讀取：造景介紹｜${new Date().toLocaleTimeString("zh-TW", {hour:"2-digit", minute:"2-digit"})}`);
+      updateScapeStatus("造景介紹已更新");
     }catch(error){
       console.warn("造景介紹讀取失敗：", url, error);
       state.scapes = [];
-      list.innerHTML = `<div class="empty scape-empty">造景介紹讀取失敗。請確認 Google Sheets 是否已發布為 CSV，或稍後重新整理。</div>`;
+      list.innerHTML = `<div class="empty scape-empty">造景介紹暫時無法讀取。</div>`;
       updateScapeStatus("造景介紹讀取失敗");
     }
   }
@@ -233,6 +233,154 @@
     const s = el("scapeGalleryStatus");
     if(s) s.textContent = text;
   }
+
+
+  async function loadEquipmentGuide(){
+    const list = el("equipmentGuideList");
+    const filterWrap = el("equipmentCategoryFilters");
+    if(!list) return;
+
+    updateEquipmentStatus("設備介紹整理中");
+
+    const url = CONFIG.equipmentCsvUrl;
+    if(!url || !String(url).trim()){
+      state.equipments = [];
+      if(filterWrap) filterWrap.innerHTML = "";
+      list.innerHTML = `<div class="empty scape-empty">設備介紹整理中。</div>`;
+      updateEquipmentStatus("");
+      return;
+    }
+
+    try{
+      const csv = await fetchTextNoCache(url, 9000);
+      const rows = csvToObjects(csv);
+      const equipments = normalizeEquipments(rows);
+      state.equipments = equipments;
+
+      renderEquipmentFilters();
+
+      if(!equipments.length){
+        list.innerHTML = `<div class="empty scape-empty">目前尚無設備介紹。</div>`;
+        updateEquipmentStatus("");
+        return;
+      }
+
+      renderEquipmentGuide();
+      updateEquipmentStatus("設備介紹已更新");
+
+    }catch(error){
+      console.warn("設備介紹讀取失敗：", url, error);
+      state.equipments = [];
+      if(filterWrap) filterWrap.innerHTML = "";
+      list.innerHTML = `<div class="empty scape-empty">設備介紹暫時無法讀取。</div>`;
+      updateEquipmentStatus("");
+    }
+  }
+
+  function normalizeEquipments(rows){
+    return rows.map((p, index) => {
+      const status = firstValue(p["狀態"], p.status) || "顯示";
+      const hidden = isHiddenRow(status);
+      const orderRaw = firstValue(p["排序"], p.order);
+      const orderNumber = Number(orderRaw);
+
+      return {
+        id: firstValue(p.id, p["ID"]) || `equipment-${index}`,
+        order: Number.isFinite(orderNumber) ? orderNumber : index + 1,
+        visible: !hidden,
+        category: firstValue(p["分類"], p["子選項"], p["設備分類"], p.category) || "其他",
+        title: firstValue(p["設備名稱"], p["名稱"], p["類型名稱"], p.title) || "未命名設備",
+        description: firstValue(p["介紹文字"], p["用途"], p["說明"], p.description),
+        scenario: firstValue(p["適合情境"], p["適合方向"], p["適用情境"], p.scenario),
+        points: firstValue(p["選購重點"], p["注意事項"], p["重點"], p.points),
+        image: normalizeScapeImageUrl(firstValue(p["圖片網址"], p["照片網址"], p["圖片"], p.image)),
+        note: firstValue(p["備註"], p.note)
+      };
+    })
+    .filter(item => item.visible && item.title && item.title !== "未命名設備")
+    .sort((a, b) => a.order - b.order);
+  }
+
+  function renderEquipmentFilters(){
+    const container = el("equipmentCategoryFilters");
+    if(!container) return;
+
+    const categories = ["全部", ...Array.from(new Set(state.equipments.map(item => item.category).filter(Boolean)))];
+
+    container.innerHTML = categories.map(cat => {
+      const active = cat === state.equipmentCategory ? "active" : "";
+      return `<button class="filter-btn ${active}" type="button" data-equipment-category="${escapeAttr(cat)}">${escapeHtml(cat)}</button>`;
+    }).join("");
+
+    container.querySelectorAll("[data-equipment-category]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.equipmentCategory = btn.dataset.equipmentCategory || "全部";
+        renderEquipmentFilters();
+        renderEquipmentGuide();
+      });
+    });
+  }
+
+  function renderEquipmentGuide(){
+    const list = el("equipmentGuideList");
+    if(!list) return;
+
+    const items = state.equipments.filter(item => {
+      return state.equipmentCategory === "全部" || item.category === state.equipmentCategory;
+    });
+
+    if(!items.length){
+      list.innerHTML = `<div class="empty scape-empty">目前尚無此分類的設備介紹。</div>`;
+      return;
+    }
+
+    list.innerHTML = items.map(item => {
+      const imgHtml = item.image
+        ? `<div class="scape-photo-wrap"><img class="scape-photo" src="${escapeAttr(item.image)}" alt="${escapeAttr(item.title)}" loading="lazy"></div>`
+        : "";
+
+      const scenarioHtml = item.scenario
+        ? `<div class="scape-row"><span>適合情境</span><p>${escapeHtml(item.scenario)}</p></div>`
+        : "";
+
+      const pointsHtml = item.points
+        ? `<div class="scape-row"><span>選購重點</span><p>${escapeHtml(item.points)}</p></div>`
+        : "";
+
+      const noteHtml = item.note
+        ? `<div class="scape-row"><span>備註</span><p>${escapeHtml(item.note)}</p></div>`
+        : "";
+
+      return `<details class="scape-item equipment-item">
+        <summary>
+          <span>
+            <b>${escapeHtml(item.title)}</b>
+            <small>${escapeHtml(item.category || "設備介紹")}</small>
+          </span>
+        </summary>
+        <div class="scape-content">
+          ${imgHtml}
+          ${item.description ? `<p>${escapeHtml(item.description)}</p>` : ""}
+          <div class="scape-meta-list">
+            ${scenarioHtml}
+            ${pointsHtml}
+            ${noteHtml}
+          </div>
+        </div>
+      </details>`;
+    }).join("");
+
+    list.querySelectorAll("img").forEach(img => img.addEventListener("error", () => {
+      const wrap = img.closest(".scape-photo-wrap");
+      if(wrap) wrap.hidden = true;
+    }));
+  }
+
+  function updateEquipmentStatus(text){
+    const s = el("equipmentGuideStatus");
+    if(s) s.textContent = text || "";
+  }
+
 
   async function fetchTextNoCache(url, timeoutMs){
     const controller = new AbortController();
