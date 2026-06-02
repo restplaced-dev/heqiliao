@@ -14,7 +14,105 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260524-v65">
+  <link rel="stylesheet" href="styles.v2.css?v=20260602-v2">
+
+  <style>
+    .scape-accordion {
+      display: grid;
+      gap: 14px;
+    }
+
+    .scape-item {
+      border: 1px solid rgba(24, 60, 53, 0.16);
+      border-radius: 18px;
+      background: #ffffff;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+    }
+
+    .scape-item summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 18px 20px;
+      font-size: 17px;
+      line-height: 1.5;
+      color: #183c35;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .scape-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .scape-item summary::after {
+      content: "＋";
+      flex: 0 0 auto;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: #eef4ef;
+      color: #183c35;
+      font-weight: 700;
+    }
+
+    .scape-item[open] summary::after {
+      content: "－";
+    }
+
+    .scape-item summary b {
+      display: block;
+      font-size: 18px;
+    }
+
+    .scape-item summary small {
+      display: block;
+      margin-top: 3px;
+      color: #66756f;
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .scape-content {
+      padding: 0 20px 20px;
+      color: #384842;
+      font-size: 15.5px;
+      line-height: 1.8;
+    }
+
+    .scape-content p {
+      margin: 0 0 12px;
+    }
+
+    .scape-content ul {
+      margin: 12px 0 0;
+      padding-left: 1.2em;
+    }
+
+    .scape-content li {
+      margin: 6px 0;
+    }
+
+    @media (max-width: 640px) {
+      .scape-item summary {
+        padding: 16px;
+        font-size: 16px;
+      }
+
+      .scape-item summary b {
+        font-size: 17px;
+      }
+
+      .scape-content {
+        padding: 0 16px 18px;
+        font-size: 15px;
+      }
+    }
+  </style>
 </head>
 <body>
   <header class="header">
@@ -23,6 +121,7 @@
       <nav class="nav-links" aria-label="主選單">
         <a href="#shipping">訂購流程</a>
         <a href="#stock">本週名單</a>
+        <a href="#scape-types">造景介紹</a>
         <a href="#principles">飼養原則</a>
         <a data-quarantine-link href="#">檢疫紀錄</a>
       </nav>
@@ -60,7 +159,6 @@
       </div>
     </section>
 
-
     <section id="shipping" class="section">
       <div class="wrap">
         <div class="section-head">
@@ -93,7 +191,7 @@
             <p>收到後建議先檢疫觀察。重點不只是找病，更是讓魚恢復運輸壓力、重新穩定狀態，並逐步習慣飼主操作；穩定後再評估是否進主缸。</p>
           </div>
         </div>
-</div>
+      </div>
     </section>
 
     <section class="section record-section">
@@ -153,7 +251,112 @@
         <div class="grid" id="productGrid"></div>
       </div>
     </section>
-<section id="principles" class="section alt">
+
+    <section id="scape-types" class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="section-title">
+            <p class="eyebrow">Aquascape Types</p>
+            <h2>造景類型介紹</h2>
+            <p>不同造景不是只有好不好看，也會影響水流、遮蔽、活動空間與魚的安心程度。以下整理幾種常見方向，點開後可查看適合的設計重點。</p>
+          </div>
+        </div>
+
+        <div class="scape-accordion">
+          <details class="scape-item">
+            <summary>
+              <span>
+                <b>溪流感造景</b>
+                <small>石頭、水流、開闊活動區</small>
+              </span>
+            </summary>
+            <div class="scape-content">
+              <p>溪流感造景適合用來呈現清爽、流動感強的環境。常見元素包含溪石、圓潤石材、薄鋪細砂，以及明確的水流方向。</p>
+              <p>設計重點不是把石頭堆滿，而是保留魚能活動、停棲與避開強水流的位置。水流太亂或死角太多，反而容易累積髒污。</p>
+              <ul>
+                <li>適合方向：吸鰍、蝦虎、部分喜流小型魚。</li>
+                <li>重點：水流穩定、石面可停棲、底部不堆積髒污。</li>
+                <li>注意：不要只追求強水流，魚也需要能休息的緩流區。</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="scape-item">
+            <summary>
+              <span>
+                <b>鼠魚底棲型造景</b>
+                <small>細砂、低障礙、底層探索</small>
+              </span>
+            </summary>
+            <div class="scape-content">
+              <p>鼠魚類造景的核心是讓底層活動更安全。底砂建議薄鋪、細顆粒，讓鼠魚可以自然翻砂、覓食，也比較不容易磨損鬚部。</p>
+              <p>沉木與石材可以提供遮蔽，但不建議把底部塞得太滿。鼠魚需要開闊的底層路線，也需要能安心停留的角落。</p>
+              <ul>
+                <li>適合方向：鼠魚、部分小型燈魚搭配的底層缸。</li>
+                <li>重點：細砂、低銳角、開闊底面、容易清潔。</li>
+                <li>注意：造景再漂亮，如果底部難清，長期狀態通常會打折。</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="scape-item">
+            <summary>
+              <span>
+                <b>沉木陰性草造景</b>
+                <small>穩定、遮蔽、低維護感</small>
+              </span>
+            </summary>
+            <div class="scape-content">
+              <p>沉木陰性草造景通常給人比較沉穩、自然的感覺。可以使用沉木、榕類、鐵皇冠、莫絲等植物，營造遮蔽與層次。</p>
+              <p>這類造景不一定要強光，重點是植物狀態穩定、動線順暢，並保留魚可以穿梭與躲藏的空間。</p>
+              <ul>
+                <li>適合方向：小型魚、鼠魚、異型魚展示缸。</li>
+                <li>重點：遮蔽、陰影、穩定水質、降低緊迫。</li>
+                <li>注意：沉木與植物太密時，要避免底部藏污納垢。</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="scape-item">
+            <summary>
+              <span>
+                <b>石組岩場造景</b>
+                <small>結構感、視覺重心、地形變化</small>
+              </span>
+            </summary>
+            <div class="scape-content">
+              <p>石組岩場造景適合營造明確的視覺重心與地形起伏。石材的方向、大小比例與留白會直接影響整體質感。</p>
+              <p>實務上要注意石頭是否穩固、是否有銳角，以及是否會大幅影響水質。不是每種石材都適合每一類魚。</p>
+              <ul>
+                <li>適合方向：展示缸、溪流缸、部分喜歡地形遮蔽的魚種。</li>
+                <li>重點：結構穩定、留白、動線、不要壓縮活動空間。</li>
+                <li>注意：石材可能影響硬度與 pH，使用前應先評估。</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="scape-item">
+            <summary>
+              <span>
+                <b>靜水療癒型造景</b>
+                <small>緩流、遮蔽、安定感</small>
+              </span>
+            </summary>
+            <div class="scape-content">
+              <p>靜水療癒型造景重點在於穩定、柔和與低壓迫感。適合設計成有遮蔽、有休息點、視覺上乾淨的環境。</p>
+              <p>這類造景常用於需要較低水流、較重視安全感的魚種。重點不是把缸弄得很空，而是讓魚有選擇：可以出來活動，也可以退回遮蔽處。</p>
+              <ul>
+                <li>適合方向：鬥魚、小型觀賞魚、低水流展示缸。</li>
+                <li>重點：緩流、遮蔽、薄鋪細砂、避免尖銳裝飾。</li>
+                <li>注意：靜水不等於髒水，過濾與維護節奏仍然要穩。</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="principles" class="section alt">
       <div class="wrap principles">
         <div class="principle-panel">
           <p class="eyebrow">Our Principles</p>
