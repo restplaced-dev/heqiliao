@@ -15,6 +15,7 @@
     resetQuickTableHeader(false, false);
     await loadProducts();
     await loadScapeGallery();
+    await loadEquipmentGuide();
   }
   function updateListUpdatedText(){
   const note = el("listUpdatedNote");
