@@ -170,7 +170,7 @@
         date: firstValue(p["日期"], p.date),
         fish: firstValue(p["適合魚種"], p["適合對象"], p["適合"], p.fish),
         description: firstValue(p["介紹文字"], p["介紹"], p["說明"], p.description),
-        image: normalizeScapeImageUrl(firstValue(p["圖片網址"], p["照片網址"], p["圖片"], p.image)),
+        image: normalizeImageUrl(firstValue(p["圖片網址"], p["照片網址"], p["圖片"], p.image)),
         size: firstValue(p["尺寸"], p["缸型"], p.size),
         note: firstValue(p["備註"], p.note)
       };
@@ -211,7 +211,7 @@
         <summary>
           <span>
             <b>${escapeHtml(scape.title)}</b>
-            ${meta ? `<small>${escapeHtml(meta)}</small>` : `<small>點開查看作品介紹</small>`}
+            ${meta ? `<small>${escapeHtml(meta)}</small>` : `<small>造景介紹</small>`}
           </span>
         </summary>
         <div class="scape-content">
@@ -226,10 +226,7 @@
       </details>`;
     }).join("");
 
-    list.querySelectorAll("img").forEach(img => img.addEventListener("error", () => {
-      const wrap = img.closest(".scape-photo-wrap");
-      if(wrap) wrap.hidden = true;
-    }));
+    list.querySelectorAll("img").forEach(img => img.addEventListener("error", () => { img.src = PLACEHOLDER; }));
   }
 
   function updateScapeStatus(text){
@@ -414,13 +411,6 @@
     const driveOpen = raw.match(/[?&]id=([^&]+)/);
     if(raw.includes("drive.google.com") && driveOpen) return `https://drive.google.com/thumbnail?id=${driveOpen[1]}&sz=w1200`;
     return raw;
-  }
-
-
-  function normalizeScapeImageUrl(url){
-    const raw = String(url || "").trim();
-    if(!raw) return "";
-    return normalizeImageUrl(raw);
   }
 
   function renderCategories(){
