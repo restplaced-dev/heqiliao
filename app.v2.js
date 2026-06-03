@@ -8,6 +8,7 @@
     scapes: [],
     equipments: [],
     equipmentCategory: "全部",
+    equipmentCategoryChosen: false,
     category: "全部",
     query: "",
     categoryChosen: false,
@@ -265,7 +266,7 @@
         title: firstValue(p["設備名稱"], p["名稱"], p["類型名稱"], p.title) || "未命名設備",
         description: firstValue(p["介紹文字"], p["用途"], p["說明"], p.description),
         scenario: firstValue(p["適合情境"], p["適合方向"], p["適用情境"], p.scenario),
-        points: firstValue(p["選購重點"], p["注意事項"], p["重點"], p.points),
+        points: firstValue(p["注意事項"], p["選購重點"], p["重點"], p.points),
         image: normalizeContentImageUrl(firstValue(p["圖片網址"], p["照片網址"], p["圖片"], p.image)),
         note: firstValue(p["備註"], p.note)
       };
@@ -279,12 +280,13 @@
     if(!container) return;
     const categories = ["全部", ...Array.from(new Set(state.equipments.map(item => item.category).filter(Boolean)))];
     container.innerHTML = categories.map(cat => {
-      const active = cat === state.equipmentCategory ? "active" : "";
+      const active = state.equipmentCategoryChosen && cat === state.equipmentCategory ? "active" : "";
       return `<button class="filter-btn ${active}" type="button" data-equipment-category="${escapeAttr(cat)}">${escapeHtml(cat)}</button>`;
     }).join("");
     container.querySelectorAll("[data-equipment-category]").forEach(btn => {
       btn.addEventListener("click", () => {
         state.equipmentCategory = btn.dataset.equipmentCategory || "全部";
+        state.equipmentCategoryChosen = true;
         renderEquipmentFilters();
         renderEquipmentGuide();
       });
@@ -294,31 +296,48 @@
   function renderEquipmentGuide(){
     const list = el("equipmentGuideList");
     if(!list) return;
-    const items = state.equipments.filter(item => state.equipmentCategory === "全部" || item.category === state.equipmentCategory);
-    if(!items.length){
-      list.innerHTML = `<div class="empty scape-empty">目前尚無此分類的設備介紹。</div>`;
+    list.classList.add("equipment-card-grid");
+
+    if(!state.equipmentCategoryChosen){
+      list.innerHTML = `<div class="empty choose-list-prompt equipment-guide-prompt">請先選擇上方分類。想快速瀏覽設備，可選「全部」。</div>`;
       return;
     }
+
+    const items = state.equipments.filter(item => state.equipmentCategory === "全部" || item.category === state.equipmentCategory);
+    if(!items.length){
+      list.innerHTML = `<div class="empty scape-empty equipment-guide-prompt">目前尚無此分類的設備介紹。</div>`;
+      return;
+    }
+
     list.innerHTML = items.map(item => {
-      const imgHtml = item.image ? `<div class="scape-photo-wrap"><img class="scape-photo" src="${escapeAttr(item.image)}" alt="${escapeAttr(item.title)}" loading="lazy"></div>` : "";
-      const scenarioHtml = item.scenario ? `<div class="scape-row"><span>適合情境</span><p>${escapeHtml(item.scenario)}</p></div>` : "";
-      const pointsHtml = item.points ? `<div class="scape-row"><span>選購重點</span><p>${escapeHtml(item.points)}</p></div>` : "";
-      const noteHtml = item.note ? `<div class="scape-row"><span>備註</span><p>${escapeHtml(item.note)}</p></div>` : "";
-      return `<details class="scape-item equipment-item">
-        <summary>
-          <span><b>${escapeHtml(item.title)}</b><small>${escapeHtml(item.category || "設備介紹")}</small></span>
-        </summary>
-        <div class="scape-content">
-          ${imgHtml}
-          ${item.description ? `<p>${escapeHtml(item.description)}</p>` : ""}
-          <div class="scape-meta-list">${scenarioHtml}${pointsHtml}${noteHtml}</div>
+      const image = item.image || PLACEHOLDER;
+      const infoRows = [
+        ["分類", item.category],
+        ["適合情境", item.scenario],
+        ["注意事項", item.points],
+        ["備註", item.note]
+      ].filter(row => row && row[1]);
+
+      return `<article class="product-card equipment-product-card">
+        <div class="product-image">
+          <button class="image-zoom-trigger" type="button" data-image-zoom="${escapeAttr(image)}" data-image-alt="${escapeAttr(item.title)}" aria-label="放大 ${escapeAttr(item.title)} 圖片">
+            <img src="${escapeAttr(image)}" alt="${escapeAttr(item.title)}" loading="lazy">
+            <span class="image-zoom-hint">點圖看大圖</span>
+          </button>
+          <span class="badge status-neutral">設備介紹</span>
         </div>
-      </details>`;
+        <div class="product-body">
+          <div class="meta"><span>${escapeHtml(item.category || "設備")}</span><span>河憩寮觀點</span></div>
+          <div>
+            <h3 class="name">${escapeHtml(item.title)}</h3>
+          </div>
+          ${item.description ? `<p class="equipment-card-desc">${escapeHtml(item.description)}</p>` : ""}
+          <div class="info-list">${infoRows.map(([k,v]) => `<div><span>${escapeHtml(k)}</span><span>${escapeHtml(v)}</span></div>`).join("")}</div>
+        </div>
+      </article>`;
     }).join("");
-    list.querySelectorAll("img").forEach(img => img.addEventListener("error", () => {
-      const wrap = img.closest(".scape-photo-wrap");
-      if(wrap) wrap.hidden = true;
-    }));
+
+    list.querySelectorAll("img").forEach(img => img.addEventListener("error", () => { img.src = PLACEHOLDER; }));
   }
 
   function updateEquipmentStatus(text){
@@ -1034,6 +1053,12 @@
       .qty-hint{font-size:13px;color:#66756f;margin-top:8px}
       .more-qty-btn{width:100%;padding:10px 12px;border:0;border-radius:10px;background:#f3f3f3;color:#183c35;cursor:pointer;font-weight:600}
       .copy-btn.copied,.btn.copied,.more-qty-btn.copied{filter:brightness(.96)}
+      .equipment-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;align-items:stretch}
+      .equipment-card-grid .equipment-guide-prompt{grid-column:1/-1}
+      .equipment-product-card{height:100%}
+      .equipment-product-card .product-image{min-height:180px}
+      .equipment-product-card .product-image img{object-fit:cover}
+      .equipment-card-desc{margin:0 0 12px;color:#33443f;line-height:1.8;white-space:pre-line}
     `;
     document.head.appendChild(style);
   }
