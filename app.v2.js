@@ -580,7 +580,7 @@
       <div class="qty-title">預計詢問數量</div>
       <div class="qty-box">
         <button type="button" class="qty-minus" aria-label="減少數量">－</button>
-        <input class="qty-input" type="number" inputmode="numeric" min="1" max="${max}" value="1" aria-label="詢問數量">
+        <input class="qty-input" type="number" inputmode="numeric" min="0" max="${max}" value="1" data-send-min="1" aria-label="詢問數量">
         <button type="button" class="qty-plus" aria-label="增加數量">＋</button>
       </div>
       <div class="qty-hint">目前最多可詢問：${max} ${escapeHtml(p.unit || "隻")}</div>
@@ -825,10 +825,14 @@
         const panel = qtyButton.closest("[data-qty-panel]");
         const input = panel ? panel.querySelector(".qty-input") : null;
         if(!input) return;
-        const min = Number(input.min || 1);
+        const sendMin = Number(input.dataset.sendMin || 1);
         const max = Number(input.max || 1);
-        const current = Number(input.value || min);
-        input.value = qtyButton.classList.contains("qty-plus") ? Math.min(current + 1, max) : Math.max(current - 1, min);
+        const currentRaw = String(input.value || "").trim();
+        const current = currentRaw === "" ? 0 : Number(currentRaw);
+        const safeCurrent = Number.isFinite(current) ? current : 0;
+        input.value = qtyButton.classList.contains("qty-plus")
+          ? Math.min(Math.max(safeCurrent, 0) + 1, max)
+          : Math.max(Math.max(safeCurrent, sendMin) - 1, sendMin);
         updateLineHrefsAround(panel);
         return;
       }
@@ -869,16 +873,34 @@
     document.addEventListener("input", (event) => {
       if(!event.target.classList.contains("qty-input")) return;
       const input = event.target;
-      const min = Number(input.min || 1);
       const max = Number(input.max || 1);
-      let value = Number(input.value || min);
-      if(!Number.isFinite(value)) value = min;
+      const raw = String(input.value || "").trim();
+
+      // 編輯中允許暫時空白，避免 iPad 刪除數字時立刻被補回 1。
+      if(raw === ""){
+        updateLineHrefsAround(input);
+        return;
+      }
+
+      let value = Number(raw);
+      if(!Number.isFinite(value)){
+        input.value = "";
+        updateLineHrefsAround(input);
+        return;
+      }
+
       value = Math.round(value);
-      if(value < min) value = min;
+      if(value < 0) value = 0;
       if(value > max) value = max;
+
       input.value = value;
       updateLineHrefsAround(input);
     });
+
+    document.addEventListener("blur", (event) => {
+      if(!event.target.classList.contains("qty-input")) return;
+      normalizeQuantityInput(event.target, true);
+    }, true);
   }
 
   function updateLineHrefsAround(node){
@@ -895,14 +917,35 @@
     return state.products.find(p => String(p.id) === String(id));
   }
 
+  function normalizeQuantityInput(input, resetEmptyToOne){
+    if(!input) return 1;
+    const max = Number(input.max || 1);
+    const sendMin = Number(input.dataset.sendMin || 1);
+    const raw = String(input.value || "").trim();
+
+    if(raw === ""){
+      if(resetEmptyToOne) input.value = sendMin;
+      return sendMin;
+    }
+
+    let value = Number(raw);
+    if(!Number.isFinite(value)) value = sendMin;
+    value = Math.round(value);
+
+    if(value <= 0 && resetEmptyToOne) value = sendMin;
+    if(value < 0) value = 0;
+    if(value > max) value = max;
+
+    input.value = value;
+    return value <= 0 ? sendMin : value;
+  }
+
   function readQuantityNear(node, product){
     if(!canSelectQuantity(product)) return 0;
     const scope = node.closest(".product-card") || node.closest(".preview-body") || document;
     const input = scope.querySelector(".qty-input");
     const max = Number.isFinite(product.askStock) ? Math.floor(product.askStock) : 1;
-    let value = Number(input?.value || 1);
-    if(!Number.isFinite(value)) value = 1;
-    value = Math.round(value);
+    let value = normalizeQuantityInput(input, false);
     if(value < 1) value = 1;
     if(value > max) value = max;
     return value;
