@@ -6,6 +6,8 @@
     products: [],
     filtered: [],
     scapes: [],
+    scapeCategory: "全部",
+    scapeCategoryChosen: false,
     equipments: [],
     equipmentCategory: "全部",
     equipmentCategoryChosen: false,
@@ -127,11 +129,16 @@
   async function loadScapeGallery(){
     const list = el("scapeGalleryList");
     if(!list) return;
+    const filterWrap = ensureScapeFilterWrap(list);
+    list.classList.add("scape-card-grid");
     updateScapeStatus("造景資料讀取中");
     const url = CONFIG.scapeCsvUrl;
     if(!url || !String(url).trim()){
       state.scapes = [];
-      list.innerHTML = `<div class="empty scape-empty">造景介紹整理中。</div>`;
+      state.scapeCategory = "全部";
+      state.scapeCategoryChosen = false;
+      if(filterWrap) filterWrap.innerHTML = "";
+      list.innerHTML = `<div class="empty scape-empty scape-guide-prompt">造景介紹整理中。</div>`;
       updateScapeStatus("尚未設定造景資料表");
       return;
     }
@@ -140,19 +147,35 @@
       const rows = csvToObjects(csv);
       const scapes = normalizeScapes(rows);
       state.scapes = scapes;
+      renderScapeFilters();
       if(!scapes.length){
-        list.innerHTML = `<div class="empty scape-empty">目前尚無造景介紹。</div>`;
+        list.innerHTML = `<div class="empty scape-empty scape-guide-prompt">目前尚無造景介紹。</div>`;
         updateScapeStatus("目前沒有可顯示的造景資料");
         return;
       }
-      renderScapeGallery(scapes);
+      renderScapeGallery();
       updateScapeStatus("造景介紹已更新");
     }catch(error){
       console.warn("造景介紹讀取失敗：", url, error);
       state.scapes = [];
-      list.innerHTML = `<div class="empty scape-empty">造景介紹暫時無法讀取。</div>`;
+      state.scapeCategory = "全部";
+      state.scapeCategoryChosen = false;
+      if(filterWrap) filterWrap.innerHTML = "";
+      list.innerHTML = `<div class="empty scape-empty scape-guide-prompt">造景介紹暫時無法讀取。</div>`;
       updateScapeStatus("造景介紹讀取失敗");
     }
+  }
+
+  function ensureScapeFilterWrap(list){
+    let container = el("scapeCategoryFilters");
+    if(container) return container;
+    if(!list || !list.parentNode) return null;
+
+    container = document.createElement("div");
+    container.id = "scapeCategoryFilters";
+    container.className = "filters scape-filters";
+    list.parentNode.insertBefore(container, list);
+    return container;
   }
 
   function normalizeScapes(rows){
@@ -165,12 +188,14 @@
         id: firstValue(p.id, p["ID"]) || `scape-${index}`,
         order: Number.isFinite(orderNumber) ? orderNumber : index + 1,
         status,
+        category: firstValue(p["分類"], p["子選項"], p["造景分類"], p["類型"], p.category) || "造景",
         title: title || "未命名造景",
-        date: firstValue(p["日期"], p.date),
-        fish: firstValue(p["適合魚種"], p["適合對象"], p["適合"], p.fish),
+        date: firstValue(p["日期"], p["更新日期"], p.date),
+        fish: firstValue(p["適合魚種"], p["適合對象"], p["適合方向"], p["適合"], p.fish),
         description: firstValue(p["介紹文字"], p["介紹"], p["說明"], p.description),
         image: normalizeContentImageUrl(firstValue(p["圖片網址"], p["照片網址"], p["圖片"], p.image)),
-        size: firstValue(p["尺寸"], p["缸型"], p.size),
+        size: firstValue(p["尺寸"], p["缸型"], p["參考尺寸"], p.size),
+        points: firstValue(p["注意事項"], p["選購重點"], p["重點"], p.points),
         note: firstValue(p["備註"], p.note)
       };
     })
@@ -184,31 +209,73 @@
     return ["隱藏", "不顯示", "下架", "停售", "hide", "hidden", "false", "0", "no"].includes(v);
   }
 
-  function renderScapeGallery(scapes){
+  function renderScapeFilters(){
+    const list = el("scapeGalleryList");
+    const container = ensureScapeFilterWrap(list);
+    if(!container) return;
+
+    const categories = ["全部", ...Array.from(new Set(state.scapes.map(item => item.category).filter(Boolean)))];
+    container.innerHTML = categories.map(cat => {
+      const active = state.scapeCategoryChosen && cat === state.scapeCategory ? "active" : "";
+      return `<button class="filter-btn ${active}" type="button" data-scape-category="${escapeAttr(cat)}">${escapeHtml(cat)}</button>`;
+    }).join("");
+
+    container.querySelectorAll("[data-scape-category]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.scapeCategory = btn.dataset.scapeCategory || "全部";
+        state.scapeCategoryChosen = true;
+        renderScapeFilters();
+        renderScapeGallery();
+      });
+    });
+  }
+
+  function renderScapeGallery(){
     const list = el("scapeGalleryList");
     if(!list) return;
-    list.innerHTML = scapes.map((scape) => {
-      const meta = [scape.date, scape.size].filter(Boolean).join("｜");
-      const imgHtml = scape.image
-        ? `<div class="scape-photo-wrap"><img class="scape-photo" src="${escapeAttr(scape.image)}" alt="${escapeAttr(scape.title)}" loading="lazy"></div>`
-        : "";
-      const fishHtml = scape.fish ? `<div class="scape-row"><span>適合方向</span><p>${escapeHtml(scape.fish)}</p></div>` : "";
-      const sizeHtml = scape.size ? `<div class="scape-row"><span>參考尺寸</span><p>${escapeHtml(scape.size)}</p></div>` : "";
-      const noteHtml = scape.note ? `<div class="scape-row"><span>備註</span><p>${escapeHtml(scape.note)}</p></div>` : "";
-      return `<details class="scape-item">
-        <summary>
-          <span>
-            <b>${escapeHtml(scape.title)}</b>
-            ${meta ? `<small>${escapeHtml(meta)}</small>` : `<small>造景介紹</small>`}
-          </span>
-        </summary>
-        <div class="scape-content">
-          ${imgHtml}
-          ${scape.description ? `<p>${escapeHtml(scape.description)}</p>` : ""}
-          <div class="scape-meta-list">${fishHtml}${sizeHtml}${noteHtml}</div>
+    list.classList.add("scape-card-grid");
+
+    if(!state.scapeCategoryChosen){
+      list.innerHTML = `<div class="empty choose-list-prompt scape-guide-prompt">請先選擇上方分類。想快速瀏覽造景，可選「全部」。</div>`;
+      return;
+    }
+
+    const items = state.scapes.filter(item => state.scapeCategory === "全部" || item.category === state.scapeCategory);
+    if(!items.length){
+      list.innerHTML = `<div class="empty scape-empty scape-guide-prompt">目前尚無此分類的造景介紹。</div>`;
+      return;
+    }
+
+    list.innerHTML = items.map(item => {
+      const image = item.image || PLACEHOLDER;
+      const infoRows = [
+        ["分類", item.category],
+        ["適合方向", item.fish],
+        ["參考尺寸", item.size],
+        ["注意事項", item.points],
+        ["備註", item.note],
+        ["更新", item.date]
+      ].filter(row => row && row[1]);
+
+      return `<article class="product-card scape-product-card">
+        <div class="product-image">
+          <button class="image-zoom-trigger" type="button" data-image-zoom="${escapeAttr(image)}" data-image-alt="${escapeAttr(item.title)}" aria-label="放大 ${escapeAttr(item.title)} 圖片">
+            <img src="${escapeAttr(image)}" alt="${escapeAttr(item.title)}" loading="lazy">
+            <span class="image-zoom-hint">點圖看大圖</span>
+          </button>
+          <span class="badge status-neutral">造景介紹</span>
         </div>
-      </details>`;
+        <div class="product-body">
+          <div class="meta"><span>${escapeHtml(item.category || "造景")}</span><span>河憩寮觀點</span></div>
+          <div>
+            <h3 class="name">${escapeHtml(item.title)}</h3>
+          </div>
+          ${item.description ? `<p class="scape-card-desc">${escapeHtml(item.description)}</p>` : ""}
+          <div class="info-list">${infoRows.map(([k,v]) => `<div><span>${escapeHtml(k)}</span><span>${escapeHtml(v)}</span></div>`).join("")}</div>
+        </div>
+      </article>`;
     }).join("");
+
     list.querySelectorAll("img").forEach(img => img.addEventListener("error", () => { img.src = PLACEHOLDER; }));
   }
 
@@ -1053,15 +1120,15 @@
       .qty-hint{font-size:13px;color:#66756f;margin-top:8px}
       .more-qty-btn{width:100%;padding:10px 12px;border:0;border-radius:10px;background:#f3f3f3;color:#183c35;cursor:pointer;font-weight:600}
       .copy-btn.copied,.btn.copied,.more-qty-btn.copied{filter:brightness(.96)}
-      .equipment-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,320px));gap:18px;align-items:stretch;justify-content:start}
-      .equipment-card-grid .equipment-guide-prompt{grid-column:1/-1}
-      .equipment-product-card{height:100%;width:100%;max-width:320px}
-      .equipment-product-card .product-image{height:180px;min-height:180px}
-      .equipment-product-card .product-image img{width:100%;height:100%;object-fit:cover}
-      .equipment-card-desc{margin:0 0 12px;color:#33443f;line-height:1.8;white-space:pre-line}
+      .equipment-card-grid,.scape-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,320px));gap:18px;align-items:stretch;justify-content:start}
+      .equipment-card-grid .equipment-guide-prompt,.scape-card-grid .scape-guide-prompt{grid-column:1/-1}
+      .equipment-product-card,.scape-product-card{height:100%;width:100%;max-width:320px}
+      .equipment-product-card .product-image,.scape-product-card .product-image{height:180px;min-height:180px}
+      .equipment-product-card .product-image img,.scape-product-card .product-image img{width:100%;height:100%;object-fit:cover}
+      .equipment-card-desc,.scape-card-desc{margin:0 0 12px;color:#33443f;line-height:1.8;white-space:pre-line}
       @media (max-width: 720px){
-        .equipment-card-grid{grid-template-columns:1fr}
-        .equipment-product-card{max-width:none}
+        .equipment-card-grid,.scape-card-grid{grid-template-columns:1fr}
+        .equipment-product-card,.scape-product-card{max-width:none}
       }
     `;
     document.head.appendChild(style);
