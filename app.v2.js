@@ -261,7 +261,7 @@
           <span class="badge status-neutral">造景介紹</span>
         </div>
         <div class="product-body">
-          <div class="meta"><span>${escapeHtml(item.category || "造景")}</span><span>河憩寮觀點</span></div>
+          <div class="meta"><span>${escapeHtml(item.category || "造景")}</span></div>
           <div>
             <h3 class="name">${escapeHtml(item.title)}</h3>
           </div>
@@ -389,7 +389,7 @@
           <span class="badge status-neutral">設備介紹</span>
         </div>
         <div class="product-body">
-          <div class="meta"><span>${escapeHtml(item.category || "設備")}</span><span>河憩寮觀點</span></div>
+          <div class="meta"><span>${escapeHtml(item.category || "設備")}</span></div>
           <div>
             <h3 class="name">${escapeHtml(item.title)}</h3>
           </div>
