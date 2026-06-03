@@ -214,19 +214,14 @@
     const container = ensureScapeFilterWrap(list);
     if(!container) return;
 
-    const categories = ["全部", ...Array.from(new Set(state.scapes.map(item => item.category).filter(Boolean)))];
-    container.innerHTML = categories.map(cat => {
-      const active = state.scapeCategoryChosen && cat === state.scapeCategory ? "active" : "";
-      return `<button class="filter-btn ${active}" type="button" data-scape-category="${escapeAttr(cat)}">${escapeHtml(cat)}</button>`;
-    }).join("");
+    const active = state.scapeCategoryChosen ? "active" : "";
+    container.innerHTML = `<button class="filter-btn ${active}" type="button" data-scape-category="造景">造景</button>`;
 
-    container.querySelectorAll("[data-scape-category]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        state.scapeCategory = btn.dataset.scapeCategory || "全部";
-        state.scapeCategoryChosen = true;
-        renderScapeFilters();
-        renderScapeGallery();
-      });
+    container.querySelector("[data-scape-category]")?.addEventListener("click", () => {
+      state.scapeCategory = "造景";
+      state.scapeCategoryChosen = true;
+      renderScapeFilters();
+      renderScapeGallery();
     });
   }
 
@@ -236,11 +231,11 @@
     list.classList.add("scape-card-grid");
 
     if(!state.scapeCategoryChosen){
-      list.innerHTML = `<div class="empty choose-list-prompt scape-guide-prompt">請先選擇上方分類。想快速瀏覽造景，可選「全部」。</div>`;
+      list.innerHTML = `<div class="empty choose-list-prompt scape-guide-prompt">請先點選上方「造景」查看造景類型介紹。</div>`;
       return;
     }
 
-    const items = state.scapes.filter(item => state.scapeCategory === "全部" || item.category === state.scapeCategory);
+    const items = state.scapes;
     if(!items.length){
       list.innerHTML = `<div class="empty scape-empty scape-guide-prompt">目前尚無此分類的造景介紹。</div>`;
       return;
