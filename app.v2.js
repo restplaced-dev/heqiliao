@@ -22,6 +22,7 @@
   async function init(){
     injectQuantityStyles();
     setLineLinks();
+    insertPaymentNotice();
     updateListUpdatedText();
     bindSearch();
     bindPreviewModal();
@@ -61,6 +62,55 @@
         if(placeholderText) a.title = placeholderText;
       }
     });
+  }
+
+  function insertPaymentNotice(){
+    if(document.getElementById("paymentConfirmNotice")) return;
+
+    const notice = document.createElement("div");
+    notice.id = "paymentConfirmNotice";
+    notice.className = "payment-confirm-notice";
+    notice.innerHTML = `
+      <div class="payment-confirm-kicker">Order Flow</div>
+      <h3>訂購採確認制</h3>
+      <p>請先填寫檢視單，讓我們初步了解飼養環境與需求。</p>
+      <p>之後再確認魚隻狀態、數量與適合的看魚／取魚或出貨安排。</p>
+      <p>訂單確認後，會提供綠界支付連結，可使用信用卡、Apple Pay 或 ATM 虛擬帳號等方式付款。</p>
+    `;
+
+    const directTarget =
+      el("order-flow") ||
+      el("orderFlow") ||
+      el("order") ||
+      el("payment") ||
+      el("payment-info") ||
+      el("paymentInfo");
+
+    let target = directTarget;
+
+    if(!target){
+      const headings = Array.from(document.querySelectorAll("section h1, section h2, section h3, .section-title h1, .section-title h2, .section-title h3"));
+      const heading = headings.find(h => /訂購流程|付款|Payment/i.test(h.textContent || ""));
+      target = heading?.closest("section") || heading?.closest(".section") || null;
+    }
+
+    if(target){
+      const wrap = target.querySelector(".wrap") || target;
+      const head = wrap.querySelector(".section-head") || wrap.querySelector(".section-title");
+      if(head && head.parentNode === wrap){
+        head.insertAdjacentElement("afterend", notice);
+      }else{
+        wrap.appendChild(notice);
+      }
+      return;
+    }
+
+    const fallback = el("stock") || el("quickListSection") || document.querySelector("main") || document.body;
+    if(fallback && fallback.parentNode){
+      fallback.parentNode.insertBefore(notice, fallback);
+    }else{
+      document.body.appendChild(notice);
+    }
   }
 
   function bindViewSwitch(){
@@ -1115,6 +1165,10 @@
       .qty-hint{font-size:13px;color:#66756f;margin-top:8px}
       .more-qty-btn{width:100%;padding:10px 12px;border:0;border-radius:10px;background:#f3f3f3;color:#183c35;cursor:pointer;font-weight:600}
       .copy-btn.copied,.btn.copied,.more-qty-btn.copied{filter:brightness(.96)}
+      .payment-confirm-notice{margin:18px 0 24px;padding:18px 20px;border:1px solid rgba(24,60,53,.12);border-left:5px solid #c49a54;border-radius:18px;background:rgba(255,255,255,.68);box-shadow:0 10px 24px rgba(24,60,53,.05);color:#183c35}
+      .payment-confirm-notice .payment-confirm-kicker{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#8b6d38;font-weight:700;margin-bottom:6px}
+      .payment-confirm-notice h3{margin:0 0 10px;font-size:20px;line-height:1.35;color:#183c35}
+      .payment-confirm-notice p{margin:6px 0;color:#42534d;line-height:1.8}
       .equipment-card-grid,.scape-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,320px));gap:18px;align-items:stretch;justify-content:start}
       .equipment-card-grid .equipment-guide-prompt,.scape-card-grid .scape-guide-prompt{grid-column:1/-1}
       .equipment-product-card,.scape-product-card{height:100%;width:100%;max-width:320px}
