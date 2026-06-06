@@ -26,6 +26,7 @@
     integrateQuarantineCtaIntoOrderFlow();
     setTimeout(integrateQuarantineCtaIntoOrderFlow, 120);
     setTimeout(integrateQuarantineCtaIntoOrderFlow, 500);
+    setTimeout(integrateQuarantineCtaIntoOrderFlow, 1200);
     updateListUpdatedText();
     bindSearch();
     bindPreviewModal();
@@ -165,55 +166,77 @@
   }
 
   function integrateQuarantineCtaIntoOrderFlow(){
-    const quarantineLink = document.querySelector("[data-quarantine-link]");
-    if(!quarantineLink) return;
-
-    const quarantineCard = findQuarantineCtaCard(quarantineLink);
-    if(!quarantineCard) return;
-
-    const stepFiveNode = Array.from(document.querySelectorAll("section *, .section *, main *"))
+    const stepFiveNode = Array.from(document.querySelectorAll("section *, .section *, main *, body *"))
       .find(node => /5\.\s*到貨檢疫與適應|到貨檢疫與適應/.test(node.textContent || ""));
-    const stepFiveCard = stepFiveNode?.closest("article, .card, .flow-card, .process-card, .info-card, .feature-card, div");
+    const stepFiveCard = stepFiveNode?.closest("article, .card, .flow-card, .process-card, .info-card, .feature-card, .action-card, div");
     const flowGrid = stepFiveCard?.parentElement;
+    if(!stepFiveCard || !flowGrid) return;
 
-    if(!stepFiveCard || !flowGrid || flowGrid.contains(quarantineCard)) return;
+    if(flowGrid.querySelector('[data-order-flow-cta="quarantine-clone"]')) return;
 
-    const originalParent = quarantineCard.parentElement;
+    const originalLink = document.querySelector('[data-quarantine-link]');
+    if(!originalLink) return;
 
-    flowGrid.classList.add("order-flow-grid-harmonized");
-    quarantineCard.classList.add("order-quarantine-cta");
-    quarantineCard.setAttribute("data-order-flow-cta", "quarantine");
+    const originalCard = findQuarantineCtaCard(originalLink);
+    const cta = stepFiveCard.cloneNode(true);
+    cta.setAttribute('data-order-flow-cta', 'quarantine-clone');
+    cta.classList.add('order-quarantine-inline-card');
 
-    const kicker =
-      quarantineCard.querySelector(".eyebrow, .kicker, .meta, .small-note") ||
-      quarantineCard.querySelector("p");
+    const title = cta.querySelector('h1, h2, h3, h4');
+    if(title) title.textContent = '近期檢疫紀錄';
 
+    const paragraphs = Array.from(cta.querySelectorAll('p'));
+    if(paragraphs[0]){
+      paragraphs[0].textContent = '可查看近期批次、觀察狀態與可詢問名單補充。';
+    }
+    for(const p of paragraphs.slice(1)){
+      p.remove();
+    }
+
+    const kicker = cta.querySelector('.eyebrow, .kicker, .meta, .small-note');
     if(kicker){
-      kicker.textContent = "狀態透明化";
-      kicker.classList.add("order-quarantine-kicker");
+      kicker.textContent = '狀態透明化';
+      kicker.classList.add('order-quarantine-kicker');
     }
 
-    const title = Array.from(quarantineCard.querySelectorAll("h1, h2, h3, h4")).find(h => /近期檢疫紀錄|檢疫紀錄/.test(h.textContent || ""));
-    if(title) title.textContent = "近期檢疫紀錄";
+    // remove numbered prefix if cloned from step card
+    if(title) title.textContent = title.textContent.replace(/^\s*\d+\.\s*/, '');
 
-    const desc = Array.from(quarantineCard.querySelectorAll("p")).find(p => /查看近期|觀察狀態|詢問名單|批次|狀態/.test(p.textContent || ""));
-    if(desc){
-      desc.textContent = "可查看近期批次、觀察狀態與可詢問名單補充。";
+    // remove any list-style or step-only text blocks accidentally carried over
+    Array.from(cta.querySelectorAll('li')).forEach(li => li.remove());
+
+    let actionWrap = cta.querySelector('.order-quarantine-action');
+    if(!actionWrap){
+      actionWrap = document.createElement('div');
+      actionWrap.className = 'order-quarantine-action';
+      cta.appendChild(actionWrap);
+    }else{
+      actionWrap.innerHTML = '';
     }
 
-    const button = quarantineCard.querySelector("a[data-quarantine-link]");
-    if(button){
-      button.textContent = "查看紀錄";
-      button.classList.add("order-quarantine-button");
-    }
+    const button = originalLink.cloneNode(true);
+    button.textContent = '查看紀錄';
+    button.classList.add('order-quarantine-button');
+    button.removeAttribute('data-line-link');
+    actionWrap.appendChild(button);
 
     if(stepFiveCard.nextSibling){
-      flowGrid.insertBefore(quarantineCard, stepFiveCard.nextSibling);
+      flowGrid.insertBefore(cta, stepFiveCard.nextSibling);
     }else{
-      flowGrid.appendChild(quarantineCard);
+      flowGrid.appendChild(cta);
     }
 
-    cleanupEmptyContainer(originalParent, document.body);
+    // hide original wide CTA card so it does not leave a large visual gap
+    if(originalCard){
+      originalCard.style.display = 'none';
+      const parent = originalCard.parentElement;
+      if(parent && parent !== flowGrid){
+        const visibleChildren = Array.from(parent.children).filter(el => el.style.display !== 'none');
+        if(visibleChildren.length === 0){
+          parent.style.display = 'none';
+        }
+      }
+    }
   }
 
   function cleanupEmptyContainer(node, stopNode){
@@ -1296,6 +1319,10 @@
       .order-quarantine-cta{border-color:rgba(196,154,84,.45)!important;background:rgba(255,250,240,.82)!important}
       .order-quarantine-cta .order-quarantine-kicker{color:#8b6d38!important;font-size:12px!important;text-transform:uppercase;letter-spacing:.14em;font-weight:700}
       .order-quarantine-cta .order-quarantine-button{white-space:nowrap}
+      .order-quarantine-inline-card{position:relative}
+      .order-quarantine-inline-card .order-quarantine-action{margin-top:18px;display:flex;justify-content:flex-start}
+      .order-quarantine-inline-card .order-quarantine-button{display:inline-flex;align-items:center;justify-content:center;padding:12px 22px;border-radius:999px;background:#c8954b;color:#183c35!important;font-weight:700;text-decoration:none;white-space:nowrap}
+      .order-quarantine-inline-card .order-quarantine-button:hover{filter:brightness(.98)}
       .equipment-card-grid,.scape-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,320px));gap:18px;align-items:stretch;justify-content:start}
       .equipment-card-grid .equipment-guide-prompt,.scape-card-grid .scape-guide-prompt{grid-column:1/-1}
       .equipment-product-card,.scape-product-card{height:100%;width:100%;max-width:320px}
