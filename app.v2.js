@@ -26,6 +26,7 @@
     updateListUpdatedText();
     bindSearch();
     bindPreviewModal();
+    bindImageCollapseControls();
     bindProductActions();
     bindViewSwitch();
     resetQuickTableHeader(false, false);
@@ -306,11 +307,12 @@
         <div class="product-image">
           <button class="image-zoom-trigger" type="button" data-image-zoom="${escapeAttr(image)}" data-image-alt="${escapeAttr(item.title)}" aria-label="放大 ${escapeAttr(item.title)} 圖片">
             <img src="${escapeAttr(image)}" alt="${escapeAttr(item.title)}" loading="lazy">
-            <span class="image-zoom-hint">點圖看大圖</span>
+            <span class="image-zoom-hint">點圖可放大</span>
           </button>
           <span class="badge status-neutral">造景介紹</span>
         </div>
         <div class="product-body">
+          <div class="card-image-toggle-row"><button class="image-collapse-toggle" type="button" data-image-collapse="true" aria-expanded="true">收合圖片</button></div>
           <div class="meta"><span>${escapeHtml(item.category || "造景")}</span></div>
           <div>
             <h3 class="name">${escapeHtml(item.title)}</h3>
@@ -434,11 +436,12 @@
         <div class="product-image">
           <button class="image-zoom-trigger" type="button" data-image-zoom="${escapeAttr(image)}" data-image-alt="${escapeAttr(item.title)}" aria-label="放大 ${escapeAttr(item.title)} 圖片">
             <img src="${escapeAttr(image)}" alt="${escapeAttr(item.title)}" loading="lazy">
-            <span class="image-zoom-hint">點圖看大圖</span>
+            <span class="image-zoom-hint">點圖可放大</span>
           </button>
           <span class="badge status-neutral">設備介紹</span>
         </div>
         <div class="product-body">
+          <div class="card-image-toggle-row"><button class="image-collapse-toggle" type="button" data-image-collapse="true" aria-expanded="true">收合圖片</button></div>
           <div class="meta"><span>${escapeHtml(item.category || "設備")}</span></div>
           <div>
             <h3 class="name">${escapeHtml(item.title)}</h3>
@@ -785,11 +788,12 @@
       <div class="product-image">
         <button class="image-zoom-trigger" type="button" data-image-zoom="${escapeAttr(p.image)}" data-image-alt="${escapeAttr(p.name)}" aria-label="放大 ${escapeAttr(p.name)} 圖片">
           <img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name)}">
-          <span class="image-zoom-hint">點圖看大圖</span>
+          <span class="image-zoom-hint">點圖可放大</span>
         </button>
         <span class="badge ${statusClass(p.status, p.soldOut)}">${escapeHtml(p.status)}</span>
       </div>
       <div class="product-body">
+        <div class="card-image-toggle-row"><button class="image-collapse-toggle" type="button" data-image-collapse="true" aria-expanded="true">收合圖片</button></div>
         <div class="meta"><span>${escapeHtml(p.category)}</span><span>${p.soldOut ? "暫不出貨" : "可私訊確認"}</span></div>
         <div>
           <h3 class="name">${escapeHtml(p.name)}</h3>
@@ -850,7 +854,7 @@
     content.innerHTML = `<div class="preview-image">
         <button class="image-zoom-trigger" type="button" data-image-zoom="${escapeAttr(p.image)}" data-image-alt="${escapeAttr(p.name)}" aria-label="放大 ${escapeAttr(p.name)} 圖片">
           <img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name)}">
-          <span class="image-zoom-hint">點圖看大圖</span>
+          <span class="image-zoom-hint">點圖可放大</span>
         </button>
         <span class="badge ${statusClass(p.status, p.soldOut)}">${escapeHtml(p.status)}</span>
       </div>
@@ -947,6 +951,23 @@
         <td><span class="badge ${statusClass(p.status, p.soldOut)}">${escapeHtml(p.status)}</span></td>
       </tr>`;
     }).join("");
+  }
+
+
+  function bindImageCollapseControls(){
+    document.addEventListener("click", (event) => {
+      const toggle = event.target.closest("[data-image-collapse]");
+      if(!toggle) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const card = toggle.closest(".product-card");
+      if(!card) return;
+      const collapsed = card.classList.toggle("image-collapsed");
+      card.querySelectorAll("[data-image-collapse]").forEach(btn => {
+        btn.textContent = collapsed ? "展開圖片" : "收合圖片";
+        btn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+      });
+    });
   }
 
   function bindProductActions(){
@@ -1169,15 +1190,22 @@
       .payment-confirm-notice .payment-confirm-kicker{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#8b6d38;font-weight:700;margin-bottom:6px}
       .payment-confirm-notice h3{margin:0 0 10px;font-size:20px;line-height:1.35;color:#183c35}
       .payment-confirm-notice p{margin:6px 0;color:#42534d;line-height:1.8}
+      .card-image-toggle-row{margin:0 0 12px}
+      .image-collapse-toggle{display:inline-flex;align-items:center;justify-content:center;padding:8px 14px;border-radius:999px;border:1px solid rgba(24,60,53,.16);background:#f3f6f4;color:#183c35;font-size:13px;font-weight:700;cursor:pointer}
+      .image-collapse-toggle:hover{filter:brightness(.98)}
+      .product-card.image-collapsed .product-image{display:none}
+      .product-card .product-image{background:#f7f6ef}
+      .product-card .product-image .image-zoom-trigger{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:transparent}
+      .product-card .product-image img{width:100%;height:100%;object-fit:contain;background:#f7f6ef}
       .equipment-card-grid,.scape-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,320px));gap:18px;align-items:stretch;justify-content:start}
       .equipment-card-grid .equipment-guide-prompt,.scape-card-grid .scape-guide-prompt{grid-column:1/-1}
       .equipment-product-card,.scape-product-card{height:100%;width:100%;max-width:320px}
-      .equipment-product-card .product-image,.scape-product-card .product-image{height:180px;min-height:180px}
-      .equipment-product-card .product-image img,.scape-product-card .product-image img{width:100%;height:100%;object-fit:cover}
+      .equipment-product-card .product-image,.scape-product-card .product-image{height:240px;min-height:240px;padding:10px}
       .equipment-card-desc,.scape-card-desc{margin:0 0 12px;color:#33443f;line-height:1.8;white-space:pre-line}
       @media (max-width: 720px){
         .equipment-card-grid,.scape-card-grid{grid-template-columns:1fr}
         .equipment-product-card,.scape-product-card{max-width:none}
+        .equipment-product-card .product-image,.scape-product-card .product-image{height:220px;min-height:220px}
       }
     `;
     document.head.appendChild(style);
