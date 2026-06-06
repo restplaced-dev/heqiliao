@@ -23,10 +23,6 @@
     injectQuantityStyles();
     setLineLinks();
     insertPaymentNotice();
-    integrateQuarantineCtaIntoOrderFlow();
-    setTimeout(integrateQuarantineCtaIntoOrderFlow, 120);
-    setTimeout(integrateQuarantineCtaIntoOrderFlow, 500);
-    setTimeout(integrateQuarantineCtaIntoOrderFlow, 1200);
     updateListUpdatedText();
     bindSearch();
     bindPreviewModal();
@@ -114,147 +110,6 @@
       fallback.parentNode.insertBefore(notice, fallback);
     }else{
       document.body.appendChild(notice);
-    }
-  }
-
-  function findOrderFlowSection(){
-    const directTarget =
-      el("order-flow") ||
-      el("orderFlow") ||
-      el("order");
-
-    if(directTarget) return directTarget;
-
-    const headings = Array.from(document.querySelectorAll("section h1, section h2, section h3, .section-title h1, .section-title h2, .section-title h3"));
-    const heading = headings.find(h => /訂購流程|Order Flow/i.test(h.textContent || ""));
-    return heading?.closest("section") || heading?.closest(".section") || null;
-  }
-
-  function findSmallestTextContainer(root, patterns){
-    if(!root) return null;
-    const nodes = Array.from(root.querySelectorAll("*"));
-    return nodes
-      .filter(node => {
-        const text = node.textContent || "";
-        return patterns.every(pattern => pattern.test(text));
-      })
-      .sort((a, b) => (a.textContent || "").length - (b.textContent || "").length)[0] || null;
-  }
-
-  function findQuarantineCtaCard(link){
-    if(!link) return null;
-
-    const knownCard = link.closest(".quarantine-card, .record-card, .cta-card, .feature-card, .action-card, .info-card, .process-card, .flow-card, .card, article");
-    if(knownCard && /近期檢疫紀錄|QUARANTINE RECORD|查看檢疫/.test(knownCard.textContent || "")){
-      return knownCard;
-    }
-
-    let node = link.parentElement;
-    while(node && node !== document.body){
-      const tag = node.tagName;
-      const text = node.textContent || "";
-
-      if(/近期檢疫紀錄|QUARANTINE RECORD|查看檢疫/.test(text) && !["SECTION", "MAIN", "BODY"].includes(tag)){
-        return node;
-      }
-
-      if(["SECTION", "MAIN", "BODY"].includes(tag)) break;
-      node = node.parentElement;
-    }
-
-    return null;
-  }
-
-  function integrateQuarantineCtaIntoOrderFlow(){
-    const stepFiveNode = Array.from(document.querySelectorAll("section *, .section *, main *, body *"))
-      .find(node => /5\.\s*到貨檢疫與適應|到貨檢疫與適應/.test(node.textContent || ""));
-    const stepFiveCard = stepFiveNode?.closest("article, .card, .flow-card, .process-card, .info-card, .feature-card, .action-card, div");
-    const flowGrid = stepFiveCard?.parentElement;
-    if(!stepFiveCard || !flowGrid) return;
-
-    if(flowGrid.querySelector('[data-order-flow-cta="quarantine-clone"]')) return;
-
-    const originalLink = document.querySelector('[data-quarantine-link]');
-    if(!originalLink) return;
-
-    const originalCard = findQuarantineCtaCard(originalLink);
-    const cta = stepFiveCard.cloneNode(true);
-    cta.setAttribute('data-order-flow-cta', 'quarantine-clone');
-    cta.classList.add('order-quarantine-inline-card');
-
-    const title = cta.querySelector('h1, h2, h3, h4');
-    if(title) title.textContent = '近期檢疫紀錄';
-
-    const paragraphs = Array.from(cta.querySelectorAll('p'));
-    if(paragraphs[0]){
-      paragraphs[0].textContent = '可查看近期批次、觀察狀態與可詢問名單補充。';
-    }
-    for(const p of paragraphs.slice(1)){
-      p.remove();
-    }
-
-    const kicker = cta.querySelector('.eyebrow, .kicker, .meta, .small-note');
-    if(kicker){
-      kicker.textContent = '狀態透明化';
-      kicker.classList.add('order-quarantine-kicker');
-    }
-
-    // remove numbered prefix if cloned from step card
-    if(title) title.textContent = title.textContent.replace(/^\s*\d+\.\s*/, '');
-
-    // remove any list-style or step-only text blocks accidentally carried over
-    Array.from(cta.querySelectorAll('li')).forEach(li => li.remove());
-
-    let actionWrap = cta.querySelector('.order-quarantine-action');
-    if(!actionWrap){
-      actionWrap = document.createElement('div');
-      actionWrap.className = 'order-quarantine-action';
-      cta.appendChild(actionWrap);
-    }else{
-      actionWrap.innerHTML = '';
-    }
-
-    const button = originalLink.cloneNode(true);
-    button.textContent = '查看紀錄';
-    button.classList.add('order-quarantine-button');
-    button.removeAttribute('data-line-link');
-    actionWrap.appendChild(button);
-
-    if(stepFiveCard.nextSibling){
-      flowGrid.insertBefore(cta, stepFiveCard.nextSibling);
-    }else{
-      flowGrid.appendChild(cta);
-    }
-
-    // hide original wide CTA card so it does not leave a large visual gap
-    if(originalCard){
-      originalCard.style.display = 'none';
-      const parent = originalCard.parentElement;
-      if(parent && parent !== flowGrid){
-        const visibleChildren = Array.from(parent.children).filter(el => el.style.display !== 'none');
-        if(visibleChildren.length === 0){
-          parent.style.display = 'none';
-        }
-      }
-    }
-  }
-
-  function cleanupEmptyContainer(node, stopNode){
-    let current = node;
-    while(current && current !== stopNode && current !== document.body){
-      const parent = current.parentElement;
-      const text = (current.textContent || "").replace(/\s+/g, "");
-      const hasMedia = current.querySelector("img, video, iframe, canvas, svg");
-      const hasMeaningfulChild = Array.from(current.children).some(child => {
-        return child.offsetParent !== null && (child.textContent || "").trim();
-      });
-
-      if(!text && !hasMedia && !hasMeaningfulChild){
-        current.remove();
-        current = parent;
-      }else{
-        break;
-      }
     }
   }
 
@@ -1314,15 +1169,6 @@
       .payment-confirm-notice .payment-confirm-kicker{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#8b6d38;font-weight:700;margin-bottom:6px}
       .payment-confirm-notice h3{margin:0 0 10px;font-size:20px;line-height:1.35;color:#183c35}
       .payment-confirm-notice p{margin:6px 0;color:#42534d;line-height:1.8}
-      .order-flow-grid-harmonized{align-items:stretch}
-      .order-flow-grid-harmonized > .order-quarantine-cta{margin:0!important;max-width:none!important;width:auto!important;min-height:0}
-      .order-quarantine-cta{border-color:rgba(196,154,84,.45)!important;background:rgba(255,250,240,.82)!important}
-      .order-quarantine-cta .order-quarantine-kicker{color:#8b6d38!important;font-size:12px!important;text-transform:uppercase;letter-spacing:.14em;font-weight:700}
-      .order-quarantine-cta .order-quarantine-button{white-space:nowrap}
-      .order-quarantine-inline-card{position:relative}
-      .order-quarantine-inline-card .order-quarantine-action{margin-top:18px;display:flex;justify-content:flex-start}
-      .order-quarantine-inline-card .order-quarantine-button{display:inline-flex;align-items:center;justify-content:center;padding:12px 22px;border-radius:999px;background:#c8954b;color:#183c35!important;font-weight:700;text-decoration:none;white-space:nowrap}
-      .order-quarantine-inline-card .order-quarantine-button:hover{filter:brightness(.98)}
       .equipment-card-grid,.scape-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,320px));gap:18px;align-items:stretch;justify-content:start}
       .equipment-card-grid .equipment-guide-prompt,.scape-card-grid .scape-guide-prompt{grid-column:1/-1}
       .equipment-product-card,.scape-product-card{height:100%;width:100%;max-width:320px}

@@ -97,8 +97,6 @@
       margin: 6px 0;
     }
 
-
-
     .scape-empty {
       padding: 18px;
       border-radius: 16px;
@@ -147,13 +145,30 @@
       margin: 0;
     }
 
-
     .equipment-filters {
       margin: 0 0 16px;
     }
 
     .equipment-item summary small {
       letter-spacing: 0.02em;
+    }
+
+    .shipping-card.quarantine-inline-card {
+      background: rgba(255, 250, 240, 0.82);
+      border-color: rgba(196, 154, 84, 0.45);
+    }
+
+    .shipping-card.quarantine-inline-card .eyebrow {
+      color: #8b6d38;
+      margin-bottom: 8px;
+    }
+
+    .shipping-card.quarantine-inline-card h3 {
+      margin-top: 0;
+    }
+
+    .shipping-card.quarantine-inline-card .inline-card-btn {
+      margin-top: 14px;
     }
 
     @media (max-width: 640px) {
@@ -185,8 +200,8 @@
       <nav class="nav-links" aria-label="主選單">
         <a href="#shipping">訂購流程</a>
         <a href="#scape-types">造景介紹</a>
-                <a href="#equipment-guide">設備介紹</a>
-<a href="#stock">本週名單</a>
+        <a href="#equipment-guide">設備介紹</a>
+        <a href="#stock">本週名單</a>
         <a href="#principles">飼養原則</a>
         <a data-quarantine-link href="#">檢疫紀錄</a>
       </nav>
@@ -255,19 +270,12 @@
             <h3>5. 到貨檢疫與適應</h3>
             <p>收到後建議先檢疫觀察。重點不只是找病，更是讓魚恢復運輸壓力、重新穩定狀態，並逐步習慣飼主操作；穩定後再評估是否進主缸。</p>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section record-section">
-      <div class="wrap">
-        <div class="record-callout compact-record">
-          <div>
-            <p class="eyebrow">Quarantine Record</p>
-            <b>近期檢疫紀錄</b>
-            <span>查看近期批次、觀察狀態與可詢問名單補充。</span>
+          <div class="shipping-card quarantine-inline-card">
+            <p class="eyebrow">Status Transparency</p>
+            <h3>近期檢疫紀錄</h3>
+            <p>可查看近期批次、觀察狀態與可詢問名單補充。</p>
+            <a class="btn gold inline-card-btn" data-quarantine-link href="#">查看紀錄</a>
           </div>
-          <a class="btn gold record-btn" data-quarantine-link href="#">查看檢疫紀錄</a>
         </div>
       </div>
     </section>
@@ -278,7 +286,6 @@
           <div class="section-title">
             <p class="eyebrow">Aquascape Gallery</p>
             <h2>造景類型介紹</h2>
-            
           </div>
           <div class="small-note" id="scapeGalleryStatus">造景資料讀取中</div>
         </div>
@@ -378,7 +385,7 @@
 
   <a class="floating-line" data-line-link href="https://lin.ee/p9wkJW2" aria-label="前往 LINE 官方帳號詢問"><span class="line-dot"></span><span class="line-label">LINE 詢問</span></a>
   <script src="config.js?v=20260602-v13"></script>
-  <script src="app.v2.js?v=20260602-v13"></script>
+  <script src="app.v2.js?v=20260606-v31"></script>
 
   <div class="preview-modal" id="productPreviewModal" aria-hidden="true">
     <div class="preview-backdrop" data-preview-close></div>
