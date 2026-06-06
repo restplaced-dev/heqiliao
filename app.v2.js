@@ -663,7 +663,7 @@
   function renderCategories(){
     const container = el("categoryFilters");
     if(!container) return;
-    const categories = Array.from(new Set(state.products.map(p => p.category).filter(Boolean)));
+    const categories = ["全部", ...Array.from(new Set(state.products.map(p => p.category).filter(Boolean)))];
     container.innerHTML = [
       `<button class="filter-btn ${!state.categoryChosen && !state.query ? "active" : ""}" type="button" data-category-collapse="true">收合</button>`,
       ...categories.map(cat => `<button class="filter-btn ${state.categoryChosen && cat === state.category ? "active" : ""}" type="button" data-category="${escapeAttr(cat)}">${escapeHtml(cat)}</button>`)
@@ -678,7 +678,7 @@
       applyFilters();
     });
     container.querySelectorAll("[data-category]").forEach(btn => btn.addEventListener("click", () => {
-      state.category = btn.dataset.category;
+      state.category = btn.dataset.category || "全部";
       state.categoryChosen = true;
       renderCategories();
       applyFilters();
@@ -705,7 +705,7 @@
       return;
     }
     if(!state.categoryChosen && !state.query){
-      grid.innerHTML = `<div class="empty choose-list-prompt">請先選擇上方分類；需要收回卡片時，點選「收合」。</div>`;
+      grid.innerHTML = `<div class="empty choose-list-prompt">請先選擇上方分類。想快速瀏覽可選「全部」；需要收回卡片時，點選「收合」。</div>`;
       return;
     }
     if(!state.filtered.length){
@@ -959,7 +959,7 @@
     if(!body) return;
     const colSpan = 4 + (showSize ? 1 : 0) + (showStock ? 1 : 0);
     if(!state.categoryChosen && !state.query){
-      body.innerHTML = `<tr class="quick-prompt-row"><td colspan="${colSpan}">請先選擇上方分類；需要收回清單時，點選「收合」。</td></tr>`;
+      body.innerHTML = `<tr class="quick-prompt-row"><td colspan="${colSpan}">請先選擇上方分類。想快速瀏覽可選「全部」；需要收回清單時，點選「收合」。</td></tr>`;
       return;
     }
     if(!state.filtered.length){
