@@ -24,6 +24,8 @@
     setLineLinks();
     insertPaymentNotice();
     integrateQuarantineCtaIntoOrderFlow();
+    setTimeout(integrateQuarantineCtaIntoOrderFlow, 120);
+    setTimeout(integrateQuarantineCtaIntoOrderFlow, 500);
     updateListUpdatedText();
     bindSearch();
     bindPreviewModal();
@@ -163,20 +165,18 @@
   }
 
   function integrateQuarantineCtaIntoOrderFlow(){
-    const orderSection = findOrderFlowSection();
     const quarantineLink = document.querySelector("[data-quarantine-link]");
-    if(!orderSection || !quarantineLink) return;
+    if(!quarantineLink) return;
 
     const quarantineCard = findQuarantineCtaCard(quarantineLink);
     if(!quarantineCard) return;
 
-    const flowGrid = findSmallestTextContainer(orderSection, [
-      /1\.\s*填寫檢視單|填寫檢視單/,
-      /2\.\s*Email|Email\s*回覆/,
-      /5\.\s*到貨檢疫|到貨檢疫/
-    ]);
+    const stepFiveNode = Array.from(document.querySelectorAll("section *, .section *, main *"))
+      .find(node => /5\.\s*到貨檢疫與適應|到貨檢疫與適應/.test(node.textContent || ""));
+    const stepFiveCard = stepFiveNode?.closest("article, .card, .flow-card, .process-card, .info-card, .feature-card, div");
+    const flowGrid = stepFiveCard?.parentElement;
 
-    if(!flowGrid || flowGrid.contains(quarantineCard)) return;
+    if(!stepFiveCard || !flowGrid || flowGrid.contains(quarantineCard)) return;
 
     const originalParent = quarantineCard.parentElement;
 
@@ -188,7 +188,7 @@
       quarantineCard.querySelector(".eyebrow, .kicker, .meta, .small-note") ||
       quarantineCard.querySelector("p");
 
-    if(kicker && /QUARANTINE RECORD|近期檢疫紀錄|檢疫/i.test(kicker.textContent || "")){
+    if(kicker){
       kicker.textContent = "狀態透明化";
       kicker.classList.add("order-quarantine-kicker");
     }
@@ -207,9 +207,13 @@
       button.classList.add("order-quarantine-button");
     }
 
-    flowGrid.appendChild(quarantineCard);
+    if(stepFiveCard.nextSibling){
+      flowGrid.insertBefore(quarantineCard, stepFiveCard.nextSibling);
+    }else{
+      flowGrid.appendChild(quarantineCard);
+    }
 
-    cleanupEmptyContainer(originalParent, orderSection);
+    cleanupEmptyContainer(originalParent, document.body);
   }
 
   function cleanupEmptyContainer(node, stopNode){
