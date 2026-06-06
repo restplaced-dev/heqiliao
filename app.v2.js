@@ -23,6 +23,7 @@
     injectQuantityStyles();
     setLineLinks();
     insertPaymentNotice();
+    integrateQuarantineCtaIntoOrderFlow();
     updateListUpdatedText();
     bindSearch();
     bindPreviewModal();
@@ -110,6 +111,123 @@
       fallback.parentNode.insertBefore(notice, fallback);
     }else{
       document.body.appendChild(notice);
+    }
+  }
+
+  function findOrderFlowSection(){
+    const directTarget =
+      el("order-flow") ||
+      el("orderFlow") ||
+      el("order");
+
+    if(directTarget) return directTarget;
+
+    const headings = Array.from(document.querySelectorAll("section h1, section h2, section h3, .section-title h1, .section-title h2, .section-title h3"));
+    const heading = headings.find(h => /訂購流程|Order Flow/i.test(h.textContent || ""));
+    return heading?.closest("section") || heading?.closest(".section") || null;
+  }
+
+  function findSmallestTextContainer(root, patterns){
+    if(!root) return null;
+    const nodes = Array.from(root.querySelectorAll("*"));
+    return nodes
+      .filter(node => {
+        const text = node.textContent || "";
+        return patterns.every(pattern => pattern.test(text));
+      })
+      .sort((a, b) => (a.textContent || "").length - (b.textContent || "").length)[0] || null;
+  }
+
+  function findQuarantineCtaCard(link){
+    if(!link) return null;
+
+    const knownCard = link.closest(".quarantine-card, .record-card, .cta-card, .feature-card, .action-card, .info-card, .process-card, .flow-card, .card, article");
+    if(knownCard && /近期檢疫紀錄|QUARANTINE RECORD|查看檢疫/.test(knownCard.textContent || "")){
+      return knownCard;
+    }
+
+    let node = link.parentElement;
+    while(node && node !== document.body){
+      const tag = node.tagName;
+      const text = node.textContent || "";
+
+      if(/近期檢疫紀錄|QUARANTINE RECORD|查看檢疫/.test(text) && !["SECTION", "MAIN", "BODY"].includes(tag)){
+        return node;
+      }
+
+      if(["SECTION", "MAIN", "BODY"].includes(tag)) break;
+      node = node.parentElement;
+    }
+
+    return null;
+  }
+
+  function integrateQuarantineCtaIntoOrderFlow(){
+    const orderSection = findOrderFlowSection();
+    const quarantineLink = document.querySelector("[data-quarantine-link]");
+    if(!orderSection || !quarantineLink) return;
+
+    const quarantineCard = findQuarantineCtaCard(quarantineLink);
+    if(!quarantineCard) return;
+
+    const flowGrid = findSmallestTextContainer(orderSection, [
+      /1\.\s*填寫檢視單|填寫檢視單/,
+      /2\.\s*Email|Email\s*回覆/,
+      /5\.\s*到貨檢疫|到貨檢疫/
+    ]);
+
+    if(!flowGrid || flowGrid.contains(quarantineCard)) return;
+
+    const originalParent = quarantineCard.parentElement;
+
+    flowGrid.classList.add("order-flow-grid-harmonized");
+    quarantineCard.classList.add("order-quarantine-cta");
+    quarantineCard.setAttribute("data-order-flow-cta", "quarantine");
+
+    const kicker =
+      quarantineCard.querySelector(".eyebrow, .kicker, .meta, .small-note") ||
+      quarantineCard.querySelector("p");
+
+    if(kicker && /QUARANTINE RECORD|近期檢疫紀錄|檢疫/i.test(kicker.textContent || "")){
+      kicker.textContent = "狀態透明化";
+      kicker.classList.add("order-quarantine-kicker");
+    }
+
+    const title = Array.from(quarantineCard.querySelectorAll("h1, h2, h3, h4")).find(h => /近期檢疫紀錄|檢疫紀錄/.test(h.textContent || ""));
+    if(title) title.textContent = "近期檢疫紀錄";
+
+    const desc = Array.from(quarantineCard.querySelectorAll("p")).find(p => /查看近期|觀察狀態|詢問名單|批次|狀態/.test(p.textContent || ""));
+    if(desc){
+      desc.textContent = "可查看近期批次、觀察狀態與可詢問名單補充。";
+    }
+
+    const button = quarantineCard.querySelector("a[data-quarantine-link]");
+    if(button){
+      button.textContent = "查看紀錄";
+      button.classList.add("order-quarantine-button");
+    }
+
+    flowGrid.appendChild(quarantineCard);
+
+    cleanupEmptyContainer(originalParent, orderSection);
+  }
+
+  function cleanupEmptyContainer(node, stopNode){
+    let current = node;
+    while(current && current !== stopNode && current !== document.body){
+      const parent = current.parentElement;
+      const text = (current.textContent || "").replace(/\s+/g, "");
+      const hasMedia = current.querySelector("img, video, iframe, canvas, svg");
+      const hasMeaningfulChild = Array.from(current.children).some(child => {
+        return child.offsetParent !== null && (child.textContent || "").trim();
+      });
+
+      if(!text && !hasMedia && !hasMeaningfulChild){
+        current.remove();
+        current = parent;
+      }else{
+        break;
+      }
     }
   }
 
@@ -1169,6 +1287,11 @@
       .payment-confirm-notice .payment-confirm-kicker{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#8b6d38;font-weight:700;margin-bottom:6px}
       .payment-confirm-notice h3{margin:0 0 10px;font-size:20px;line-height:1.35;color:#183c35}
       .payment-confirm-notice p{margin:6px 0;color:#42534d;line-height:1.8}
+      .order-flow-grid-harmonized{align-items:stretch}
+      .order-flow-grid-harmonized > .order-quarantine-cta{margin:0!important;max-width:none!important;width:auto!important;min-height:0}
+      .order-quarantine-cta{border-color:rgba(196,154,84,.45)!important;background:rgba(255,250,240,.82)!important}
+      .order-quarantine-cta .order-quarantine-kicker{color:#8b6d38!important;font-size:12px!important;text-transform:uppercase;letter-spacing:.14em;font-weight:700}
+      .order-quarantine-cta .order-quarantine-button{white-space:nowrap}
       .equipment-card-grid,.scape-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,320px));gap:18px;align-items:stretch;justify-content:start}
       .equipment-card-grid .equipment-guide-prompt,.scape-card-grid .scape-guide-prompt{grid-column:1/-1}
       .equipment-product-card,.scape-product-card{height:100%;width:100%;max-width:320px}
