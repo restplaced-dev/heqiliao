@@ -26,7 +26,6 @@
     updateListUpdatedText();
     bindSearch();
     bindPreviewModal();
-    bindImageCollapseControls();
     bindProductActions();
     bindViewSwitch();
     resetQuickTableHeader(false, false);
@@ -265,8 +264,19 @@
     const container = ensureScapeFilterWrap(list);
     if(!container) return;
 
-    const active = state.scapeCategoryChosen ? "active" : "";
-    container.innerHTML = `<button class="filter-btn ${active}" type="button" data-scape-category="造景">造景</button>`;
+    const collapseActive = !state.scapeCategoryChosen ? "active" : "";
+    const scapeActive = state.scapeCategoryChosen ? "active" : "";
+    container.innerHTML = `
+      <button class="filter-btn ${collapseActive}" type="button" data-scape-collapse="true">收合</button>
+      <button class="filter-btn ${scapeActive}" type="button" data-scape-category="造景">造景</button>
+    `;
+
+    container.querySelector("[data-scape-collapse]")?.addEventListener("click", () => {
+      state.scapeCategory = "全部";
+      state.scapeCategoryChosen = false;
+      renderScapeFilters();
+      renderScapeGallery();
+    });
 
     container.querySelector("[data-scape-category]")?.addEventListener("click", () => {
       state.scapeCategory = "造景";
@@ -312,7 +322,6 @@
           <span class="badge status-neutral">造景介紹</span>
         </div>
         <div class="product-body">
-          <div class="card-image-toggle-row"><button class="image-collapse-toggle" type="button" data-image-collapse="true" aria-expanded="true">收合圖片</button></div>
           <div class="meta"><span>${escapeHtml(item.category || "造景")}</span></div>
           <div>
             <h3 class="name">${escapeHtml(item.title)}</h3>
@@ -392,14 +401,23 @@
   function renderEquipmentFilters(){
     const container = el("equipmentCategoryFilters");
     if(!container) return;
-    const categories = ["全部", ...Array.from(new Set(state.equipments.map(item => item.category).filter(Boolean)))];
-    container.innerHTML = categories.map(cat => {
-      const active = state.equipmentCategoryChosen && cat === state.equipmentCategory ? "active" : "";
-      return `<button class="filter-btn ${active}" type="button" data-equipment-category="${escapeAttr(cat)}">${escapeHtml(cat)}</button>`;
-    }).join("");
+    const categories = Array.from(new Set(state.equipments.map(item => item.category).filter(Boolean)));
+    container.innerHTML = [
+      `<button class="filter-btn ${!state.equipmentCategoryChosen ? "active" : ""}" type="button" data-equipment-collapse="true">收合</button>`,
+      ...categories.map(cat => {
+        const active = state.equipmentCategoryChosen && cat === state.equipmentCategory ? "active" : "";
+        return `<button class="filter-btn ${active}" type="button" data-equipment-category="${escapeAttr(cat)}">${escapeHtml(cat)}</button>`;
+      })
+    ].join("");
+    container.querySelector("[data-equipment-collapse]")?.addEventListener("click", () => {
+      state.equipmentCategory = "全部";
+      state.equipmentCategoryChosen = false;
+      renderEquipmentFilters();
+      renderEquipmentGuide();
+    });
     container.querySelectorAll("[data-equipment-category]").forEach(btn => {
       btn.addEventListener("click", () => {
-        state.equipmentCategory = btn.dataset.equipmentCategory || "全部";
+        state.equipmentCategory = btn.dataset.equipmentCategory || "";
         state.equipmentCategoryChosen = true;
         renderEquipmentFilters();
         renderEquipmentGuide();
@@ -413,11 +431,11 @@
     list.classList.add("equipment-card-grid");
 
     if(!state.equipmentCategoryChosen){
-      list.innerHTML = `<div class="empty choose-list-prompt equipment-guide-prompt">請先選擇上方分類。想快速瀏覽設備，可選「全部」。</div>`;
+      list.innerHTML = `<div class="empty choose-list-prompt equipment-guide-prompt">請先選擇上方分類；需要收回卡片時，點選「收合」。</div>`;
       return;
     }
 
-    const items = state.equipments.filter(item => state.equipmentCategory === "全部" || item.category === state.equipmentCategory);
+    const items = state.equipments.filter(item => item.category === state.equipmentCategory);
     if(!items.length){
       list.innerHTML = `<div class="empty scape-empty equipment-guide-prompt">目前尚無此分類的設備介紹。</div>`;
       return;
@@ -441,7 +459,6 @@
           <span class="badge status-neutral">設備介紹</span>
         </div>
         <div class="product-body">
-          <div class="card-image-toggle-row"><button class="image-collapse-toggle" type="button" data-image-collapse="true" aria-expanded="true">收合圖片</button></div>
           <div class="meta"><span>${escapeHtml(item.category || "設備")}</span></div>
           <div>
             <h3 class="name">${escapeHtml(item.title)}</h3>
@@ -646,9 +663,21 @@
   function renderCategories(){
     const container = el("categoryFilters");
     if(!container) return;
-    const categories = ["全部", ...Array.from(new Set(state.products.map(p => p.category).filter(Boolean)))];
-    container.innerHTML = categories.map(cat => `<button class="filter-btn ${state.categoryChosen && cat === state.category ? "active" : ""}" data-category="${escapeAttr(cat)}">${escapeHtml(cat)}</button>`).join("");
-    container.querySelectorAll("button").forEach(btn => btn.addEventListener("click", () => {
+    const categories = Array.from(new Set(state.products.map(p => p.category).filter(Boolean)));
+    container.innerHTML = [
+      `<button class="filter-btn ${!state.categoryChosen && !state.query ? "active" : ""}" type="button" data-category-collapse="true">收合</button>`,
+      ...categories.map(cat => `<button class="filter-btn ${state.categoryChosen && cat === state.category ? "active" : ""}" type="button" data-category="${escapeAttr(cat)}">${escapeHtml(cat)}</button>`)
+    ].join("");
+    container.querySelector("[data-category-collapse]")?.addEventListener("click", () => {
+      state.category = "全部";
+      state.categoryChosen = false;
+      state.query = "";
+      const search = el("searchInput");
+      if(search) search.value = "";
+      renderCategories();
+      applyFilters();
+    });
+    container.querySelectorAll("[data-category]").forEach(btn => btn.addEventListener("click", () => {
       state.category = btn.dataset.category;
       state.categoryChosen = true;
       renderCategories();
@@ -676,7 +705,7 @@
       return;
     }
     if(!state.categoryChosen && !state.query){
-      grid.innerHTML = `<div class="empty choose-list-prompt">請先選擇上方分類。想快速瀏覽可選「全部」；想找特定魚種或造景，可直接選分類。</div>`;
+      grid.innerHTML = `<div class="empty choose-list-prompt">請先選擇上方分類；需要收回卡片時，點選「收合」。</div>`;
       return;
     }
     if(!state.filtered.length){
@@ -793,7 +822,6 @@
         <span class="badge ${statusClass(p.status, p.soldOut)}">${escapeHtml(p.status)}</span>
       </div>
       <div class="product-body">
-        <div class="card-image-toggle-row"><button class="image-collapse-toggle" type="button" data-image-collapse="true" aria-expanded="true">收合圖片</button></div>
         <div class="meta"><span>${escapeHtml(p.category)}</span><span>${p.soldOut ? "暫不出貨" : "可私訊確認"}</span></div>
         <div>
           <h3 class="name">${escapeHtml(p.name)}</h3>
@@ -931,7 +959,7 @@
     if(!body) return;
     const colSpan = 4 + (showSize ? 1 : 0) + (showStock ? 1 : 0);
     if(!state.categoryChosen && !state.query){
-      body.innerHTML = `<tr class="quick-prompt-row"><td colspan="${colSpan}">請先選擇上方分類。想快速瀏覽可選「全部」；想找特定魚種或造景，可直接選分類。</td></tr>`;
+      body.innerHTML = `<tr class="quick-prompt-row"><td colspan="${colSpan}">請先選擇上方分類；需要收回清單時，點選「收合」。</td></tr>`;
       return;
     }
     if(!state.filtered.length){
@@ -953,22 +981,6 @@
     }).join("");
   }
 
-
-  function bindImageCollapseControls(){
-    document.addEventListener("click", (event) => {
-      const toggle = event.target.closest("[data-image-collapse]");
-      if(!toggle) return;
-      event.preventDefault();
-      event.stopPropagation();
-      const card = toggle.closest(".product-card");
-      if(!card) return;
-      const collapsed = card.classList.toggle("image-collapsed");
-      card.querySelectorAll("[data-image-collapse]").forEach(btn => {
-        btn.textContent = collapsed ? "展開圖片" : "收合圖片";
-        btn.setAttribute("aria-expanded", collapsed ? "false" : "true");
-      });
-    });
-  }
 
   function bindProductActions(){
     document.addEventListener("click", (event) => {
@@ -1190,13 +1202,12 @@
       .payment-confirm-notice .payment-confirm-kicker{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#8b6d38;font-weight:700;margin-bottom:6px}
       .payment-confirm-notice h3{margin:0 0 10px;font-size:20px;line-height:1.35;color:#183c35}
       .payment-confirm-notice p{margin:6px 0;color:#42534d;line-height:1.8}
-      .card-image-toggle-row{margin:0 0 12px}
-      .image-collapse-toggle{display:inline-flex;align-items:center;justify-content:center;padding:8px 14px;border-radius:999px;border:1px solid rgba(24,60,53,.16);background:#f3f6f4;color:#183c35;font-size:13px;font-weight:700;cursor:pointer}
-      .image-collapse-toggle:hover{filter:brightness(.98)}
-      .product-card.image-collapsed .product-image{display:none}
       .product-card .product-image{background:#f7f6ef}
       .product-card .product-image .image-zoom-trigger{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:transparent}
       .product-card .product-image img{width:100%;height:100%;object-fit:contain;background:#f7f6ef}
+      .filter-btn[data-category-collapse],
+      .filter-btn[data-equipment-collapse],
+      .filter-btn[data-scape-collapse]{border-color:rgba(196,154,84,.42);color:#8b6d38}
       .equipment-card-grid,.scape-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,320px));gap:18px;align-items:stretch;justify-content:start}
       .equipment-card-grid .equipment-guide-prompt,.scape-card-grid .scape-guide-prompt{grid-column:1/-1}
       .equipment-product-card,.scape-product-card{height:100%;width:100%;max-width:320px}
