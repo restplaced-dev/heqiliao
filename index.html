@@ -171,6 +171,147 @@
       margin-top: 14px;
     }
 
+    .flow-summary {
+      margin: 0 0 20px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: #f6f8f7;
+      border: 1px solid rgba(24, 60, 53, 0.12);
+      color: #31413c;
+      line-height: 1.8;
+    }
+
+    .customer-info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin: 0 0 22px;
+    }
+
+    .customer-info-card {
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid rgba(24, 60, 53, 0.12);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.035);
+      color: #3c4d47;
+      line-height: 1.75;
+    }
+
+    .customer-info-card b {
+      display: block;
+      margin-bottom: 6px;
+      color: #183c35;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .faq-card {
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid rgba(24, 60, 53, 0.12);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.035);
+      line-height: 1.75;
+      color: #3c4d47;
+    }
+
+    .faq-card b {
+      display: block;
+      color: #183c35;
+      margin-bottom: 6px;
+    }
+
+    .final-cta-panel {
+      padding: 24px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(24, 60, 53, 0.96), rgba(35, 84, 75, 0.92));
+      color: #fffaf0;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .final-cta-panel h2 {
+      margin: 0 0 8px;
+      color: #fffaf0;
+    }
+
+    .final-cta-panel p {
+      margin: 0;
+      color: rgba(255, 250, 240, 0.86);
+      line-height: 1.8;
+    }
+
+    .final-cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 780px) {
+      .customer-info-grid,
+      .faq-grid,
+      .final-cta-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .final-cta-actions {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .header .nav {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 10px;
+        padding-bottom: 10px;
+      }
+
+      .header .brand {
+        flex: 0 0 auto;
+      }
+
+      .header .brand img {
+        max-height: 64px;
+      }
+
+      .nav-links {
+        display: flex !important;
+        width: 100%;
+        max-width: 100%;
+        gap: 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 4px 0 2px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .nav-links::-webkit-scrollbar {
+        display: none;
+      }
+
+      .nav-links a {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(24, 60, 53, 0.12);
+        color: #183c35;
+        font-size: 13px;
+        line-height: 1;
+      }
+    }
+
     @media (max-width: 640px) {
       .scape-item summary {
         padding: 16px;
@@ -198,12 +339,12 @@
     <div class="wrap nav">
       <a class="brand" href="#top" aria-label="河憩寮首頁"><img src="logo-official-transparent.png" alt="河憩寮官方 Logo"></a>
       <nav class="nav-links" aria-label="主選單">
+        <a href="#stock">本週名單</a>
         <a href="#shipping">訂購流程</a>
+        <a data-quarantine-link href="#">檢疫紀錄</a>
         <a href="#scape-types">造景介紹</a>
         <a href="#equipment-guide">設備介紹</a>
-        <a href="#stock">本週名單</a>
         <a href="#principles">飼養原則</a>
-        <a data-quarantine-link href="#">檢疫紀錄</a>
       </nav>
     </div>
   </header>
@@ -217,7 +358,7 @@
           <p class="lead">河憩寮以淡水觀賞魚為主，也整理合作造景品項、目前觀察到的狀態，以及詢問前的注意事項。比起把魚賣出去，我們更在意你帶回去之後，能不能養得長久、養得安心。</p>
           <div class="hero-actions">
             <a class="btn gold" href="#shipping">先看訂購流程</a>
-            <a class="btn secondary quick-list-jump" href="#quickListSection">查看文字版快速清單</a>
+            <a class="btn secondary quick-list-jump" href="#stock">查看本週可詢問名單</a>
           </div>
           <div class="notice">詢問前請先透過 LINE 確認庫存、狀態與可安排日期。活體、造景或特殊環境，建議先描述缸況，再評估是否適合。</div>
         </div>
@@ -239,6 +380,51 @@
       </div>
     </section>
 
+    <section id="stock" class="section alt">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="section-title">
+            <p class="eyebrow">Current List</p>
+            <h2>本週可詢問清單</h2>
+            <p>以下名單依試算表資料更新。實際庫存、狀態與可安排日期，請以 LINE 確認為準。</p>
+          </div>
+          <div class="small-note" id="stockStatus">資料讀取中</div>
+        </div>
+        <div class="list-updated-note" id="listUpdatedNote"></div>
+        <div class="list-note">「可詢問」＝目前可討論是否安排，不代表已完成預留或一定能立即出貨；仍會依當下狀態、收件安排與批次確認。</div>
+        <div class="toolbar">
+          <label class="search" aria-label="搜尋品項"><input id="searchInput" type="search" placeholder="輸入品名、學名、分類、標籤"></label>
+          <div class="filters" id="categoryFilters"></div>
+        </div>
+        <div class="view-switch" aria-label="名單顯示方式">
+          <span>顯示方式</span>
+          <button class="view-btn active" type="button" data-view-mode="text">文字版</button>
+          <button class="view-btn" type="button" data-view-mode="photo">圖文版</button>
+        </div>
+        <div class="inline-quick-list" id="quickListSection">
+          <div class="section-head compact-head">
+            <div class="section-title">
+              <p class="eyebrow">Quick List</p>
+              <h2>文字版快速清單</h2>
+              <p>請先選擇上方分類。想快速瀏覽可選「全部」；需要收回清單時，點選「收合」。</p>
+            </div>
+          </div>
+          <div class="quick-table" id="quickTableWrap">
+            <table id="quickTable">
+              <thead><tr><th>分類</th><th>品名</th><th>尺寸</th><th>價格</th><th>狀態</th></tr></thead>
+              <tbody id="quickListBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="section-title card-list-title hidden-view" id="photoListTitle">
+          <p class="eyebrow">Photo List</p>
+          <h2>圖文版名單</h2>
+          <p>請先選擇上方分類。想快速瀏覽可選「全部」；需要收回清單時，點選「收合」。照片可點開查看大圖。</p>
+        </div>
+        <div class="grid" id="productGrid"></div>
+      </div>
+    </section>
+
     <section id="shipping" class="section">
       <div class="wrap">
         <div class="section-head">
@@ -247,6 +433,12 @@
             <h2>訂購流程與到貨提醒</h2>
             <p>請先填寫檢視單整理缸況與需求。河憩寮會依內容評估，並回覆到填寫人留下的 Gmail；確認沒有明顯問題後，再進入訂購討論。</p>
           </div>
+        </div>
+        <div class="flow-summary"><b>簡單來說：</b>先填檢視單 → 等 Email 回覆 → LINE 確認魚況與數量 → 安排付款、取魚或出貨。</div>
+        <div class="customer-info-grid">
+          <div class="customer-info-card"><b>訂購採確認制</b>確認魚隻狀態、數量與可安排日期後，才會提供付款方式；不是看到名單就直接下單。</div>
+          <div class="customer-info-card"><b>活體安排看魚況</b>若該批個體仍需觀察、天氣不適合或收件時間不穩，會先暫緩安排。</div>
+          <div class="customer-info-card"><b>付款與寄送</b>可依確認後的安排提供付款連結；若需保溫箱或特殊包裝，會另外說明押金與退還方式。</div>
         </div>
         <div class="shipping-grid flow-grid">
           <div class="shipping-card featured-step">
@@ -274,7 +466,7 @@
             <p class="eyebrow">Status Transparency</p>
             <h3>近期檢疫紀錄</h3>
             <p>可查看近期批次、觀察狀態與可詢問名單補充。</p>
-            <a class="btn gold inline-card-btn" data-quarantine-link href="#">查看紀錄</a>
+            <a class="btn gold inline-card-btn" data-quarantine-link href="#">查看近期檢疫紀錄</a>
           </div>
         </div>
       </div>
@@ -310,51 +502,6 @@
       </div>
     </section>
 
-    <section id="stock" class="section alt">
-      <div class="wrap">
-        <div class="section-head">
-          <div class="section-title">
-            <p class="eyebrow">Current List</p>
-            <h2>本週可詢問清單</h2>
-            <p>以下名單依試算表資料更新。實際庫存、狀態與可安排日期，請以 LINE 確認為準。</p>
-          </div>
-          <div class="small-note" id="stockStatus">資料讀取中</div>
-        </div>
-        <div class="list-updated-note" id="listUpdatedNote"></div>
-        <div class="list-note">「可詢問」不代表一定能立即安排，仍會依當下狀態、收件安排與批次確認。</div>
-        <div class="toolbar">
-          <label class="search" aria-label="搜尋品項"><input id="searchInput" type="search" placeholder="輸入品名、學名、分類、標籤"></label>
-          <div class="filters" id="categoryFilters"></div>
-        </div>
-        <div class="view-switch" aria-label="名單顯示方式">
-          <span>顯示方式</span>
-          <button class="view-btn active" type="button" data-view-mode="text">文字版</button>
-          <button class="view-btn" type="button" data-view-mode="photo">圖文版</button>
-        </div>
-        <div class="inline-quick-list" id="quickListSection">
-          <div class="section-head compact-head">
-            <div class="section-title">
-              <p class="eyebrow">Quick List</p>
-              <h2>文字版快速清單</h2>
-              <p>請先選擇上方分類。想快速瀏覽可選「全部」；需要收回清單時，點選「收合」。</p>
-            </div>
-          </div>
-          <div class="quick-table" id="quickTableWrap">
-            <table id="quickTable">
-              <thead><tr><th>分類</th><th>品名</th><th>尺寸</th><th>價格</th><th>狀態</th></tr></thead>
-              <tbody id="quickListBody"></tbody>
-            </table>
-          </div>
-        </div>
-        <div class="section-title card-list-title hidden-view" id="photoListTitle">
-          <p class="eyebrow">Photo List</p>
-          <h2>圖文版名單</h2>
-          <p>請先選擇上方分類。想快速瀏覽可選「全部」；需要收回清單時，點選「收合」。照片可點開查看大圖。</p>
-        </div>
-        <div class="grid" id="productGrid"></div>
-      </div>
-    </section>
-
     <section id="principles" class="section alt">
       <div class="wrap principles">
         <div class="principle-panel">
@@ -367,6 +514,42 @@
           <div class="principle-item"><b>環境</b><p>條件不是死背數字；重點是觀察魚在環境中的反應。看牠是否願意探索、安心躲藏、穩定進食，再調整水流、遮蔽、空間與維護節奏。</p></div>
           <div class="principle-item"><b>健康</b><p>觀察體態、活動力、呼吸、進食與恢復狀況；若評估仍不穩，會先暫停販售。</p></div>
           <div class="principle-item"><b>行為與心理狀態</b><p>重視魚是否願意探索、能安心躲藏與休息，並在環境中逐步恢復穩定，而不只是維持存活。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="section-title">
+            <p class="eyebrow">FAQ</p>
+            <h2>常見問題</h2>
+            <p>先整理最常被問到的幾件事，減少來回確認，也讓安排更穩。</p>
+          </div>
+        </div>
+        <div class="faq-grid">
+          <div class="faq-card"><b>可以直接下單嗎？</b>目前採確認制。請先填寫檢視單，確認環境、魚況與數量後，再安排付款或取魚／出貨。</div>
+          <div class="faq-card"><b>什麼是檢視單？</b>檢視單是了解飼養環境與需求用，不是考試。填得越接近實際狀況，越容易判斷是否適合安排。</div>
+          <div class="faq-card"><b>填完多久會回覆？</b>會盡量依序回覆到填寫的 Gmail。若品項或環境需要更多確認，會再請你透過 LINE 補充。</div>
+          <div class="faq-card"><b>為什麼可詢問但不能馬上出？</b>可詢問代表可以討論安排，不代表該批魚已經完全適合出貨。若仍需觀察、休養或天氣不適合，會先暫緩。</div>
+          <div class="faq-card"><b>可以寄送嗎？</b>活體寄送會依魚況、天氣、包裝與收件時間評估。若風險過高，會建議改期或改用其他安排。</div>
+          <div class="faq-card"><b>收到魚後要怎麼處理？</b>建議先檢疫與觀察，讓魚從運輸壓力中恢復，確認進食與活動穩定後，再評估是否進主缸。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="final-cta-panel">
+          <div>
+            <p class="eyebrow">Ready to Ask</p>
+            <h2>準備詢問魚隻了嗎？</h2>
+            <p>先看本週名單，確認有興趣的品項後，再填寫檢視單。若還不確定適不適合，也可以先整理缸況一起討論。</p>
+          </div>
+          <div class="final-cta-actions">
+            <a class="btn gold" href="#stock">查看本週名單</a>
+            <a class="btn secondary" data-questionnaire-link href="#">填寫檢視單</a>
+          </div>
         </div>
       </div>
     </section>
@@ -385,7 +568,7 @@
 
   <a class="floating-line" data-line-link href="https://lin.ee/p9wkJW2" aria-label="前往 LINE 官方帳號詢問"><span class="line-dot"></span><span class="line-label">LINE 詢問</span></a>
   <script src="config.js?v=20260602-v13"></script>
-  <script src="app.v2.js?v=20260606-v34"></script>
+  <script src="app.v2.js?v=20260606-v36"></script>
 
   <div class="preview-modal" id="productPreviewModal" aria-hidden="true">
     <div class="preview-backdrop" data-preview-close></div>
