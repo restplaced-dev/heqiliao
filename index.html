@@ -13,7 +13,7 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-spec-list-fix">
+  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-image-zoom">
 
   <style>
     .scape-accordion { display: grid; gap: 14px; }
@@ -63,6 +63,10 @@
     .hardware-card.hardware-muted { opacity: 0.68; }
     .hardware-img-wrap { width: 100%; aspect-ratio: 4 / 3; max-height: 210px; background: #eef5f1; overflow: hidden; border-bottom: 1px solid rgba(24, 60, 53, 0.08); }
     .hardware-img { width: 100%; height: 100%; object-fit: contain; display: block; background: #f7f2e7; }
+    .hardware-img { transition: transform .18s ease, filter .18s ease; }
+    .hardware-img-wrap[data-hardware-zoom-img] { cursor: zoom-in; }
+    .hardware-img-wrap[data-hardware-zoom-img]:hover .hardware-img { transform: scale(1.015); filter: brightness(0.98); }
+    .hardware-img-wrap[data-hardware-zoom-img]:focus-visible { outline: 3px solid rgba(201, 143, 71, 0.72); outline-offset: 3px; }
     .hardware-img-caption { position: absolute; left: 10px; bottom: 10px; max-width: calc(100% - 20px); padding: 5px 9px; border-radius: 999px; background: rgba(24, 60, 53, 0.82); color: #fffaf0; font-size: 12px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .hardware-spec-name-button { appearance: none; border: 0; background: transparent; color: #1f5f52; font: inherit; font-weight: 800; padding: 0; text-align: left; cursor: pointer; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
     .hardware-spec-name-button:hover, .hardware-spec-name-button.active { color: #c98f47; }
@@ -452,8 +456,8 @@
 
   <a class="floating-line" data-line-link href="https://lin.ee/p9wkJW2" aria-label="前往 LINE 官方帳號詢問"><span class="line-dot"></span><span class="line-label">LINE 詢問</span></a>
 
-  <script src="config.js?v=20260607-hardware-spec-list-fix"></script>
-  <script src="app.v2.js?v=20260606-v37"></script>
+  <script src="config.js?v=20260607-hardware-image-zoom"></script>
+  <script src="app.v2.js?v=20260606-v38"></script>
 
   <script>
   (function(){
@@ -464,7 +468,10 @@
     let hardwareCategory = "全部";
     let hardwareCategoryChosen = false;
 
-    document.addEventListener("DOMContentLoaded", loadHardwareSale);
+    document.addEventListener("DOMContentLoaded", () => {
+      setupHardwareImageZoom();
+      loadHardwareSale();
+    });
 
     async function loadHardwareSale(){
       const list = el("hardwareSaleList");
@@ -566,6 +573,7 @@
 
       list.innerHTML = items.map(renderHardwareCard).join("");
       bindHardwareSpecImageSwitchers(list);
+      bindHardwareImageZooms(list);
       list.querySelectorAll("img").forEach(img => img.addEventListener("error", () => { img.src = PLACEHOLDER; }));
       if(status) status.textContent = `${hardwareCategory}｜共 ${items.length} 項`;
     }
@@ -660,7 +668,8 @@
       const image = firstVariantWithImage?.image || item.image || "";
       if(!image) return "";
       const label = firstVariantWithImage?.spec || item.name || "商品圖";
-      return `<div class="hardware-img-wrap">
+      const caption = label ? `${item.name}｜${label}` : (item.name || "商品圖");
+      return `<div class="hardware-img-wrap" data-hardware-zoom-img="${escapeHtml(image)}" data-hardware-zoom-caption="${escapeHtml(caption)}" role="button" tabindex="0" aria-label="查看${escapeHtml(caption)}大圖">
         <img class="hardware-img" data-hardware-main-img src="${escapeHtml(image)}" alt="${escapeHtml(item.name)} ${escapeHtml(label)}" loading="lazy">
         ${label ? `<span class="hardware-img-caption" data-hardware-main-caption>${escapeHtml(label)}</span>` : ""}
       </div>`;
@@ -698,10 +707,76 @@
           img.src = image;
           img.alt = label ? `${card.querySelector("h3")?.textContent || "商品"} ${label}` : (card.querySelector("h3")?.textContent || "商品圖");
           if(caption) caption.textContent = label;
+          const zoomWrap = card.querySelector("[data-hardware-zoom-img]");
+          if(zoomWrap){
+            const name = card.querySelector("h3")?.textContent || "商品";
+            zoomWrap.dataset.hardwareZoomImg = image;
+            zoomWrap.dataset.hardwareZoomCaption = label ? `${name}｜${label}` : `${name} 商品圖`;
+            zoomWrap.setAttribute("aria-label", `查看${zoomWrap.dataset.hardwareZoomCaption}大圖`);
+          }
           card.querySelectorAll(".hardware-spec-name-button").forEach(btn => btn.classList.remove("active"));
           button.classList.add("active");
         });
       });
+    }
+
+    function bindHardwareImageZooms(scope){
+      scope.querySelectorAll("[data-hardware-zoom-img]").forEach(trigger => {
+        trigger.addEventListener("click", () => openHardwareImageZoomFromTrigger(trigger));
+        trigger.addEventListener("keydown", (event) => {
+          if(event.key === "Enter" || event.key === " "){
+            event.preventDefault();
+            openHardwareImageZoomFromTrigger(trigger);
+          }
+        });
+      });
+    }
+
+    function openHardwareImageZoomFromTrigger(trigger){
+      const card = trigger.closest(".hardware-card");
+      const mainImg = card?.querySelector("[data-hardware-main-img]");
+      const image = mainImg?.currentSrc || mainImg?.src || trigger.dataset.hardwareZoomImg || "";
+      const caption = trigger.dataset.hardwareZoomCaption || card?.querySelector("h3")?.textContent || "商品圖";
+      if(image) openHardwareImageZoom(image, caption);
+    }
+
+    function setupHardwareImageZoom(){
+      const modal = el("imageZoomModal");
+      if(!modal) return;
+      modal.querySelectorAll("[data-image-close]").forEach(close => {
+        close.addEventListener("click", closeHardwareImageZoom);
+      });
+      document.addEventListener("keydown", (event) => {
+        if(event.key === "Escape" && modal.classList.contains("show")) closeHardwareImageZoom();
+      });
+    }
+
+    function openHardwareImageZoom(image, caption){
+      const modal = el("imageZoomModal");
+      const img = el("imageZoomImg");
+      const cap = el("imageZoomCaption");
+      if(!modal || !img) return;
+      img.src = image;
+      img.alt = caption || "商品圖";
+      if(cap) cap.textContent = caption || "";
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+    }
+
+    function closeHardwareImageZoom(){
+      const modal = el("imageZoomModal");
+      const img = el("imageZoomImg");
+      const cap = el("imageZoomCaption");
+      if(!modal) return;
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+      if(img){
+        img.removeAttribute("src");
+        img.alt = "";
+      }
+      if(cap) cap.textContent = "";
     }
 
     function renderSingleSpec(item){
