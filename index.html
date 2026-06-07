@@ -13,7 +13,7 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-multispec">
+  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-accordion">
 
   <style>
     .scape-accordion { display: grid; gap: 14px; }
@@ -54,6 +54,8 @@
     .final-cta-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
 
     .hardware-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; align-items: stretch; }
+    .hardware-filters { margin: 0 0 16px; }
+    .hardware-list-note { margin: 0 0 16px; padding: 14px 16px; border-radius: 16px; background: rgba(255, 250, 240, 0.72); border: 1px solid rgba(24, 60, 53, 0.10); color: #53645f; line-height: 1.8; }
     .hardware-card { background: rgba(255, 255, 255, 0.86); border: 1px solid rgba(24, 60, 53, 0.13); border-radius: 20px; overflow: hidden; box-shadow: 0 8px 24px rgba(20, 45, 40, 0.08); display: flex; flex-direction: column; min-height: 100%; }
     .hardware-card.hardware-muted { opacity: 0.68; }
     .hardware-img-wrap { width: 100%; aspect-ratio: 4 / 3; background: #eef5f1; overflow: hidden; border-bottom: 1px solid rgba(24, 60, 53, 0.08); }
@@ -235,6 +237,7 @@
           </div>
           <div class="small-note" id="hardwareSaleStatus">硬體販售整理中</div>
         </div>
+        <div class="filters hardware-filters" id="hardwareCategoryFilters"></div>
         <div class="hardware-grid" id="hardwareSaleList"></div>
       </div>
     </section>
@@ -284,7 +287,7 @@
 
   <a class="floating-line" data-line-link href="https://lin.ee/p9wkJW2" aria-label="前往 LINE 官方帳號詢問"><span class="line-dot"></span><span class="line-label">LINE 詢問</span></a>
 
-  <script src="config.js?v=20260607-hardware-multispec"></script>
+  <script src="config.js?v=20260607-hardware-accordion"></script>
   <script src="app.v2.js?v=20260606-v37"></script>
 
   <script>
@@ -292,6 +295,9 @@
     const CONFIG = window.HEQILIAO_CONFIG || {};
     const PLACEHOLDER = "card-placeholder.svg";
     const el = (id) => document.getElementById(id);
+    let hardwareItems = [];
+    let hardwareCategory = "全部";
+    let hardwareCategoryChosen = false;
 
     document.addEventListener("DOMContentLoaded", loadHardwareSale);
 
@@ -302,6 +308,8 @@
 
       const url = CONFIG.hardwareSaleCsvUrl || CONFIG.hardwareCsvUrl || "";
       if(!url || !String(url).trim()){
+        const filterWrap = el("hardwareCategoryFilters");
+        if(filterWrap) filterWrap.innerHTML = "";
         list.innerHTML = '<div class="hardware-empty">硬體販售資料尚未設定。請先建立「硬體販售」試算表分頁，發布 CSV 後填入 config.js 的 hardwareSaleCsvUrl。</div>';
         if(status) status.textContent = "尚未設定";
         return;
@@ -312,6 +320,10 @@
         const csv = await fetchTextNoCache(url, 9000);
         const rows = csvToObjects(csv);
         const items = groupHardwareItems(rows);
+        hardwareItems = items;
+        hardwareCategory = "全部";
+        hardwareCategoryChosen = false;
+        renderHardwareFilters();
 
         if(!items.length){
           list.innerHTML = '<div class="hardware-empty">目前沒有硬體販售品項。</div>';
@@ -319,14 +331,77 @@
           return;
         }
 
-        list.innerHTML = items.map(renderHardwareCard).join("");
-        list.querySelectorAll("img").forEach(img => img.addEventListener("error", () => { img.src = PLACEHOLDER; }));
-        if(status) status.textContent = `共 ${items.length} 項`;
+        renderHardwareList();
+        if(status) status.textContent = "硬體販售已更新";
       }catch(error){
         console.warn("硬體販售資料讀取失敗：", error);
+        const filterWrap = el("hardwareCategoryFilters");
+        if(filterWrap) filterWrap.innerHTML = "";
         list.innerHTML = '<div class="hardware-empty">硬體販售資料讀取失敗。請確認 CSV 是否已發布到網路，且網址可公開讀取。</div>';
         if(status) status.textContent = "讀取失敗";
       }
+    }
+
+    function renderHardwareFilters(){
+      const container = el("hardwareCategoryFilters");
+      if(!container) return;
+      const categories = Array.from(new Set(hardwareItems.map(item => item.category).filter(Boolean)));
+      if(!categories.length){
+        container.innerHTML = "";
+        return;
+      }
+      container.innerHTML = [
+        `<button type="button" class="filter ${!hardwareCategoryChosen ? "active" : ""}" data-hardware-collapse>收合</button>`,
+        ...categories.map(cat => {
+          const active = hardwareCategoryChosen && cat === hardwareCategory ? "active" : "";
+          return `<button type="button" class="filter ${active}" data-hardware-category="${escapeHtml(cat)}">${escapeHtml(cat)}</button>`;
+        })
+      ].join("");
+
+      container.querySelector("[data-hardware-collapse]")?.addEventListener("click", () => {
+        hardwareCategory = "全部";
+        hardwareCategoryChosen = false;
+        renderHardwareFilters();
+        renderHardwareList();
+      });
+
+      container.querySelectorAll("[data-hardware-category]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          hardwareCategory = btn.dataset.hardwareCategory || "";
+          hardwareCategoryChosen = true;
+          renderHardwareFilters();
+          renderHardwareList();
+        });
+      });
+    }
+
+    function renderHardwareList(){
+      const list = el("hardwareSaleList");
+      const status = el("hardwareSaleStatus");
+      if(!list) return;
+
+      if(!hardwareItems.length){
+        list.innerHTML = '<div class="hardware-empty">目前沒有硬體販售品項。</div>';
+        if(status) status.textContent = "目前無資料";
+        return;
+      }
+
+      if(!hardwareCategoryChosen){
+        list.innerHTML = '<div class="hardware-empty">請先選擇上方分類；需要收回卡片時，點選「收合」。</div>';
+        if(status) status.textContent = "請先選擇分類";
+        return;
+      }
+
+      const items = hardwareItems.filter(item => item.category === hardwareCategory);
+      if(!items.length){
+        list.innerHTML = '<div class="hardware-empty">目前尚無此分類的硬體品項。</div>';
+        if(status) status.textContent = "目前無資料";
+        return;
+      }
+
+      list.innerHTML = items.map(renderHardwareCard).join("");
+      list.querySelectorAll("img").forEach(img => img.addEventListener("error", () => { img.src = PLACEHOLDER; }));
+      if(status) status.textContent = `${hardwareCategory}｜共 ${items.length} 項`;
     }
 
     function groupHardwareItems(rows){
