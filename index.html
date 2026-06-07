@@ -13,7 +13,7 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-multiimage">
+  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-spec-click">
 
   <style>
     .scape-accordion { display: grid; gap: 14px; }
@@ -63,10 +63,10 @@
     .hardware-card.hardware-muted { opacity: 0.68; }
     .hardware-img-wrap { width: 100%; aspect-ratio: 4 / 3; max-height: 210px; background: #eef5f1; overflow: hidden; border-bottom: 1px solid rgba(24, 60, 53, 0.08); }
     .hardware-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .hardware-img-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(78px, 1fr)); gap: 8px; padding: 10px; background: #eef5f1; border-bottom: 1px solid rgba(24, 60, 53, 0.08); }
-    .hardware-thumb { position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 12px; background: #ffffff; border: 1px solid rgba(24, 60, 53, 0.10); }
-    .hardware-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .hardware-thumb span { position: absolute; left: 6px; right: 6px; bottom: 6px; padding: 3px 5px; border-radius: 999px; background: rgba(24, 60, 53, 0.82); color: #fffaf0; font-size: 11px; line-height: 1.2; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hardware-img-caption { position: absolute; left: 10px; bottom: 10px; max-width: calc(100% - 20px); padding: 5px 9px; border-radius: 999px; background: rgba(24, 60, 53, 0.82); color: #fffaf0; font-size: 12px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hardware-spec-name-button { appearance: none; border: 0; background: transparent; color: #1f5f52; font: inherit; font-weight: 800; padding: 0; text-align: left; cursor: pointer; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    .hardware-spec-name-button:hover, .hardware-spec-name-button.active { color: #c98f47; }
+    .hardware-spec-name-button.active { text-decoration-thickness: 2px; }
     .hardware-body { padding: 13px 14px 15px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
     .hardware-top { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
     .hardware-tag, .hardware-status { font-size: 12px; line-height: 1; padding: 6px 8px; border-radius: 999px; background: rgba(55, 115, 100, 0.1); color: #2f6f61; white-space: nowrap; }
@@ -95,7 +95,6 @@
     @media (max-width: 640px) {
       .hardware-grid { grid-template-columns: 1fr; }
       .hardware-img-wrap { max-height: none; }
-      .hardware-img-gallery { grid-template-columns: repeat(auto-fit, minmax(86px, 1fr)); }
       .hardware-filters .filter { padding: 9px 14px; min-height: 38px; font-size: 13px; }
       .scape-item summary { padding: 16px; font-size: 16px; }
       .scape-item summary b { font-size: 17px; }
@@ -298,7 +297,7 @@
 
   <a class="floating-line" data-line-link href="https://lin.ee/p9wkJW2" aria-label="前往 LINE 官方帳號詢問"><span class="line-dot"></span><span class="line-label">LINE 詢問</span></a>
 
-  <script src="config.js?v=20260607-hardware-multiimage"></script>
+  <script src="config.js?v=20260607-hardware-spec-click"></script>
   <script src="app.v2.js?v=20260606-v37"></script>
 
   <script>
@@ -411,6 +410,7 @@
       }
 
       list.innerHTML = items.map(renderHardwareCard).join("");
+      bindHardwareSpecImageSwitchers(list);
       list.querySelectorAll("img").forEach(img => img.addEventListener("error", () => { img.src = PLACEHOLDER; }));
       if(status) status.textContent = `${hardwareCategory}｜共 ${items.length} 項`;
     }
@@ -501,35 +501,48 @@
     }
 
     function renderHardwareImages(item, variants){
-      const images = [];
-      const seen = new Set();
-      (variants || []).forEach(v => {
-        const image = v.image || "";
-        if(!image || seen.has(image)) return;
-        seen.add(image);
-        images.push({ image, label: v.spec || item.name || "商品圖" });
-      });
-      if(!images.length && item.image) images.push({ image: item.image, label: item.name || "商品圖" });
-      if(!images.length) return "";
-
-      if(images.length === 1){
-        const only = images[0];
-        return `<div class="hardware-img-wrap"><img class="hardware-img" src="${escapeHtml(only.image)}" alt="${escapeHtml(item.name)}" loading="lazy"></div>`;
-      }
-
-      return `<div class="hardware-img-gallery">${images.map(pic => `
-        <a class="hardware-thumb" href="${escapeHtml(pic.image)}" target="_blank" rel="noopener" title="${escapeHtml(pic.label)}">
-          <img src="${escapeHtml(pic.image)}" alt="${escapeHtml(item.name)} ${escapeHtml(pic.label)}" loading="lazy">
-          <span>${escapeHtml(pic.label)}</span>
-        </a>
-      `).join("")}</div>`;
+      const firstVariantWithImage = (variants || []).find(v => v.image);
+      const image = firstVariantWithImage?.image || item.image || "";
+      if(!image) return "";
+      const label = firstVariantWithImage?.spec || item.name || "商品圖";
+      return `<div class="hardware-img-wrap">
+        <img class="hardware-img" data-hardware-main-img src="${escapeHtml(image)}" alt="${escapeHtml(item.name)} ${escapeHtml(label)}" loading="lazy">
+        ${label ? `<span class="hardware-img-caption" data-hardware-main-caption>${escapeHtml(label)}</span>` : ""}
+      </div>`;
     }
 
     function renderSpecTable(variants){
+      const firstImage = variants.find(v => v.image)?.image || "";
       return `<table class="hardware-spec-table">
         <thead><tr><th>規格</th><th>狀態</th><th>價格</th></tr></thead>
-        <tbody>${variants.map(v => `<tr><td>${escapeHtml(v.spec || "單一規格")}</td><td>${escapeHtml(v.status || "")}</td><td class="hardware-table-price">${escapeHtml(formatPrice(v.price))}</td></tr>`).join("")}</tbody>
+        <tbody>${variants.map(v => {
+          const spec = v.spec || "單一規格";
+          const active = v.image && v.image === firstImage ? " active" : "";
+          const specCell = v.image
+            ? `<button type="button" class="hardware-spec-name-button${active}" data-hardware-spec-img="${escapeHtml(v.image)}" data-hardware-spec-label="${escapeHtml(spec)}">${escapeHtml(spec)}</button>`
+            : escapeHtml(spec);
+          return `<tr><td>${specCell}</td><td>${escapeHtml(v.status || "")}</td><td class="hardware-table-price">${escapeHtml(formatPrice(v.price))}</td></tr>`;
+        }).join("")}</tbody>
       </table>`;
+    }
+
+    function bindHardwareSpecImageSwitchers(scope){
+      scope.querySelectorAll("[data-hardware-spec-img]").forEach(button => {
+        button.addEventListener("click", () => {
+          const card = button.closest(".hardware-card");
+          if(!card) return;
+          const img = card.querySelector("[data-hardware-main-img]");
+          const caption = card.querySelector("[data-hardware-main-caption]");
+          const image = button.dataset.hardwareSpecImg || "";
+          const label = button.dataset.hardwareSpecLabel || "";
+          if(!img || !image) return;
+          img.src = image;
+          img.alt = label ? `${card.querySelector("h3")?.textContent || "商品"} ${label}` : (card.querySelector("h3")?.textContent || "商品圖");
+          if(caption) caption.textContent = label;
+          card.querySelectorAll(".hardware-spec-name-button").forEach(btn => btn.classList.remove("active"));
+          button.classList.add("active");
+        });
+      });
     }
 
     function renderSingleSpec(item){
