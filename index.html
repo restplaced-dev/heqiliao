@@ -13,7 +13,7 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-compact-fix">
+  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-spec-note-inline">
 
   <style>
     .scape-accordion { display: grid; gap: 14px; }
@@ -228,6 +228,14 @@
       font-weight: 800;
       overflow-wrap: anywhere;
       word-break: break-word;
+      line-height: 1.55;
+    }
+    .hardware-spec-extra {
+      color: #65756f;
+      font-size: 12.5px;
+      font-weight: 500;
+      line-height: 1.55;
+      margin-left: 0.25em;
     }
     .hardware-spec-price {
       flex: 0 0 auto;
@@ -574,7 +582,7 @@
 
   <a class="floating-line" data-line-link href="https://lin.ee/p9wkJW2" aria-label="前往 LINE 官方帳號詢問"><span class="line-dot"></span><span class="line-label">LINE 詢問</span></a>
 
-  <script src="config.js?v=20260607-hardware-compact-fix"></script>
+  <script src="config.js?v=20260607-hardware-spec-note-inline"></script>
   <script src="app.v2.js?v=20260606-v38"></script>
 
   <script>
@@ -833,9 +841,11 @@
             ? `<button type="button" class="hardware-spec-name-button${active}" data-hardware-spec-img="${escapeHtml(v.image)}" data-hardware-spec-label="${escapeHtml(spec)}">${escapeHtml(spec)}</button>`
             : `<span>${escapeHtml(spec)}</span>`;
           const price = formatPrice(v.price);
+          const note = String(v.note || "").trim();
+          const noteInline = note ? `<span class="hardware-spec-extra">｜${escapeHtml(note)}</span>` : "";
           return `<div class="hardware-spec-row" role="listitem">
             <div class="hardware-spec-main">
-              <div class="hardware-spec-title">${specCell}</div>
+              <div class="hardware-spec-title">${specCell}${noteInline}</div>
               ${price ? `<div class="hardware-spec-price">${escapeHtml(price)}</div>` : ""}
             </div>
             ${v.status ? `<div class="hardware-spec-state">${escapeHtml(v.status)}</div>` : ""}
@@ -935,11 +945,8 @@
     }
 
     function renderNotes(item, variants, isMulti){
+      if(isMulti) return "";
       if(!isMulti && variants[0]?.note && !item.description) return `<p class="hardware-note">${escapeHtml(variants[0].note)}</p>`;
-      const notes = variants.filter(v => v.note).map(v => `${v.spec || "規格"}：${v.note}`);
-      if(isMulti && notes.length){
-        return `<details class="hardware-note-details"><summary>規格補充</summary><div class="hardware-note-list">${notes.map(note => `<p class="hardware-note-line">${escapeHtml(note)}</p>`).join("")}</div></details>`;
-      }
       if(!isMulti && variants[0]?.note) return `<p class="hardware-note">${escapeHtml(variants[0].note)}</p>`;
       return "";
     }
