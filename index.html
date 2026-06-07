@@ -13,7 +13,7 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-pc-price-fix">
+  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-spec-list-fix">
 
   <style>
     .scape-accordion { display: grid; gap: 14px; }
@@ -189,6 +189,71 @@
     @media (max-width: 640px) {
       .hardware-grid { grid-template-columns: 1fr; }
       .hardware-spec-table tr { grid-template-columns: minmax(0, 1fr) max-content; }
+    }
+
+
+    /* Hardware sale: replace spec table with card-safe list layout */
+    .hardware-spec-list {
+      display: grid;
+      gap: 0;
+      width: 100%;
+      border: 1px solid rgba(24, 60, 53, 0.12);
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(255, 250, 240, 0.54);
+    }
+    .hardware-spec-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 3px;
+      padding: 9px 10px;
+      border-top: 1px solid rgba(24, 60, 53, 0.10);
+      min-width: 0;
+    }
+    .hardware-spec-row:first-child { border-top: 0; }
+    .hardware-spec-main {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      min-width: 0;
+    }
+    .hardware-spec-title {
+      min-width: 0;
+      color: #1f5f52;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .hardware-spec-price {
+      flex: 0 0 auto;
+      color: #1f5f52;
+      font-weight: 800;
+      font-size: 13px;
+      line-height: 1.35;
+      white-space: nowrap;
+      text-align: right;
+    }
+    .hardware-spec-state {
+      color: #65756f;
+      font-size: 12.5px;
+      line-height: 1.4;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .hardware-spec-list .hardware-spec-name-button {
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    @media (max-width: 420px) {
+      .hardware-spec-main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: baseline;
+      }
+      .hardware-spec-price { font-size: 12.5px; }
     }
 
   </style>
@@ -387,7 +452,7 @@
 
   <a class="floating-line" data-line-link href="https://lin.ee/p9wkJW2" aria-label="前往 LINE 官方帳號詢問"><span class="line-dot"></span><span class="line-label">LINE 詢問</span></a>
 
-  <script src="config.js?v=20260607-hardware-price-mobile-fix"></script>
+  <script src="config.js?v=20260607-hardware-spec-list-fix"></script>
   <script src="app.v2.js?v=20260606-v37"></script>
 
   <script>
@@ -603,17 +668,21 @@
 
     function renderSpecTable(variants){
       const firstImage = variants.find(v => v.image)?.image || "";
-      return `<table class="hardware-spec-table">
-        <thead><tr><th>規格</th><th>狀態</th><th>價格</th></tr></thead>
-        <tbody>${variants.map(v => {
+      return `<div class="hardware-spec-list" role="list">${variants.map(v => {
           const spec = v.spec || "單一規格";
           const active = v.image && v.image === firstImage ? " active" : "";
           const specCell = v.image
             ? `<button type="button" class="hardware-spec-name-button${active}" data-hardware-spec-img="${escapeHtml(v.image)}" data-hardware-spec-label="${escapeHtml(spec)}">${escapeHtml(spec)}</button>`
-            : escapeHtml(spec);
-          return `<tr><td>${specCell}</td><td>${escapeHtml(v.status || "")}</td><td class="hardware-table-price">${escapeHtml(formatPrice(v.price))}</td></tr>`;
-        }).join("")}</tbody>
-      </table>`;
+            : `<span>${escapeHtml(spec)}</span>`;
+          const price = formatPrice(v.price);
+          return `<div class="hardware-spec-row" role="listitem">
+            <div class="hardware-spec-main">
+              <div class="hardware-spec-title">${specCell}</div>
+              ${price ? `<div class="hardware-spec-price">${escapeHtml(price)}</div>` : ""}
+            </div>
+            ${v.status ? `<div class="hardware-spec-state">${escapeHtml(v.status)}</div>` : ""}
+          </div>`;
+        }).join("")}</div>`;
     }
 
     function bindHardwareSpecImageSwitchers(scope){
