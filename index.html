@@ -13,7 +13,7 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260607-order-sequence">
+  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-multispec">
 
   <style>
     .scape-accordion { display: grid; gap: 14px; }
@@ -53,17 +53,22 @@
     .final-cta-panel p { margin: 0; color: rgba(255, 250, 240, 0.86); line-height: 1.8; }
     .final-cta-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
 
-    .hardware-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; }
-    .hardware-card { background: rgba(255, 255, 255, 0.86); border: 1px solid rgba(24, 60, 53, 0.13); border-radius: 18px; overflow: hidden; box-shadow: 0 8px 24px rgba(20, 45, 40, 0.08); }
-    .hardware-img-wrap { width: 100%; aspect-ratio: 4 / 3; background: #eef5f1; overflow: hidden; }
+    .hardware-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; align-items: stretch; }
+    .hardware-card { background: rgba(255, 255, 255, 0.86); border: 1px solid rgba(24, 60, 53, 0.13); border-radius: 20px; overflow: hidden; box-shadow: 0 8px 24px rgba(20, 45, 40, 0.08); display: flex; flex-direction: column; min-height: 100%; }
+    .hardware-card.hardware-muted { opacity: 0.68; }
+    .hardware-img-wrap { width: 100%; aspect-ratio: 4 / 3; background: #eef5f1; overflow: hidden; border-bottom: 1px solid rgba(24, 60, 53, 0.08); }
     .hardware-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .hardware-body { padding: 14px 15px 16px; }
-    .hardware-top { display: flex; justify-content: space-between; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .hardware-body { padding: 15px 16px 17px; display: flex; flex-direction: column; gap: 9px; flex: 1; }
+    .hardware-top { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
     .hardware-tag, .hardware-status { font-size: 12px; line-height: 1; padding: 6px 8px; border-radius: 999px; background: rgba(55, 115, 100, 0.1); color: #2f6f61; white-space: nowrap; }
     .hardware-status { background: rgba(120, 90, 45, 0.1); color: #8a6430; }
-    .hardware-card h3 { margin: 0 0 8px; font-size: 18px; line-height: 1.35; color: #183c35; }
-    .hardware-spec, .hardware-note { margin: 0 0 8px; font-size: 14px; line-height: 1.6; color: #53645f; }
-    .hardware-price { margin: 8px 0 0; font-size: 18px; font-weight: 700; color: #1f5f52; }
+    .hardware-card h3 { margin: 0; font-size: 19px; line-height: 1.35; color: #183c35; }
+    .hardware-desc, .hardware-spec, .hardware-note { margin: 0; font-size: 14px; line-height: 1.65; color: #53645f; }
+    .hardware-price { margin: 2px 0 0; font-size: 19px; font-weight: 800; color: #1f5f52; }
+    .hardware-spec-table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; border: 1px solid rgba(24, 60, 53, 0.12); border-radius: 14px; background: rgba(255, 250, 240, 0.54); font-size: 14px; }
+    .hardware-spec-table th { text-align: left; padding: 9px 10px; background: rgba(238, 244, 239, 0.92); color: #365c53; font-size: 13px; font-weight: 700; }
+    .hardware-spec-table td { padding: 9px 10px; border-top: 1px solid rgba(24, 60, 53, 0.10); color: #2c4d45; vertical-align: middle; }
+    .hardware-spec-table .hardware-table-price { font-weight: 800; color: #1f5f52; white-space: nowrap; }
     .hardware-empty { padding: 22px; border-radius: 18px; background: rgba(255, 255, 255, 0.72); color: #64736f; line-height: 1.8; }
 
     @media (max-width: 780px) {
@@ -279,7 +284,7 @@
 
   <a class="floating-line" data-line-link href="https://lin.ee/p9wkJW2" aria-label="前往 LINE 官方帳號詢問"><span class="line-dot"></span><span class="line-label">LINE 詢問</span></a>
 
-  <script src="config.js?v=20260607-order-sequence"></script>
+  <script src="config.js?v=20260607-hardware-multispec"></script>
   <script src="app.v2.js?v=20260606-v37"></script>
 
   <script>
@@ -306,7 +311,7 @@
         if(status) status.textContent = "硬體販售讀取中";
         const csv = await fetchTextNoCache(url, 9000);
         const rows = csvToObjects(csv);
-        const items = normalizeHardwareItems(rows);
+        const items = groupHardwareItems(rows);
 
         if(!items.length){
           list.innerHTML = '<div class="hardware-empty">目前沒有硬體販售品項。</div>';
@@ -324,38 +329,117 @@
       }
     }
 
-    function normalizeHardwareItems(rows){
-      return rows.map((p, index) => {
+    function groupHardwareItems(rows){
+      const groups = new Map();
+
+      rows.forEach((p, index) => {
         const orderRaw = firstValue(p["排序"], p.order, p["順序"]);
         const order = Number(orderRaw);
-        const status = firstValue(p["狀態"], p.status);
-        return {
-          id: firstValue(p.id, p["ID"]) || `hardware-${index + 1}`,
+        const category = firstValue(p["分類"], p.category) || "硬體";
+        const name = firstValue(p["品名"], p["名稱"], p.name, p.title);
+        const rowStatus = firstValue(p["狀態"], p.status);
+        const productStatus = firstValue(p["商品狀態"], p["整體狀態"]);
+        if(!name || isHidden(rowStatus) || isHidden(productStatus)) return;
+
+        const productId = firstValue(p["商品ID"], p["產品ID"], p["商品編號"], p.id, p["ID"]);
+        const key = productId || `${category}__${name}`;
+        const image = normalizeImageUrl(firstValue(p["圖片網址"], p["照片網址"], p.image));
+        const productDescription = firstValue(p["商品說明"], p["介紹文字"], p["商品備註"], p.description);
+        const rowNote = firstValue(p["規格備註"], p["備註"], p.note);
+
+        if(!groups.has(key)){
+          groups.set(key, {
+            id: key,
+            order: Number.isFinite(order) ? order : index + 1,
+            category,
+            name,
+            image,
+            description: productDescription,
+            productStatus,
+            variants: []
+          });
+        }
+
+        const group = groups.get(key);
+        group.order = Math.min(group.order, Number.isFinite(order) ? order : index + 1);
+        group.category = group.category || category;
+        group.name = group.name || name;
+        group.image = group.image || image;
+        group.description = group.description || productDescription;
+        group.productStatus = group.productStatus || productStatus;
+        group.variants.push({
           order: Number.isFinite(order) ? order : index + 1,
-          category: firstValue(p["分類"], p.category) || "硬體",
-          name: firstValue(p["品名"], p["名稱"], p.name, p.title),
-          spec: firstValue(p["規格"], p["尺寸"], p.spec, p.size),
-          status,
+          spec: firstValue(p["規格"], p["尺寸"], p.spec, p.size) || "單一規格",
+          status: rowStatus,
           price: firstValue(p["售價"], p["價格"], p.price),
-          note: firstValue(p["備註"], p["說明"], p.note, p.description),
-          image: normalizeImageUrl(firstValue(p["圖片網址"], p["照片網址"], p.image))
-        };
-      }).filter(item => item.name && !isHidden(item.status)).sort((a,b) => a.order - b.order);
+          note: rowNote
+        });
+      });
+
+      return Array.from(groups.values()).map(group => {
+        group.variants.sort((a, b) => a.order - b.order);
+        group.status = summarizeGroupStatus(group);
+        group.muted = shouldMuteGroup(group);
+        return group;
+      }).sort((a, b) => a.order - b.order);
+    }
+
+    function summarizeGroupStatus(group){
+      if(group.productStatus) return group.productStatus;
+      if(group.variants.length > 1) return "多規格";
+      return group.variants[0]?.status || "";
+    }
+
+    function shouldMuteGroup(group){
+      const values = [group.productStatus, ...group.variants.map(v => v.status)].join(" ");
+      return /暫缺|缺貨|售完|補貨中|停售|不可販售|休養/.test(values);
     }
 
     function renderHardwareCard(item){
       const image = item.image || "";
-      const priceText = item.price ? (String(item.price).includes("$") || /NT\$|元/.test(String(item.price)) ? item.price : `NT$ ${item.price}`) : "";
-      return `<article class="hardware-card">
+      const variants = item.variants || [];
+      const isMulti = variants.length > 1;
+      const single = variants[0] || {};
+      const cardClass = item.muted ? "hardware-card hardware-muted" : "hardware-card";
+
+      return `<article class="${cardClass}">
         ${image ? `<div class="hardware-img-wrap"><img class="hardware-img" src="${escapeHtml(image)}" alt="${escapeHtml(item.name)}" loading="lazy"></div>` : ""}
         <div class="hardware-body">
           <div class="hardware-top"><span class="hardware-tag">${escapeHtml(item.category || "硬體")}</span>${item.status ? `<span class="hardware-status">${escapeHtml(item.status)}</span>` : ""}</div>
           <h3>${escapeHtml(item.name)}</h3>
-          ${item.spec ? `<p class="hardware-spec">${escapeHtml(item.spec)}</p>` : ""}
-          ${priceText ? `<p class="hardware-price">${escapeHtml(priceText)}</p>` : ""}
-          ${item.note ? `<p class="hardware-note">${escapeHtml(item.note)}</p>` : ""}
+          ${item.description ? `<p class="hardware-desc">${escapeHtml(item.description)}</p>` : ""}
+          ${isMulti ? renderSpecTable(variants) : renderSingleSpec(single)}
+          ${renderNotes(item, variants, isMulti)}
         </div>
       </article>`;
+    }
+
+    function renderSpecTable(variants){
+      return `<table class="hardware-spec-table">
+        <thead><tr><th>規格</th><th>狀態</th><th>價格</th></tr></thead>
+        <tbody>${variants.map(v => `<tr><td>${escapeHtml(v.spec || "單一規格")}</td><td>${escapeHtml(v.status || "")}</td><td class="hardware-table-price">${escapeHtml(formatPrice(v.price))}</td></tr>`).join("")}</tbody>
+      </table>`;
+    }
+
+    function renderSingleSpec(item){
+      const spec = item.spec && item.spec !== "單一規格" ? `<p class="hardware-spec">規格：${escapeHtml(item.spec)}</p>` : "";
+      const price = item.price ? `<p class="hardware-price">${escapeHtml(formatPrice(item.price))}</p>` : "";
+      return `${spec}${price}`;
+    }
+
+    function renderNotes(item, variants, isMulti){
+      if(!isMulti && variants[0]?.note && !item.description) return `<p class="hardware-note">${escapeHtml(variants[0].note)}</p>`;
+      const notes = variants.filter(v => v.note).map(v => `${v.spec || "規格"}：${v.note}`);
+      if(isMulti && notes.length) return `<p class="hardware-note">${escapeHtml(notes.join("｜"))}</p>`;
+      if(!isMulti && variants[0]?.note) return `<p class="hardware-note">${escapeHtml(variants[0].note)}</p>`;
+      return "";
+    }
+
+    function formatPrice(value){
+      const text = String(value || "").trim();
+      if(!text) return "";
+      if(text.includes("$") || /NT\$|元/.test(text)) return text;
+      return `NT$ ${text}`;
     }
 
     async function fetchTextNoCache(url, timeoutMs){
