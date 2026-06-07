@@ -13,7 +13,7 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-desc-fix">
+  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-compact-fix">
 
   <style>
     .scape-accordion { display: grid; gap: 14px; }
@@ -309,6 +309,75 @@
       .hardware-desc-list li { padding-left: 1em; }
     }
 
+
+    /* Hardware sale: compact card layout for long descriptions */
+    .hardware-grid {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 360px));
+      gap: 18px;
+    }
+    .hardware-card h3 {
+      font-size: 17px;
+      line-height: 1.42;
+    }
+    .hardware-desc-preview {
+      margin-bottom: 0;
+    }
+    .hardware-desc-more,
+    .hardware-note-details {
+      border-radius: 12px;
+      border: 1px solid rgba(24, 60, 53, 0.10);
+      background: rgba(255, 250, 240, 0.46);
+      overflow: hidden;
+    }
+    .hardware-desc-more summary,
+    .hardware-note-details summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 8px 11px;
+      color: #1f5f52;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.35;
+      user-select: none;
+    }
+    .hardware-desc-more summary::-webkit-details-marker,
+    .hardware-note-details summary::-webkit-details-marker { display: none; }
+    .hardware-desc-more summary::after,
+    .hardware-note-details summary::after {
+      content: "＋";
+      float: right;
+      color: #8a6430;
+      font-weight: 800;
+    }
+    .hardware-desc-more[open] summary::after,
+    .hardware-note-details[open] summary::after { content: "－"; }
+    .hardware-desc-more .hardware-desc {
+      border: 0;
+      border-top: 1px solid rgba(24, 60, 53, 0.08);
+      border-radius: 0;
+      background: rgba(255,255,255,0.24);
+      padding-top: 8px;
+    }
+    .hardware-note-details .hardware-note-list {
+      margin: 0;
+      padding: 8px 11px 10px;
+      border-top: 1px solid rgba(24, 60, 53, 0.08);
+      color: #53645f;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .hardware-note-details .hardware-note-line {
+      margin: 0 0 4px;
+      overflow-wrap: break-word;
+    }
+    .hardware-note-details .hardware-note-line:last-child { margin-bottom: 0; }
+    @media (max-width: 640px) {
+      .hardware-grid { grid-template-columns: 1fr; }
+      .hardware-card h3 { font-size: 17px; }
+      .hardware-desc-more summary,
+      .hardware-note-details summary { padding: 8px 10px; }
+    }
+
   </style>
 </head>
 <body>
@@ -505,7 +574,7 @@
 
   <a class="floating-line" data-line-link href="https://lin.ee/p9wkJW2" aria-label="前往 LINE 官方帳號詢問"><span class="line-dot"></span><span class="line-label">LINE 詢問</span></a>
 
-  <script src="config.js?v=20260607-hardware-desc-fix"></script>
+  <script src="config.js?v=20260607-hardware-compact-fix"></script>
   <script src="app.v2.js?v=20260606-v38"></script>
 
   <script>
@@ -734,8 +803,23 @@
         .split(/\n+|[•・●▪︎]\s*|(?:^|\s)[．·]\s*/)
         .map(part => part.trim())
         .filter(Boolean);
+
       if(hasBullet && parts.length >= 2){
-        return `<ul class="hardware-desc hardware-desc-list">${parts.map(part => `<li>${escapeHtml(part)}</li>`).join("")}</ul>`;
+        const previewCount = 4;
+        const previewParts = parts.slice(0, previewCount);
+        const remainingParts = parts.slice(previewCount);
+        const preview = `<ul class="hardware-desc hardware-desc-list hardware-desc-preview">${previewParts.map(part => `<li>${escapeHtml(part)}</li>`).join("")}</ul>`;
+        if(remainingParts.length){
+          const more = `<details class="hardware-desc-more"><summary>查看完整說明</summary><ul class="hardware-desc hardware-desc-list">${remainingParts.map(part => `<li>${escapeHtml(part)}</li>`).join("")}</ul></details>`;
+          return preview + more;
+        }
+        return preview;
+      }
+
+      if(normalized.length > 90){
+        const previewText = normalized.slice(0, 90).trim();
+        const restText = normalized.slice(90).trim();
+        return `<p class="hardware-desc hardware-desc-preview">${escapeHtml(previewText)}${restText ? "…" : ""}</p>${restText ? `<details class="hardware-desc-more"><summary>查看完整說明</summary><p class="hardware-desc">${escapeHtml(restText).replace(/\n/g, "<br>")}</p></details>` : ""}`;
       }
       return `<p class="hardware-desc">${escapeHtml(normalized).replace(/\n/g, "<br>")}</p>`;
     }
@@ -853,7 +937,9 @@
     function renderNotes(item, variants, isMulti){
       if(!isMulti && variants[0]?.note && !item.description) return `<p class="hardware-note">${escapeHtml(variants[0].note)}</p>`;
       const notes = variants.filter(v => v.note).map(v => `${v.spec || "規格"}：${v.note}`);
-      if(isMulti && notes.length) return `<p class="hardware-note">${escapeHtml(notes.join("｜"))}</p>`;
+      if(isMulti && notes.length){
+        return `<details class="hardware-note-details"><summary>規格補充</summary><div class="hardware-note-list">${notes.map(note => `<p class="hardware-note-line">${escapeHtml(note)}</p>`).join("")}</div></details>`;
+      }
       if(!isMulti && variants[0]?.note) return `<p class="hardware-note">${escapeHtml(variants[0].note)}</p>`;
       return "";
     }
