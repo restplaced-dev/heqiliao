@@ -1,0 +1,20 @@
+請先閱讀本 repo 根目錄的 AGENTS.md、PROJECT_CONTEXT.md、DATA_SCHEMA.md、CHANGELOG_HEQILIAO.md、TODO_FOR_CODEX.md。
+
+這是「河憩寮」GitHub Pages 靜態網站。請不要重做網站架構，先理解目前 index.html、app.v2.js、styles.v2.css、config.js 的分工。
+
+重要規則：
+1. 不要覆蓋 config.js 裡已設定好的 Google Sheets CSV 網址。
+2. 若任務不需要修改設定，請不要動 config.js。
+3. 硬體販售維持「商品ID 合併多規格」模式。
+4. 規格名稱可點選切換主圖。
+5. 商品主圖可彈出大圖預覽，但不要另開分頁。
+6. 商品圖片不可裁切重點，優先完整顯示。
+7. 規格備註應顯示在規格名稱後方，不要另外做很長的補充區塊。
+8. 手機版與 PC 版都要檢查價格、規格、按鈕是否外溢。
+9. 所有對外文案使用繁體中文。
+10. 先提出修改計畫，等我確認後再改檔案。
+
+請先回覆：
+- 你讀到的目前網站架構摘要
+- 你認為本次任務會修改哪些檔案
+- 你會如何避免改壞既有功能
