@@ -13,7 +13,7 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-accordion">
+  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-visual-fix">
 
   <style>
     .scape-accordion { display: grid; gap: 14px; }
@@ -53,23 +53,26 @@
     .final-cta-panel p { margin: 0; color: rgba(255, 250, 240, 0.86); line-height: 1.8; }
     .final-cta-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
 
-    .hardware-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; align-items: stretch; }
-    .hardware-filters { margin: 0 0 16px; }
+    .hardware-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 0 0 16px; }
+    .hardware-filters .filter { appearance: none; border: 1px solid rgba(196, 154, 84, 0.42); background: rgba(255, 250, 240, 0.92); color: #183c35; border-radius: 999px; padding: 10px 18px; min-height: 40px; font: inherit; font-size: 14px; font-weight: 700; line-height: 1; letter-spacing: 0.04em; cursor: pointer; box-shadow: none; }
+    .hardware-filters .filter:hover { border-color: rgba(24, 60, 53, 0.42); background: rgba(255, 255, 255, 0.84); }
+    .hardware-filters .filter.active { background: #183c35; border-color: #183c35; color: #d49a4a; }
     .hardware-list-note { margin: 0 0 16px; padding: 14px 16px; border-radius: 16px; background: rgba(255, 250, 240, 0.72); border: 1px solid rgba(24, 60, 53, 0.10); color: #53645f; line-height: 1.8; }
-    .hardware-card { background: rgba(255, 255, 255, 0.86); border: 1px solid rgba(24, 60, 53, 0.13); border-radius: 20px; overflow: hidden; box-shadow: 0 8px 24px rgba(20, 45, 40, 0.08); display: flex; flex-direction: column; min-height: 100%; }
+    .hardware-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 280px)); gap: 16px; align-items: start; justify-content: start; }
+    .hardware-card { width: 100%; background: rgba(255, 255, 255, 0.86); border: 1px solid rgba(24, 60, 53, 0.13); border-radius: 18px; overflow: hidden; box-shadow: 0 8px 22px rgba(20, 45, 40, 0.08); display: flex; flex-direction: column; min-height: 100%; }
     .hardware-card.hardware-muted { opacity: 0.68; }
-    .hardware-img-wrap { width: 100%; aspect-ratio: 4 / 3; background: #eef5f1; overflow: hidden; border-bottom: 1px solid rgba(24, 60, 53, 0.08); }
+    .hardware-img-wrap { width: 100%; aspect-ratio: 4 / 3; max-height: 210px; background: #eef5f1; overflow: hidden; border-bottom: 1px solid rgba(24, 60, 53, 0.08); }
     .hardware-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .hardware-body { padding: 15px 16px 17px; display: flex; flex-direction: column; gap: 9px; flex: 1; }
+    .hardware-body { padding: 13px 14px 15px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
     .hardware-top { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
     .hardware-tag, .hardware-status { font-size: 12px; line-height: 1; padding: 6px 8px; border-radius: 999px; background: rgba(55, 115, 100, 0.1); color: #2f6f61; white-space: nowrap; }
     .hardware-status { background: rgba(120, 90, 45, 0.1); color: #8a6430; }
-    .hardware-card h3 { margin: 0; font-size: 19px; line-height: 1.35; color: #183c35; }
-    .hardware-desc, .hardware-spec, .hardware-note { margin: 0; font-size: 14px; line-height: 1.65; color: #53645f; }
-    .hardware-price { margin: 2px 0 0; font-size: 19px; font-weight: 800; color: #1f5f52; }
-    .hardware-spec-table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; border: 1px solid rgba(24, 60, 53, 0.12); border-radius: 14px; background: rgba(255, 250, 240, 0.54); font-size: 14px; }
-    .hardware-spec-table th { text-align: left; padding: 9px 10px; background: rgba(238, 244, 239, 0.92); color: #365c53; font-size: 13px; font-weight: 700; }
-    .hardware-spec-table td { padding: 9px 10px; border-top: 1px solid rgba(24, 60, 53, 0.10); color: #2c4d45; vertical-align: middle; }
+    .hardware-card h3 { margin: 0; font-size: 18px; line-height: 1.35; color: #183c35; }
+    .hardware-desc, .hardware-spec, .hardware-note { margin: 0; font-size: 13.5px; line-height: 1.65; color: #53645f; }
+    .hardware-price { margin: 2px 0 0; font-size: 18px; font-weight: 800; color: #1f5f52; }
+    .hardware-spec-table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; border: 1px solid rgba(24, 60, 53, 0.12); border-radius: 12px; background: rgba(255, 250, 240, 0.54); font-size: 13px; }
+    .hardware-spec-table th { text-align: left; padding: 8px 8px; background: rgba(238, 244, 239, 0.92); color: #365c53; font-size: 12.5px; font-weight: 700; }
+    .hardware-spec-table td { padding: 8px 8px; border-top: 1px solid rgba(24, 60, 53, 0.10); color: #2c4d45; vertical-align: middle; }
     .hardware-spec-table .hardware-table-price { font-weight: 800; color: #1f5f52; white-space: nowrap; }
     .hardware-empty { padding: 22px; border-radius: 18px; background: rgba(255, 255, 255, 0.72); color: #64736f; line-height: 1.8; }
 
@@ -86,6 +89,9 @@
       .nav-links a { flex: 0 0 auto; white-space: nowrap; padding: 8px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.72); border: 1px solid rgba(24, 60, 53, 0.12); color: #183c35; font-size: 13px; line-height: 1; }
     }
     @media (max-width: 640px) {
+      .hardware-grid { grid-template-columns: 1fr; }
+      .hardware-img-wrap { max-height: none; }
+      .hardware-filters .filter { padding: 9px 14px; min-height: 38px; font-size: 13px; }
       .scape-item summary { padding: 16px; font-size: 16px; }
       .scape-item summary b { font-size: 17px; }
       .scape-content { padding: 0 16px 18px; font-size: 15px; }
@@ -287,7 +293,7 @@
 
   <a class="floating-line" data-line-link href="https://lin.ee/p9wkJW2" aria-label="前往 LINE 官方帳號詢問"><span class="line-dot"></span><span class="line-label">LINE 詢問</span></a>
 
-  <script src="config.js?v=20260607-hardware-accordion"></script>
+  <script src="config.js?v=20260607-hardware-visual-fix"></script>
   <script src="app.v2.js?v=20260606-v37"></script>
 
   <script>
