@@ -13,7 +13,7 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-image-zoom">
+  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-desc-fix">
 
   <style>
     .scape-accordion { display: grid; gap: 14px; }
@@ -260,6 +260,55 @@
       .hardware-spec-price { font-size: 12.5px; }
     }
 
+
+    /* Hardware sale: product description readability fix */
+    .hardware-desc {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 250, 240, 0.62);
+      border: 1px solid rgba(24, 60, 53, 0.08);
+      color: #3d524c;
+      font-size: 13.5px;
+      line-height: 1.78;
+      letter-spacing: 0.015em;
+      text-align: left;
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+    .hardware-desc-list {
+      list-style: none;
+      margin: 0;
+    }
+    .hardware-desc-list li {
+      position: relative;
+      padding-left: 1.05em;
+      margin: 0.08em 0;
+      line-height: 1.72;
+    }
+    .hardware-desc-list li::before {
+      content: "";
+      position: absolute;
+      left: 0.18em;
+      top: 0.74em;
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(24, 60, 53, 0.54);
+    }
+    .hardware-note {
+      letter-spacing: 0.015em;
+      line-height: 1.72;
+      overflow-wrap: break-word;
+    }
+    @media (max-width: 640px) {
+      .hardware-desc {
+        font-size: 13px;
+        line-height: 1.72;
+        padding: 9px 10px;
+      }
+      .hardware-desc-list li { padding-left: 1em; }
+    }
+
   </style>
 </head>
 <body>
@@ -456,7 +505,7 @@
 
   <a class="floating-line" data-line-link href="https://lin.ee/p9wkJW2" aria-label="前往 LINE 官方帳號詢問"><span class="line-dot"></span><span class="line-label">LINE 詢問</span></a>
 
-  <script src="config.js?v=20260607-hardware-image-zoom"></script>
+  <script src="config.js?v=20260607-hardware-desc-fix"></script>
   <script src="app.v2.js?v=20260606-v38"></script>
 
   <script>
@@ -656,7 +705,7 @@
         <div class="hardware-body">
           <div class="hardware-top"><span class="hardware-tag">${escapeHtml(item.category || "硬體")}</span>${item.status ? `<span class="hardware-status">${escapeHtml(item.status)}</span>` : ""}</div>
           <h3>${escapeHtml(item.name)}</h3>
-          ${item.description ? `<p class="hardware-desc">${escapeHtml(item.description)}</p>` : ""}
+          ${renderHardwareDescription(item.description)}
           ${isMulti ? renderSpecTable(variants) : renderSingleSpec(single)}
           ${renderNotes(item, variants, isMulti)}
         </div>
@@ -673,6 +722,22 @@
         <img class="hardware-img" data-hardware-main-img src="${escapeHtml(image)}" alt="${escapeHtml(item.name)} ${escapeHtml(label)}" loading="lazy">
         ${label ? `<span class="hardware-img-caption" data-hardware-main-caption>${escapeHtml(label)}</span>` : ""}
       </div>`;
+    }
+
+
+    function renderHardwareDescription(description){
+      const raw = String(description || "").trim();
+      if(!raw) return "";
+      const normalized = raw.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+      const hasBullet = /[•・●▪︎．·]/.test(normalized);
+      const parts = normalized
+        .split(/\n+|[•・●▪︎]\s*|(?:^|\s)[．·]\s*/)
+        .map(part => part.trim())
+        .filter(Boolean);
+      if(hasBullet && parts.length >= 2){
+        return `<ul class="hardware-desc hardware-desc-list">${parts.map(part => `<li>${escapeHtml(part)}</li>`).join("")}</ul>`;
+      }
+      return `<p class="hardware-desc">${escapeHtml(normalized).replace(/\n/g, "<br>")}</p>`;
     }
 
     function renderSpecTable(variants){
