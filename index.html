@@ -13,7 +13,7 @@
   <meta name="theme-color" content="#183c35">
   <title>河憩寮｜淡水觀賞魚</title>
   <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-sale">
+  <link rel="stylesheet" href="styles.v2.css?v=20260607-order-sequence">
 
   <style>
     .scape-accordion { display: grid; gap: 14px; }
@@ -133,6 +133,48 @@
       </div>
     </section>
 
+    <section id="shipping" class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="section-title">
+            <p class="eyebrow">Order Flow</p>
+            <h2>訂購流程與到貨提醒</h2>
+            <p>請先填寫檢視單整理缸況與需求。河憩寮會依內容評估，並回覆到填寫人留下的 Gmail；確認沒有明顯問題後，再進入訂購討論。</p>
+          </div>
+        </div>
+        <div class="flow-summary"><b>簡單來說：</b>先填檢視單 → 等 Email 回覆 → LINE 確認魚況與數量 → 安排付款、取魚或出貨。</div>
+        <div class="customer-info-grid">
+          <div class="customer-info-card"><b>訂購採確認制</b>確認魚隻狀態、數量與可安排日期後，才會提供付款方式；不是看到名單就直接下單。</div>
+          <div class="customer-info-card"><b>活體安排看魚況</b>若該批個體仍需觀察、天氣不適合或收件時間不穩，會先暫緩安排。</div>
+          <div class="customer-info-card"><b>付款與寄送</b>可依確認後的安排提供付款連結；若需保溫箱或特殊包裝，會另外說明押金與退還方式。</div>
+        </div>
+        <div class="shipping-grid flow-grid">
+          <div class="shipping-card featured-step"><h3>1. 先填寫檢視單</h3><p>先整理目前缸況、想詢問的魚種與飼養條件。這不是考試，而是讓雙方先確認魚到新環境後是否有機會穩定下來。</p><a class="btn gold inline-card-btn" data-questionnaire-link href="#">填寫檢視單</a></div>
+          <div class="shipping-card"><h3>2. 等待 Email 回覆</h3><p>檢視單回覆會寄到填寫人留下的 Gmail。若缸況、混養或飼養條件需要調整，會先提出建議；確認沒有明顯問題後，再討論訂購。</p></div>
+          <div class="shipping-card"><h3>3. LINE 官方帳號討論品項</h3><p>收到 Email 回覆、確認沒有明顯問題後，再透過右下角 LINE 詢問按鈕討論想詢問的魚種、數量與補充狀況。</p></div>
+          <div class="shipping-card"><h3>4. 確認狀態與安排</h3><p>確認名單狀態、餵食反應、魚況、可安排日期與相關細節；若該批個體尚未穩定，會先暫緩安排。</p></div>
+          <div class="shipping-card"><h3>5. 到貨檢疫與適應</h3><p>收到後建議先檢疫觀察。重點不只是找病，更是讓魚恢復運輸壓力、重新穩定狀態，並逐步習慣飼主操作；穩定後再評估是否進主缸。</p></div>
+          <div class="shipping-card quarantine-inline-card"><p class="eyebrow">Status Transparency</p><h3>近期檢疫紀錄</h3><p>可查看近期批次、觀察狀態與可詢問名單補充。</p><a class="btn gold inline-card-btn" data-quarantine-link href="#">查看近期檢疫紀錄</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="scape-types" class="section">
+      <div class="wrap">
+        <div class="section-head"><div class="section-title"><p class="eyebrow">Aquascape Gallery</p><h2>造景類型介紹</h2></div><div class="small-note" id="scapeGalleryStatus">造景資料讀取中</div></div>
+        <div class="list-note">造景適合魚種僅作方向參考，實際仍需依缸體尺寸、水流、底砂、遮蔽、個體性格與混養狀況評估。</div>
+        <div class="scape-accordion" id="scapeGalleryList"></div>
+      </div>
+    </section>
+
+    <section id="equipment-guide" class="section alt">
+      <div class="wrap">
+        <div class="section-head"><div class="section-title"><p class="eyebrow">Equipment Guide</p><h2>設備介紹</h2></div><div class="small-note" id="equipmentGuideStatus">設備介紹整理中</div></div>
+        <div class="filters equipment-filters" id="equipmentCategoryFilters"></div>
+        <div class="scape-accordion equipment-accordion" id="equipmentGuideList"></div>
+      </div>
+    </section>
+
     <section id="stock" class="section alt">
       <div class="wrap">
         <div class="section-head">
@@ -192,48 +234,6 @@
       </div>
     </section>
 
-    <section id="shipping" class="section">
-      <div class="wrap">
-        <div class="section-head">
-          <div class="section-title">
-            <p class="eyebrow">Order Flow</p>
-            <h2>訂購流程與到貨提醒</h2>
-            <p>請先填寫檢視單整理缸況與需求。河憩寮會依內容評估，並回覆到填寫人留下的 Gmail；確認沒有明顯問題後，再進入訂購討論。</p>
-          </div>
-        </div>
-        <div class="flow-summary"><b>簡單來說：</b>先填檢視單 → 等 Email 回覆 → LINE 確認魚況與數量 → 安排付款、取魚或出貨。</div>
-        <div class="customer-info-grid">
-          <div class="customer-info-card"><b>訂購採確認制</b>確認魚隻狀態、數量與可安排日期後，才會提供付款方式；不是看到名單就直接下單。</div>
-          <div class="customer-info-card"><b>活體安排看魚況</b>若該批個體仍需觀察、天氣不適合或收件時間不穩，會先暫緩安排。</div>
-          <div class="customer-info-card"><b>付款與寄送</b>可依確認後的安排提供付款連結；若需保溫箱或特殊包裝，會另外說明押金與退還方式。</div>
-        </div>
-        <div class="shipping-grid flow-grid">
-          <div class="shipping-card featured-step"><h3>1. 先填寫檢視單</h3><p>先整理目前缸況、想詢問的魚種與飼養條件。這不是考試，而是讓雙方先確認魚到新環境後是否有機會穩定下來。</p><a class="btn gold inline-card-btn" data-questionnaire-link href="#">填寫檢視單</a></div>
-          <div class="shipping-card"><h3>2. 等待 Email 回覆</h3><p>檢視單回覆會寄到填寫人留下的 Gmail。若缸況、混養或飼養條件需要調整，會先提出建議；確認沒有明顯問題後，再討論訂購。</p></div>
-          <div class="shipping-card"><h3>3. LINE 官方帳號討論品項</h3><p>收到 Email 回覆、確認沒有明顯問題後，再透過右下角 LINE 詢問按鈕討論想詢問的魚種、數量與補充狀況。</p></div>
-          <div class="shipping-card"><h3>4. 確認狀態與安排</h3><p>確認名單狀態、餵食反應、魚況、可安排日期與相關細節；若該批個體尚未穩定，會先暫緩安排。</p></div>
-          <div class="shipping-card"><h3>5. 到貨檢疫與適應</h3><p>收到後建議先檢疫觀察。重點不只是找病，更是讓魚恢復運輸壓力、重新穩定狀態，並逐步習慣飼主操作；穩定後再評估是否進主缸。</p></div>
-          <div class="shipping-card quarantine-inline-card"><p class="eyebrow">Status Transparency</p><h3>近期檢疫紀錄</h3><p>可查看近期批次、觀察狀態與可詢問名單補充。</p><a class="btn gold inline-card-btn" data-quarantine-link href="#">查看近期檢疫紀錄</a></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="scape-types" class="section">
-      <div class="wrap">
-        <div class="section-head"><div class="section-title"><p class="eyebrow">Aquascape Gallery</p><h2>造景類型介紹</h2></div><div class="small-note" id="scapeGalleryStatus">造景資料讀取中</div></div>
-        <div class="list-note">造景適合魚種僅作方向參考，實際仍需依缸體尺寸、水流、底砂、遮蔽、個體性格與混養狀況評估。</div>
-        <div class="scape-accordion" id="scapeGalleryList"></div>
-      </div>
-    </section>
-
-    <section id="equipment-guide" class="section alt">
-      <div class="wrap">
-        <div class="section-head"><div class="section-title"><p class="eyebrow">Equipment Guide</p><h2>設備介紹</h2></div><div class="small-note" id="equipmentGuideStatus">設備介紹整理中</div></div>
-        <div class="filters equipment-filters" id="equipmentCategoryFilters"></div>
-        <div class="scape-accordion equipment-accordion" id="equipmentGuideList"></div>
-      </div>
-    </section>
-
     <section id="principles" class="section alt">
       <div class="wrap principles">
         <div class="principle-panel"><p class="eyebrow">Our Principles</p><h2>河憩寮的飼養觀點</h2><p>飼養建議不是背一組固定答案，而是先看魚的反應，再依照個體、環境與飼主操作節奏調整。以下是河憩寮看待活體狀態的幾個重點。</p></div>
@@ -279,7 +279,7 @@
 
   <a class="floating-line" data-line-link href="https://lin.ee/p9wkJW2" aria-label="前往 LINE 官方帳號詢問"><span class="line-dot"></span><span class="line-label">LINE 詢問</span></a>
 
-  <script src="config.js?v=20260607-hardware-sale"></script>
+  <script src="config.js?v=20260607-order-sequence"></script>
   <script src="app.v2.js?v=20260606-v37"></script>
 
   <script>
