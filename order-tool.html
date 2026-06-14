@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#183c35">
+  <title>河憩寮｜內部算單工具</title>
+  <link rel="icon" href="favicon.png" type="image/png">
+  <script src="config.js"></script>
+  <style>
+    :root {
+      --ink: #17231f;
+      --muted: #5c6b66;
+      --line: #d8e2dd;
+      --paper: #fbfcfa;
+      --panel: #ffffff;
+      --green: #183c35;
+      --green-soft: #e8f1ed;
+      --gold: #c48b3c;
+      --blue: #315b80;
+      --danger: #9f3e34;
+      --shadow: 0 10px 26px rgba(24, 60, 53, 0.09);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(232, 241, 237, 0.92), rgba(255, 250, 240, 0.72) 42%, rgba(238, 244, 248, 0.9)),
+        var(--paper);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      line-height: 1.55;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: 0.56; }
+
+    .shell { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 20px 0 28px; }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .brand h1 { margin: 0; font-size: clamp(24px, 4vw, 38px); line-height: 1.15; letter-spacing: 0; color: var(--green); }
+    .brand p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+    .dot.ready { background: #2f805f; }
+    .dot.error { background: var(--danger); }
+
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; align-items: start; }
+    .surface {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(24, 60, 53, 0.13);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    .catalog { min-width: 0; }
+    .controls { padding: 14px; display: grid; gap: 12px; border-bottom: 1px solid var(--line); }
+    .control-row { display: grid; grid-template-columns: 1fr 150px 150px; gap: 10px; align-items: center; }
+    .input, .select, .textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      min-height: 42px;
+      padding: 9px 11px;
+      outline: none;
+    }
+    .textarea { min-height: 156px; resize: vertical; }
+    .input:focus, .select:focus, .textarea:focus { border-color: rgba(24, 60, 53, 0.48); box-shadow: 0 0 0 3px rgba(24, 60, 53, 0.11); }
+    .mode-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab, .chip, .icon-btn, .copy-btn {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--green);
+      min-height: 38px;
+      padding: 8px 11px;
+      font-weight: 700;
+    }
+    .tab.active, .chip.active { background: var(--green); color: #fffaf0; border-color: var(--green); }
+    .chip { font-size: 13px; min-height: 34px; }
+
+    .product-list { display: grid; gap: 0; }
+    .empty { padding: 28px 16px; color: var(--muted); text-align: center; }
+    .product-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 13px 14px;
+      border-bottom: 1px solid rgba(24, 60, 53, 0.09);
+      align-items: center;
+    }
+    .product-row:last-child { border-bottom: 0; }
+    .product-main { min-width: 0; }
+    .product-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 5px;
+    }
+    .product-title b { font-size: 16px; color: var(--green); overflow-wrap: anywhere; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: #27604f;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge.warn { background: #fff0d8; color: #85612c; }
+    .badge.off { background: #f5dfdc; color: var(--danger); }
+    .meta { display: flex; gap: 8px 12px; flex-wrap: wrap; color: var(--muted); font-size: 13px; }
+    .variant-select {
+      width: min(230px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      min-height: 38px;
+      padding: 7px 9px;
+    }
+    .add-area { display: grid; grid-template-columns: 74px 86px; gap: 8px; align-items: center; }
+    .qty { text-align: center; }
+    .primary {
+      border: 1px solid var(--green);
+      border-radius: 8px;
+      min-height: 38px;
+      padding: 8px 12px;
+      background: var(--green);
+      color: #fffaf0;
+      font-weight: 800;
+    }
+
+    .cart { position: sticky; top: 14px; padding: 14px; display: grid; gap: 13px; }
+    .cart h2, .panel-title { margin: 0; font-size: 18px; color: var(--green); }
+    .cart-items { display: grid; gap: 8px; max-height: 280px; overflow: auto; padding-right: 2px; }
+    .cart-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .cart-name { font-weight: 800; color: var(--ink); overflow-wrap: anywhere; }
+    .cart-spec { color: var(--muted); font-size: 13px; margin-top: 2px; }
+    .cart-line { color: var(--green); font-weight: 800; white-space: nowrap; }
+    .cart-tools { display: flex; gap: 6px; align-items: center; justify-content: flex-end; grid-column: 1 / -1; }
+    .stepper {
+      width: 64px;
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .icon-btn { width: 36px; min-height: 34px; padding: 0; display: grid; place-items: center; color: var(--danger); }
+    .money-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .quick-fees { display: flex; gap: 8px; flex-wrap: wrap; }
+    .totals { display: grid; gap: 7px; padding-top: 10px; border-top: 1px solid var(--line); }
+    .total-row { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); }
+    .total-row strong { color: var(--ink); }
+    .grand { font-size: 22px; color: var(--green); font-weight: 900; }
+    .output-panel { display: grid; gap: 8px; }
+    .copy-btn { background: var(--blue); color: #fff; border-color: var(--blue); width: 100%; }
+    .ghost { background: #fff; color: var(--green); border-color: var(--line); }
+    .fine { color: var(--muted); font-size: 12px; margin: 0; }
+
+    @media (max-width: 940px) {
+      .layout { grid-template-columns: 1fr; }
+      .cart { position: static; }
+    }
+    @media (max-width: 680px) {
+      .shell { width: min(100% - 18px, 1180px); padding-top: 12px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .status { white-space: normal; }
+      .control-row { grid-template-columns: 1fr; }
+      .product-row { grid-template-columns: 1fr; }
+      .add-area { grid-template-columns: 78px 1fr; }
+      .variant-select { width: 100%; }
+      .money-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <h1>內部算單工具</h1>
+        <p>河憩寮內部使用，讀取現有 Google Sheets，不寫回資料。</p>
+      </div>
+      <div class="status" id="loadStatus"><span class="dot"></span><span>讀取資料中</span></div>
+    </header>
+
+    <section class="layout">
+      <div class="catalog surface">
+        <div class="controls">
+          <div class="mode-tabs" aria-label="商品類型">
+            <button class="tab active" type="button" data-mode="all">全部</button>
+            <button class="tab" type="button" data-mode="live">本週名單</button>
+            <button class="tab" type="button" data-mode="hardware">硬體</button>
+          </div>
+          <div class="control-row">
+            <input class="input" id="searchInput" type="search" placeholder="搜尋品名、ID、分類、規格">
+            <select class="select" id="categorySelect" aria-label="分類"></select>
+            <select class="select" id="sortSelect" aria-label="排序">
+              <option value="category">分類排序</option>
+              <option value="name">品名排序</option>
+              <option value="priceAsc">價格低到高</option>
+              <option value="priceDesc">價格高到低</option>
+            </select>
+          </div>
+        </div>
+        <div class="product-list" id="productList">
+          <div class="empty">資料讀取中...</div>
+        </div>
+      </div>
+
+      <aside class="cart surface" aria-label="算單">
+        <h2>本次算單</h2>
+        <div class="cart-items" id="cartItems">
+          <div class="empty">尚未加入品項</div>
+        </div>
+
+        <div class="money-grid">
+          <label>
+            <span class="fine">運費</span>
+            <input class="input" id="shippingInput" type="number" min="0" step="1" value="0">
+          </label>
+          <label>
+            <span class="fine">折扣 / 調整</span>
+            <input class="input" id="discountInput" type="number" step="1" value="0">
+          </label>
+        </div>
+        <div class="quick-fees">
+          <button class="chip" type="button" data-shipping="0">自取 0</button>
+          <button class="chip" type="button" data-shipping="60">店到店 60</button>
+          <button class="chip" type="button" data-shipping="120">宅配 120</button>
+        </div>
+
+        <div class="totals">
+          <div class="total-row"><span>商品小計</span><strong id="subtotalText">NT$ 0</strong></div>
+          <div class="total-row"><span>運費</span><strong id="shippingText">NT$ 0</strong></div>
+          <div class="total-row"><span>折扣 / 調整</span><strong id="discountText">NT$ 0</strong></div>
+          <div class="total-row"><span>綠界金額</span><span class="grand" id="grandText">NT$ 0</span></div>
+        </div>
+
+        <div class="output-panel">
+          <div class="panel-title">LINE 確認文字</div>
+          <textarea class="textarea" id="lineText" readonly></textarea>
+          <button class="copy-btn" type="button" data-copy-target="lineText">複製 LINE 文字</button>
+        </div>
+
+        <div class="output-panel">
+          <div class="panel-title">出貨備註</div>
+          <textarea class="textarea" id="noteText" readonly></textarea>
+          <button class="copy-btn ghost" type="button" data-copy-target="noteText">複製出貨備註</button>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const CONFIG = window.HEQILIAO_CONFIG || {};
+    const state = {
+      products: [],
+      filtered: [],
+      cart: [],
+      mode: "all",
+      category: "全部",
+      query: "",
+      sort: "category"
+    };
+
+    const els = {
+      status: document.getElementById("loadStatus"),
+      list: document.getElementById("productList"),
+      search: document.getElementById("searchInput"),
+      category: document.getElementById("categorySelect"),
+      sort: document.getElementById("sortSelect"),
+      cart: document.getElementById("cartItems"),
+      shipping: document.getElementById("shippingInput"),
+      discount: document.getElementById("discountInput"),
+      subtotal: document.getElementById("subtotalText"),
+      shippingText: document.getElementById("shippingText"),
+      discountText: document.getElementById("discountText"),
+      grand: document.getElementById("grandText"),
+      lineText: document.getElementById("lineText"),
+      noteText: document.getElementById("noteText")
+    };
+
+    init();
+
+    async function init(){
+      bindControls();
+      try{
+        const [liveRows, hardwareRows] = await Promise.all([
+          loadCsv(CONFIG.sheetCsvUrl),
+          loadCsv(CONFIG.hardwareSaleCsvUrl)
+        ]);
+        const live = normalizeLiveItems(liveRows);
+        const hardware = normalizeHardwareItems(hardwareRows);
+        state.products = [...live, ...hardware];
+        setStatus(`已載入 ${live.length} 筆本週名單、${hardware.length} 筆硬體`, "ready");
+        renderCategoryOptions();
+        applyFilters();
+        renderCart();
+      }catch(error){
+        console.error(error);
+        setStatus("資料讀取失敗，請稍後再試", "error");
+        els.list.innerHTML = `<div class="empty">讀取資料失敗：${escapeHtml(error.message || String(error))}</div>`;
+      }
+    }
+
+    function bindControls(){
+      document.querySelectorAll("[data-mode]").forEach(button => {
+        button.addEventListener("click", () => {
+          state.mode = button.dataset.mode || "all";
+          document.querySelectorAll("[data-mode]").forEach(btn => btn.classList.toggle("active", btn === button));
+          state.category = "全部";
+          renderCategoryOptions();
+          applyFilters();
+        });
+      });
+      els.search.addEventListener("input", () => {
+        state.query = els.search.value.trim().toLowerCase();
+        applyFilters();
+      });
+      els.category.addEventListener("change", () => {
+        state.category = els.category.value || "全部";
+        applyFilters();
+      });
+      els.sort.addEventListener("change", () => {
+        state.sort = els.sort.value;
+        applyFilters();
+      });
+      [els.shipping, els.discount].forEach(input => input.addEventListener("input", renderCart));
+      document.querySelectorAll("[data-shipping]").forEach(button => {
+        button.addEventListener("click", () => {
+          els.shipping.value = button.dataset.shipping || "0";
+          renderCart();
+        });
+      });
+      document.querySelectorAll("[data-copy-target]").forEach(button => {
+        button.addEventListener("click", () => copyFrom(button.dataset.copyTarget, button));
+      });
+    }
+
+    async function loadCsv(url){
+      if(!url) return [];
+      const sep = url.includes("?") ? "&" : "?";
+      const response = await fetch(`${url}${sep}_=${Date.now()}`, { cache: "no-store" });
+      if(!response.ok) throw new Error(`CSV HTTP ${response.status}`);
+      return csvToObjects(await response.text());
+    }
+
+    function parseCsv(text){
+      const rows = [];
+      let row = [];
+      let field = "";
+      let inQuotes = false;
+      for(let i = 0; i < text.length; i++){
+        const char = text[i];
+        const next = text[i + 1];
+        if(char === '"'){
+          if(inQuotes && next === '"'){
+            field += '"';
+            i++;
+          }else{
+            inQuotes = !inQuotes;
+          }
+        }else if(char === "," && !inQuotes){
+          row.push(field);
+          field = "";
+        }else if((char === "\n" || char === "\r") && !inQuotes){
+          if(char === "\r" && next === "\n") i++;
+          row.push(field);
+          if(row.some(value => String(value).trim() !== "")) rows.push(row);
+          row = [];
+          field = "";
+        }else{
+          field += char;
+        }
+      }
+      row.push(field);
+      if(row.some(value => String(value).trim() !== "")) rows.push(row);
+      return rows;
+    }
+
+    function csvToObjects(text){
+      const rows = parseCsv(String(text || "").replace(/^\uFEFF/, ""));
+      if(rows.length < 2) return [];
+      const headers = rows[0].map(header => String(header || "").trim());
+      return rows.slice(1).map(row => {
+        const item = {};
+        headers.forEach((header, index) => item[header] = String(row[index] ?? "").trim());
+        return item;
+      }).filter(item => Object.values(item).some(value => String(value || "").trim() !== ""));
+    }
+
+    function normalizeLiveItems(rows){
+      return rows.map((row, index) => {
+        const stockRaw = firstValue(row["可詢問庫存"], row["目前庫存"], row["庫存"], row["數量"]);
+        const stockNumber = parseNumber(stockRaw);
+        const statusRaw = firstValue(row["狀態"], row["販售狀態"], row.status);
+        const manualUnavailable = isUnavailable(firstValue(row["是否售完"], row["暫不販售"]));
+        const stockSoldOut = stockRaw && stockNumber !== null && stockNumber <= 0;
+        const statusUnavailable = isUnavailable(statusRaw);
+        const unavailable = manualUnavailable || stockSoldOut || statusUnavailable;
+        const status = manualUnavailable ? "暫不販售" : stockSoldOut ? "售完" : statusUnavailable ? "暫不販售" : statusRaw || "可詢問";
+        const price = parseMoney(firstValue(row["售價"], row["價格"], row["單價"]));
+        const name = firstValue(row["品名"], row["魚種"], row["名稱"]);
+        const category = firstValue(row["分類"], row["類別"]) || "其他";
+        const typeLabel = /造景/.test(category) ? "造景" : "活體";
+        return {
+          id: firstValue(row["ID"], row.id, row["編號"]) || `live-${index + 1}`,
+          type: "live",
+          typeLabel,
+          category,
+          name,
+          spec: firstValue(row["尺寸"], row.size) || "未填尺寸",
+          price,
+          status,
+          stock: stockRaw,
+          unavailable,
+          keywords: [name, row["ID"], row["分類"], row["尺寸"], status, stockRaw].join(" ")
+        };
+      }).filter(item => item.name);
+    }
+
+    function normalizeHardwareItems(rows){
+      const groups = new Map();
+      rows.forEach((row, index) => {
+        const productId = firstValue(row["商品ID"], row["產品ID"], row["商品編號"], row.id, row["ID"]);
+        const category = firstValue(row["分類"], row.category) || "";
+        const name = firstValue(row["品名"], row["名稱"], row.name, row.title);
+        const description = firstValue(row["商品說明"], row.description);
+        const productStatus = firstValue(row["商品狀態"], row["整體狀態"]);
+        const key = productId || `${category}-${name || index}`;
+        if(!groups.has(key)){
+          groups.set(key, {
+            id: key,
+            type: "hardware",
+            typeLabel: "硬體",
+            category,
+            name,
+            description,
+            productStatus,
+            variants: [],
+            order: parseNumber(firstValue(row["排序"], row.order)) ?? index + 1
+          });
+        }
+        const group = groups.get(key);
+        group.category = group.category || category;
+        group.name = group.name || name;
+        group.description = group.description || description;
+        group.productStatus = group.productStatus || productStatus;
+        group.order = Math.min(group.order, parseNumber(firstValue(row["排序"], row.order)) ?? index + 1);
+        group.variants.push({
+          spec: firstValue(row["規格"], row["尺寸"], row.spec) || "單一規格",
+          price: parseMoney(firstValue(row["售價"], row["價格"], row.price)),
+          status: firstValue(row["狀態"], row.status),
+          note: firstValue(row["規格備註"], row["備註"], row.note),
+          order: parseNumber(firstValue(row["排序"], row.order)) ?? index + 1
+        });
+      });
+
+      return Array.from(groups.values()).filter(group => group.name).map(group => {
+        group.variants.sort((a, b) => a.order - b.order);
+        const firstVariant = group.variants[0] || {};
+        const statuses = [group.productStatus, ...group.variants.map(v => v.status)].join(" ");
+        const unavailable = /暫缺|缺貨|售完|補貨中|停售|不可販售|休養/.test(statuses);
+        const minPrice = group.variants.reduce((min, variant) => {
+          return Number.isFinite(variant.price) ? Math.min(min, variant.price) : min;
+        }, Infinity);
+        return {
+          ...group,
+          spec: firstVariant.spec || "單一規格",
+          price: Number.isFinite(minPrice) ? minPrice : null,
+          status: group.productStatus || (group.variants.length > 1 ? "多規格" : firstVariant.status || ""),
+          stock: "",
+          unavailable,
+          keywords: [group.name, group.id, group.category, group.description, group.variants.map(v => `${v.spec} ${v.note}`).join(" ")].join(" ")
+        };
+      });
+    }
+
+    function renderCategoryOptions(){
+      const source = state.products.filter(item => state.mode === "all" || item.type === state.mode);
+      const categories = ["全部", ...Array.from(new Set(source.map(item => item.category).filter(Boolean))).sort((a, b) => a.localeCompare(b, "zh-Hant"))];
+      els.category.innerHTML = categories.map(category => `<option value="${escapeAttr(category)}">${escapeHtml(category)}</option>`).join("");
+      els.category.value = state.category;
+    }
+
+    function applyFilters(){
+      const query = state.query;
+      state.filtered = state.products.filter(item => {
+        const modeOk = state.mode === "all" || item.type === state.mode;
+        const categoryOk = state.category === "全部" || item.category === state.category;
+        const text = String(item.keywords || "").toLowerCase();
+        return modeOk && categoryOk && (!query || text.includes(query));
+      });
+      sortProducts(state.filtered);
+      renderProducts();
+    }
+
+    function sortProducts(items){
+      const byName = (a, b) => a.name.localeCompare(b.name, "zh-Hant");
+      const byPrice = (a, b) => (a.price ?? Number.MAX_SAFE_INTEGER) - (b.price ?? Number.MAX_SAFE_INTEGER);
+      if(state.sort === "name") items.sort(byName);
+      else if(state.sort === "priceAsc") items.sort(byPrice);
+      else if(state.sort === "priceDesc") items.sort((a, b) => byPrice(b, a));
+      else items.sort((a, b) => a.category.localeCompare(b.category, "zh-Hant") || byName(a, b));
+    }
+
+    function renderProducts(){
+      if(!state.filtered.length){
+        els.list.innerHTML = '<div class="empty">沒有符合條件的品項</div>';
+        return;
+      }
+      els.list.innerHTML = state.filtered.map((item, index) => renderProductRow(item, index)).join("");
+      els.list.querySelectorAll("[data-add-index]").forEach(button => {
+        button.addEventListener("click", () => {
+          const item = state.filtered[Number(button.dataset.addIndex)];
+          const row = button.closest(".product-row");
+          const qty = Math.max(1, Math.floor(Number(row.querySelector("[data-qty]")?.value || 1)));
+          const variantIndex = Number(row.querySelector("[data-variant]")?.value || 0);
+          addToCart(item, qty, variantIndex);
+        });
+      });
+    }
+
+    function renderProductRow(item, index){
+      const variantSelect = item.type === "hardware" && item.variants.length > 1
+        ? `<select class="variant-select" data-variant aria-label="規格">${item.variants.map((variant, variantIndex) => {
+            const note = variant.note ? `｜${variant.note}` : "";
+            return `<option value="${variantIndex}">${escapeHtml(variant.spec)}${escapeHtml(note)}｜${formatMoney(variant.price)}</option>`;
+          }).join("")}</select>`
+        : "";
+      const specText = item.type === "hardware" ? (item.variants[0]?.spec || item.spec) : item.spec;
+      const stockText = item.stock ? `庫存 ${escapeHtml(item.stock)}` : "";
+      const statusClass = item.unavailable ? "off" : /觀察|適應|檢疫|保留/.test(item.status) ? "warn" : "";
+      return `<article class="product-row">
+        <div class="product-main">
+          <div class="product-title">
+            <b>${escapeHtml(item.name)}</b>
+            <span class="badge">${escapeHtml(item.typeLabel)}</span>
+            <span class="badge ${statusClass}">${escapeHtml(item.status || "可詢問")}</span>
+          </div>
+          <div class="meta">
+            <span>${escapeHtml(item.category || "未分類")}</span>
+            <span>${escapeHtml(specText || "單一規格")}</span>
+            <span>${formatMoney(item.price)}</span>
+            ${stockText ? `<span>${stockText}</span>` : ""}
+          </div>
+          ${variantSelect}
+        </div>
+        <div class="add-area">
+          <input class="input qty" data-qty type="number" min="1" step="1" value="1" aria-label="數量">
+          <button class="primary" type="button" data-add-index="${index}" ${item.unavailable ? "disabled" : ""}>加入</button>
+        </div>
+      </article>`;
+    }
+
+    function addToCart(item, qty, variantIndex){
+      const variant = item.type === "hardware" ? (item.variants[variantIndex] || item.variants[0] || {}) : null;
+      const spec = variant ? variant.spec : item.spec;
+      const note = variant?.note || "";
+      const price = variant ? variant.price : item.price;
+      if(!Number.isFinite(price)) return;
+      const key = `${item.type}|${item.id}|${spec}|${price}`;
+      const existing = state.cart.find(line => line.key === key);
+      if(existing){
+        existing.qty += qty;
+      }else{
+        state.cart.push({
+          key,
+          type: item.type,
+          typeLabel: item.typeLabel,
+          id: item.id,
+          category: item.category,
+          name: item.name,
+          spec,
+          note,
+          price,
+          qty
+        });
+      }
+      renderCart();
+    }
+
+    function renderCart(){
+      if(!state.cart.length){
+        els.cart.innerHTML = '<div class="empty">尚未加入品項</div>';
+      }else{
+        els.cart.innerHTML = state.cart.map((line, index) => {
+          return `<div class="cart-item">
+            <div>
+              <div class="cart-name">${escapeHtml(line.name)}</div>
+              <div class="cart-spec">${escapeHtml(line.typeLabel)}｜${escapeHtml(line.spec)}${line.note ? `｜${escapeHtml(line.note)}` : ""}</div>
+            </div>
+            <div class="cart-line">${formatMoney(line.price * line.qty)}</div>
+            <div class="cart-tools">
+              <input class="stepper" type="number" min="1" step="1" value="${line.qty}" data-cart-qty="${index}" aria-label="調整數量">
+              <button class="icon-btn" type="button" data-remove="${index}" title="移除">×</button>
+            </div>
+          </div>`;
+        }).join("");
+      }
+      els.cart.querySelectorAll("[data-cart-qty]").forEach(input => {
+        input.addEventListener("input", () => {
+          const line = state.cart[Number(input.dataset.cartQty)];
+          if(!line) return;
+          line.qty = Math.max(1, Math.floor(Number(input.value || 1)));
+          updateTotalsAndText();
+        });
+      });
+      els.cart.querySelectorAll("[data-remove]").forEach(button => {
+        button.addEventListener("click", () => {
+          state.cart.splice(Number(button.dataset.remove), 1);
+          renderCart();
+        });
+      });
+      updateTotalsAndText();
+    }
+
+    function updateTotalsAndText(){
+      const subtotal = state.cart.reduce((sum, line) => sum + line.price * line.qty, 0);
+      const shipping = Math.max(0, Math.floor(Number(els.shipping.value || 0)));
+      const discount = Math.floor(Number(els.discount.value || 0));
+      const grand = Math.max(0, subtotal + shipping - discount);
+      els.subtotal.textContent = formatMoney(subtotal);
+      els.shippingText.textContent = formatMoney(shipping);
+      els.discountText.textContent = discount ? `-${formatMoney(discount)}` : "NT$ 0";
+      els.grand.textContent = formatMoney(grand);
+      els.lineText.value = buildLineText(subtotal, shipping, discount, grand);
+      els.noteText.value = buildNoteText(subtotal, shipping, discount, grand);
+    }
+
+    function buildLineText(subtotal, shipping, discount, grand){
+      if(!state.cart.length) return "尚未加入品項。";
+      const lines = [
+        "您好，這邊幫您整理本次品項：",
+        "",
+        ...state.cart.map(line => {
+          const note = line.note ? `｜${line.note}` : "";
+          return `- ${line.name}｜${line.spec}${note}｜${formatMoney(line.price)} × ${line.qty} = ${formatMoney(line.price * line.qty)}`;
+        }),
+        "",
+        `商品小計：${formatMoney(subtotal)}`,
+        `運費：${formatMoney(shipping)}`,
+      ];
+      if(discount) lines.push(`折扣 / 調整：-${formatMoney(discount)}`);
+      lines.push(`合計：${formatMoney(grand)}`);
+      lines.push("");
+      lines.push("確認品項、數量與取貨／寄送方式後，再提供付款資訊。");
+      return lines.join("\n");
+    }
+
+    function buildNoteText(subtotal, shipping, discount, grand){
+      if(!state.cart.length) return "尚未加入品項。";
+      const weekly = state.cart.filter(line => line.type === "live");
+      const hardware = state.cart.filter(line => line.type === "hardware");
+      return [
+        `總額：${formatMoney(grand)}`,
+        `商品小計：${formatMoney(subtotal)}｜運費：${formatMoney(shipping)}${discount ? `｜折扣：-${formatMoney(discount)}` : ""}`,
+        weekly.length ? `本週名單：${weekly.map(line => `${line.typeLabel} ${line.name} ${line.spec} x${line.qty}`).join("、")}` : "",
+        hardware.length ? `硬體：${hardware.map(line => `${line.name} ${line.spec} x${line.qty}`).join("、")}` : "",
+        "付款：綠界金額以上方總額為準",
+        "備註：出貨前再次確認狀態、庫存與收件安排"
+      ].filter(Boolean).join("\n");
+    }
+
+    async function copyFrom(targetId, button){
+      const target = document.getElementById(targetId);
+      if(!target) return;
+      target.select();
+      target.setSelectionRange(0, target.value.length);
+      try{
+        await navigator.clipboard.writeText(target.value);
+      }catch(error){
+        document.execCommand("copy");
+      }
+      const old = button.textContent;
+      button.textContent = "已複製";
+      setTimeout(() => { button.textContent = old; }, 1200);
+    }
+
+    function firstValue(...values){
+      for(const value of values){
+        if(value !== undefined && value !== null && String(value).trim() !== "") return String(value).trim();
+      }
+      return "";
+    }
+
+    function parseNumber(value){
+      const match = String(value ?? "").replace(/,/g, "").match(/-?\d+(?:\.\d+)?/);
+      if(!match) return null;
+      const n = Number(match[0]);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function parseMoney(value){
+      return parseNumber(String(value || "").replace(/^NT\$?\s*/i, ""));
+    }
+
+    function isUnavailable(value){
+      const v = String(value || "").trim().toLowerCase();
+      return ["是", "yes", "true", "1", "售完", "已售完", "sold out", "soldout", "暫不販售", "不可販售", "不販售", "停售", "暫停販售", "保留", "休養", "已售出"].includes(v);
+    }
+
+    function formatMoney(value){
+      const n = Number(value);
+      if(!Number.isFinite(n)) return "詢問";
+      return `NT$ ${Math.round(n).toLocaleString("zh-TW")}`;
+    }
+
+    function setStatus(text, type){
+      const dot = els.status.querySelector(".dot");
+      els.status.querySelector("span:last-child").textContent = text;
+      dot.className = `dot ${type || ""}`.trim();
+    }
+
+    function escapeHtml(value){
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[char]);
+    }
+
+    function escapeAttr(value){
+      return escapeHtml(value);
+    }
+  </script>
+</body>
+</html>
