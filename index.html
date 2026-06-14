@@ -254,6 +254,31 @@
       overflow-wrap: anywhere;
       word-break: break-word;
     }
+    .hardware-spec-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 5px;
+    }
+    .hardware-spec-copy {
+      appearance: none;
+      border: 1px solid rgba(24, 60, 53, 0.18);
+      background: rgba(255, 255, 255, 0.76);
+      color: #365c53;
+      border-radius: 999px;
+      padding: 5px 9px;
+      min-height: 28px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .hardware-spec-copy:hover {
+      border-color: rgba(201, 143, 71, 0.5);
+      color: #1f5f52;
+    }
     .hardware-spec-list .hardware-spec-name-button {
       max-width: 100%;
       overflow-wrap: anywhere;
@@ -265,6 +290,7 @@
         grid-template-columns: minmax(0, 1fr) auto;
         align-items: baseline;
       }
+      .hardware-spec-actions { grid-column: 1 / -1; }
       .hardware-spec-price { font-size: 12.5px; }
     }
 
@@ -699,6 +725,7 @@
 
       list.innerHTML = items.map(renderHardwareCard).join("");
       bindHardwareSpecImageSwitchers(list);
+      bindHardwareCopyButtons(list);
       bindHardwareImageZooms(list);
       list.querySelectorAll("img").forEach(img => img.addEventListener("error", () => { img.src = PLACEHOLDER; }));
       if(status) status.textContent = `${hardwareCategory}｜共 ${items.length} 項`;
@@ -783,7 +810,7 @@
           <div class="hardware-top"><span class="hardware-tag">${escapeHtml(item.category || "硬體")}</span>${item.status ? `<span class="hardware-status">${escapeHtml(item.status)}</span>` : ""}</div>
           <h3>${escapeHtml(item.name)}</h3>
           ${renderHardwareDescription(item.description)}
-          ${isMulti ? renderSpecTable(variants) : renderSingleSpec(single)}
+          ${isMulti ? renderSpecTable(item, variants) : renderSingleSpec(item, single)}
           ${renderNotes(item, variants, isMulti)}
         </div>
       </article>`;
@@ -832,7 +859,7 @@
       return `<p class="hardware-desc">${escapeHtml(normalized).replace(/\n/g, "<br>")}</p>`;
     }
 
-    function renderSpecTable(variants){
+    function renderSpecTable(item, variants){
       const firstImage = variants.find(v => v.image)?.image || "";
       return `<div class="hardware-spec-list" role="list">${variants.map(v => {
           const spec = v.spec || "單一規格";
@@ -843,10 +870,14 @@
           const price = formatPrice(v.price);
           const note = String(v.note || "").trim();
           const noteInline = note ? `<span class="hardware-spec-extra">｜${escapeHtml(note)}</span>` : "";
+          const copyText = buildHardwareInquiryText(item.name, spec, price);
           return `<div class="hardware-spec-row" role="listitem">
             <div class="hardware-spec-main">
               <div class="hardware-spec-title">${specCell}${noteInline}</div>
               ${price ? `<div class="hardware-spec-price">${escapeHtml(price)}</div>` : ""}
+            </div>
+            <div class="hardware-spec-actions">
+              <button type="button" class="hardware-spec-copy" data-hardware-copy="${escapeHtml(copyText)}">複製詢問文字</button>
             </div>
             ${v.status ? `<div class="hardware-spec-state">${escapeHtml(v.status)}</div>` : ""}
           </div>`;
@@ -889,6 +920,47 @@
           }
         });
       });
+    }
+
+    function bindHardwareCopyButtons(scope){
+      scope.querySelectorAll("[data-hardware-copy]").forEach(button => {
+        button.addEventListener("click", async () => {
+          const text = button.dataset.hardwareCopy || "";
+          if(!text) return;
+          await copyHardwareText(text);
+          flashHardwareCopyButton(button);
+        });
+      });
+    }
+
+    async function copyHardwareText(text){
+      if(navigator.clipboard?.writeText){
+        try{
+          await navigator.clipboard.writeText(text);
+          return;
+        }catch(error){
+          console.warn("剪貼簿 API 無法使用，改用備援複製。", error);
+        }
+      }
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
+
+    function flashHardwareCopyButton(button){
+      const oldText = button.textContent;
+      button.textContent = "已複製";
+      button.disabled = true;
+      window.setTimeout(() => {
+        button.textContent = oldText;
+        button.disabled = false;
+      }, 1200);
     }
 
     function openHardwareImageZoomFromTrigger(trigger){
@@ -938,10 +1010,25 @@
       if(cap) cap.textContent = "";
     }
 
-    function renderSingleSpec(item){
+    function renderSingleSpec(product, item){
+      const specText = item.spec || "單一規格";
       const spec = item.spec && item.spec !== "單一規格" ? `<p class="hardware-spec">規格：${escapeHtml(item.spec)}</p>` : "";
-      const price = item.price ? `<p class="hardware-price">${escapeHtml(formatPrice(item.price))}</p>` : "";
-      return `${spec}${price}`;
+      const priceText = formatPrice(item.price);
+      const price = priceText ? `<p class="hardware-price">${escapeHtml(priceText)}</p>` : "";
+      const copyText = buildHardwareInquiryText(product.name, specText, priceText);
+      const copyButton = `<div class="hardware-spec-actions"><button type="button" class="hardware-spec-copy" data-hardware-copy="${escapeHtml(copyText)}">複製詢問文字</button></div>`;
+      return `${spec}${price}${copyButton}`;
+    }
+
+    function buildHardwareInquiryText(name, spec, price){
+      return [
+        "您好，我想詢問硬體商品：",
+        String(name || "未命名商品").trim(),
+        `規格：${String(spec || "單一規格").trim()}`,
+        price ? `售價：${price}` : "",
+        "",
+        "想確認目前是否有現貨，以及可安排的取貨／寄送方式。"
+      ].filter(line => line !== "").join("\n");
     }
 
     function renderNotes(item, variants, isMulti){
