@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="河憩寮自取與停車指引，包含抵達後停車、入口與進入方式。">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="河憩寮｜自取與停車指引">
+  <meta property="og:description" content="自取前請先確認安排時間，抵達後可依照片指引停車與進入。">
+  <meta property="og:url" content="https://restplaced-dev.github.io/heqiliao/visit-guide.html">
+  <meta property="og:image" content="https://restplaced-dev.github.io/heqiliao/visit-guide-01.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#183c35">
+  <title>河憩寮｜自取與停車指引</title>
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="stylesheet" href="styles.v2.css?v=20260607-hardware-spec-note-inline">
+  <style>
+    body {
+      background:
+        linear-gradient(135deg, rgba(232, 241, 237, 0.92), rgba(255, 250, 240, 0.74) 44%, rgba(242, 247, 245, 0.96)),
+        #fbfcfa;
+      color: #183c35;
+    }
+
+    .visit-page {
+      min-height: 100vh;
+    }
+
+    .visit-hero {
+      padding: 24px 0 18px;
+    }
+
+    .visit-hero-panel {
+      display: grid;
+      gap: 18px;
+      align-items: end;
+      grid-template-columns: minmax(0, 1fr) auto;
+      padding: 28px;
+      border: 1px solid rgba(24, 60, 53, 0.13);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 10px 26px rgba(24, 60, 53, 0.08);
+    }
+
+    .visit-hero h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 52px);
+      line-height: 1.08;
+      letter-spacing: 0;
+      color: #183c35;
+    }
+
+    .visit-hero p {
+      margin: 12px 0 0;
+      max-width: 720px;
+      color: #53645f;
+      font-size: 16px;
+      line-height: 1.9;
+    }
+
+    .visit-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .visit-notice {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(196, 154, 84, 0.34);
+      background: rgba(255, 250, 240, 0.9);
+      color: #4a5b55;
+      line-height: 1.8;
+    }
+
+    .visit-steps {
+      display: grid;
+      gap: 18px;
+      padding: 12px 0 36px;
+    }
+
+    .visit-step {
+      overflow: hidden;
+      border: 1px solid rgba(24, 60, 53, 0.13);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 8px 22px rgba(20, 45, 40, 0.08);
+    }
+
+    .visit-step img {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #edf3f0;
+    }
+
+    .visit-step-body {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 14px;
+      padding: 18px 20px 20px;
+      align-items: start;
+    }
+
+    .visit-step-number {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #183c35;
+      color: #fffaf0;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .visit-step h2 {
+      margin: 0 0 6px;
+      color: #183c35;
+      font-size: 22px;
+      line-height: 1.35;
+    }
+
+    .visit-step p {
+      margin: 0;
+      color: #53645f;
+      line-height: 1.8;
+    }
+
+    .visit-footer-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 0 0 34px;
+    }
+
+    @media (max-width: 760px) {
+      .visit-hero {
+        padding-top: 14px;
+      }
+
+      .visit-hero-panel {
+        grid-template-columns: 1fr;
+        padding: 20px;
+      }
+
+      .visit-actions {
+        justify-content: flex-start;
+      }
+
+      .visit-step-body {
+        grid-template-columns: 1fr;
+        padding: 16px;
+      }
+
+      .visit-step-number {
+        width: 38px;
+        height: 38px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="visit-page">
+    <section class="visit-hero">
+      <div class="wrap">
+        <div class="visit-hero-panel">
+          <div>
+            <p class="eyebrow">Visit Guide</p>
+            <h1>自取與停車指引</h1>
+            <p>自取前請先透過 LINE 確認時間與品項。抵達附近後，可依下方照片順序停車、進入，若現場狀況不同再私訊確認。</p>
+          </div>
+          <div class="visit-actions">
+            <a class="btn" href="index.html">回到首頁</a>
+            <a class="btn gold" href="https://lin.ee/p9wkJW2">LINE 聯絡</a>
+          </div>
+        </div>
+        <div class="visit-notice">現場為預約自取，請勿未確認時間直接前往。若遇到車位已有車、社區門口施工或臨時不便進入，先透過 LINE 聯絡會比較穩妥。</div>
+      </div>
+    </section>
+
+    <section class="wrap visit-steps" aria-label="自取與停車步驟">
+      <article class="visit-step">
+        <img src="visit-guide-01.jpg" alt="河憩寮建物外觀與車庫右側可停位置" loading="eager">
+        <div class="visit-step-body">
+          <div class="visit-step-number">1</div>
+          <div>
+            <h2>看到車庫後，停右邊</h2>
+            <p>抵達後先看建物外觀與車庫位置，右側框選區域可臨停。停妥後再準備由旁邊入口進入。</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="visit-step">
+        <img src="visit-guide-02.jpg" alt="車庫旁入口與前往河憩寮的方向箭頭" loading="lazy">
+        <div class="visit-step-body">
+          <div class="visit-step-number">2</div>
+          <div>
+            <h2>由車庫旁入口進入</h2>
+            <p>停車後往車庫旁的入口走，依照片箭頭方向進入。若當天有其他車輛或物品，保持出入口通暢即可。</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="visit-step">
+        <img src="visit-guide-03.jpg" alt="河憩寮入口門把位置與進入方向" loading="lazy">
+        <div class="visit-step-body">
+          <div class="visit-step-number">3</div>
+          <div>
+            <h2>拉開門把即可進入</h2>
+            <p>走到入口後，拉開右側門把即可進來。若門口暫時沒人回應，請先用 LINE 告知已抵達。</p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <div class="visit-footer-actions wrap">
+      <a class="btn gold" href="https://lin.ee/p9wkJW2">抵達後 LINE 聯絡</a>
+      <a class="btn" href="index.html#shipping">回訂購流程</a>
+    </div>
+  </main>
+</body>
+</html>
