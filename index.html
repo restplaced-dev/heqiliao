@@ -54,10 +54,6 @@
     .faq-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
     .faq-card { padding: 18px 20px; border-radius: 18px; background: #ffffff; border: 1px solid rgba(24, 60, 53, 0.12); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.035); line-height: 1.75; color: #3c4d47; }
     .faq-card b { display: block; color: #183c35; margin-bottom: 6px; }
-    .final-cta-panel { padding: 24px; border-radius: 24px; background: linear-gradient(135deg, rgba(24, 60, 53, 0.96), rgba(35, 84, 75, 0.92)); color: #fffaf0; display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center; }
-    .final-cta-panel h2 { margin: 0 0 8px; color: #fffaf0; }
-    .final-cta-panel p { margin: 0; color: rgba(255, 250, 240, 0.86); line-height: 1.8; }
-    .final-cta-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
     .footer-hours { margin-top: 14px; color: #d6e8df; line-height: 1.8; }
     .footer-hours b { display: block; margin-bottom: 4px; color: #fffaf0; }
     .footer-hours ul { margin: 0; padding: 0; list-style: none; }
@@ -95,8 +91,8 @@
     .hardware-empty { padding: 22px; border-radius: 18px; background: rgba(255, 255, 255, 0.72); color: #64736f; line-height: 1.8; }
 
     @media (max-width: 780px) {
-      .customer-info-grid, .faq-grid, .final-cta-panel, .visit-info-panel { grid-template-columns: 1fr; }
-      .final-cta-actions, .visit-info-actions { justify-content: flex-start; }
+      .customer-info-grid, .faq-grid, .visit-info-panel { grid-template-columns: 1fr; }
+      .visit-info-actions { justify-content: flex-start; }
     }
     @media (max-width: 760px) {
       .header .nav { flex-wrap: wrap; align-items: flex-start; gap: 10px; padding-bottom: 10px; }
@@ -620,14 +616,6 @@
       </div>
     </section>
 
-    <section class="section">
-      <div class="wrap">
-        <div class="final-cta-panel">
-          <div><p class="eyebrow">Ready to Ask</p><h2>準備詢問魚隻了嗎？</h2><p>先看本週名單，確認有興趣的品項後，再填寫檢視單。若還不確定適不適合，也可以先整理缸況一起討論。</p></div>
-          <div class="final-cta-actions"><a class="btn gold" href="#stock">查看本週名單</a><a class="btn secondary" data-questionnaire-link href="#">填寫檢視單</a></div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer class="footer">
