@@ -833,7 +833,7 @@
         ${quantityControls(p)}
         <div class="card-actions">
           <button class="copy-btn" type="button" data-copy-product="${escapeAttr(p.id)}">複製詢問文字</button>
-          ${p.soldOut ? `<button class="btn" type="button" disabled>${escapeHtml(p.status || "暫不販售")}</button>` : `<a class="btn" href="${escapeAttr(lineHrefForProduct(p, 1))}" data-line-product="${escapeAttr(p.id)}" target="_blank" rel="noopener">LINE 詢問</a>`}
+          ${p.soldOut ? `<button class="btn" type="button" disabled>${escapeHtml(p.status || "暫不販售")}</button>` : `<a class="btn" href="${escapeAttr(lineHrefForProduct(p, 1))}" data-line-product="${escapeAttr(p.id)}">LINE 詢問</a>`}
           ${canSelectQuantity(p) ? `<button class="more-qty-btn" type="button" data-more-qty="${escapeAttr(p.id)}">想詢問更多數量</button>` : ""}
         </div>
       </div>
@@ -897,7 +897,7 @@
         ${quantityControls(p)}
         <div class="card-actions preview-actions">
           <button class="copy-btn" type="button" data-copy-product="${escapeAttr(p.id)}">複製詢問文字</button>
-          ${p.soldOut ? `<button class="btn" type="button" disabled>${escapeHtml(p.status || "暫不販售")}</button>` : `<a class="btn" href="${escapeAttr(lineHrefForProduct(p, 1))}" data-line-product="${escapeAttr(p.id)}" target="_blank" rel="noopener">LINE 詢問</a>`}
+          ${p.soldOut ? `<button class="btn" type="button" disabled>${escapeHtml(p.status || "暫不販售")}</button>` : `<a class="btn" href="${escapeAttr(lineHrefForProduct(p, 1))}" data-line-product="${escapeAttr(p.id)}">LINE 詢問</a>`}
           ${canSelectQuantity(p) ? `<button class="more-qty-btn" type="button" data-more-qty="${escapeAttr(p.id)}">想詢問更多數量</button>` : ""}
         </div>
       </div>`;
@@ -1030,7 +1030,7 @@
         if(!wanted) return;
         const message = buildMoreQuantityText(product, wanted);
         copyInquiry(message, moreButton, "已複製更多數量詢問文字");
-        window.open(buildLineHref(message), "_blank", "noopener");
+        window.location.href = buildLineHref(message);
       }
     });
 
