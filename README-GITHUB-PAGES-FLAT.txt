@@ -5,7 +5,7 @@
 使用方式：
 1. 解壓縮這個 ZIP。
 2. 把解壓後看到的所有檔案，一次上傳到 GitHub repository。
-3. GitHub repository 最外層要直接看到 index.html、config.js、app.v2.js、styles.v2.css、hero-illustration-v18.jpg、logo-official-transparent.png、products.csv 等檔案。
+3. GitHub repository 最外層要直接看到 index.html、config.js、app.v2.js、styles.v2.css、hero-illustration-v21.jpg、logo-official-transparent.png、products.csv 等檔案。
 4. Settings → Pages → Deploy from a branch → main → / root。
 5. 等 github-pages 部署完成後打開網址。
 
