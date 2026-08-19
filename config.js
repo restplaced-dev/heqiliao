@@ -41,11 +41,73 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // 正式主視覺：實體圖片，不再使用文字覆蓋層。
-  const heroImage = document.querySelector(".hero-card > img");
+  // 使用 repo 中原本的高解析主視覺；只覆蓋圖內舊副標，避免再經過低解析重建流程。
+  const heroImage = document.querySelector(".hero-card > img, .hero-image-brand-wrap > img");
   if(heroImage){
-    heroImage.src = "hero-illustration-v20-exact-text.jpg?v=20260819-29";
+    heroImage.src = "hero-illustration.jpg?v=20260819-33";
     heroImage.alt = "河憩寮淡水寵物魚工作室品牌插畫";
+
+    let wrapper = heroImage.closest(".hero-image-brand-wrap");
+    if(!wrapper){
+      wrapper = document.createElement("div");
+      wrapper.className = "hero-image-brand-wrap";
+      heroImage.parentNode.insertBefore(wrapper, heroImage);
+      wrapper.appendChild(heroImage);
+    }
+
+    if(!wrapper.querySelector(".hero-brand-subtitle-overlay")){
+      const overlay = document.createElement("div");
+      overlay.className = "hero-brand-subtitle-overlay";
+      overlay.textContent = "淡水寵物魚工作室";
+      wrapper.appendChild(overlay);
+    }
+
+    if(!document.getElementById("heqiliao-hires-hero-style")){
+      const style = document.createElement("style");
+      style.id = "heqiliao-hires-hero-style";
+      style.textContent = `
+        .hero-image-brand-wrap {
+          position: relative;
+          overflow: hidden;
+          width: 100%;
+        }
+        .hero-image-brand-wrap > img {
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+        .hero-brand-subtitle-overlay {
+          position: absolute;
+          left: 24%;
+          right: 24%;
+          bottom: 3.8%;
+          min-height: 6.2%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.15em 0.35em;
+          background: rgba(248, 244, 233, 0.99);
+          box-shadow: 0 0 10px 10px rgba(248, 244, 233, 0.96);
+          color: #31534b;
+          font-size: clamp(10px, 1.05vw, 15px);
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.22em;
+          white-space: nowrap;
+          pointer-events: none;
+        }
+        @media (max-width: 720px) {
+          .hero-brand-subtitle-overlay {
+            left: 20%;
+            right: 20%;
+            bottom: 3.6%;
+            font-size: clamp(9px, 2.8vw, 13px);
+            letter-spacing: 0.18em;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
   }
 
   document.title = "河憩寮｜寵物魚工作室";
