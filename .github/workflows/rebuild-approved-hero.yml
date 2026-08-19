@@ -1,41 +1,36 @@
-name: Rebuild approved hero
+name: Install approved full-resolution hero
 
 on:
   push:
     paths:
-      - '.hero-src/**'
-      - '.github/workflows/rebuild-approved-hero.yml'
+      - '.hero-src/exact-v21.ready'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  rebuild:
+  install:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Decode approved JPEG
+      - name: Decode exact approved JPEG
         shell: bash
         run: |
           set -euo pipefail
-          cat .hero-src/hero-v20.part-* | tr -d '\n\r ' | base64 --decode > hero-illustration-v20-exact-text.jpg
-          test -s hero-illustration-v20-exact-text.jpg
-          file hero-illustration-v20-exact-text.jpg | grep -qi 'JPEG image data'
-          sha256sum hero-illustration-v20-exact-text.jpg
-      - name: Commit rebuilt hero
+          cat .hero-src/exact-v21.part-* | tr -d '\n\r ' | base64 --decode > hero-illustration-v21.jpg
+          test -s hero-illustration-v21.jpg
+          file hero-illustration-v21.jpg | grep -qi 'JPEG image data'
+          echo 'f2ad6cef2d136d6cb61ec3ea388e689a42d47673be4ac3faeeed41842a4b394c  hero-illustration-v21.jpg' | sha256sum -c -
+      - name: Commit exact hero
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add hero-illustration-v20-exact-text.jpg
-          if git diff --cached --quiet; then
-            echo 'No image change required.'
-            exit 0
-          fi
-          git commit -m 'fix(site): rebuild approved hero JPEG'
+          git add hero-illustration-v21.jpg
+          git commit -m 'fix(site): install approved full-resolution hero'
           git push
