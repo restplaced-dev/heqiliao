@@ -24,7 +24,6 @@ window.HEQILIAO_CONFIG = {
 document.addEventListener("DOMContentLoaded", () => {
   const CONFIG = window.HEQILIAO_CONFIG || {};
 
-  // 首頁品牌定位文字。
   const studioLabel = document.querySelector(".hero .eyebrow");
   if(studioLabel && CONFIG.studioLabel) studioLabel.textContent = CONFIG.studioLabel;
 
@@ -42,13 +41,12 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // 正式主視覺：使用已定稿的實體圖片，不再使用文字覆蓋層。
+  // 正式主視覺：實體圖片，不再使用文字覆蓋層。
   const heroImage = document.querySelector(".hero-card > img");
   if(heroImage){
     heroImage.src = "hero-illustration-v20-exact-text.jpg?v=20260819-29";
     heroImage.alt = "河憩寮淡水寵物魚工作室品牌插畫";
   }
 
-  // 瀏覽器頁籤品牌名稱同步更新；SEO 內容仍保留淡水觀賞魚相關關鍵字。
   document.title = "河憩寮｜寵物魚工作室";
 });
