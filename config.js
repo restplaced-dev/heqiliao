@@ -1,5 +1,6 @@
 window.HEQILIAO_CONFIG = {
   brandName: "河憩寮",
+  studioLabel: "寵物魚工作室",
   lineUrl: "https://lin.ee/p9wkJW2",
 
   // 本週名單 CSV
@@ -19,3 +20,9 @@ window.HEQILIAO_CONFIG = {
 
   listUpdatedText: "2026/05/31"
 };
+
+document.addEventListener("DOMContentLoaded", () => {
+  const studioLabel = document.querySelector(".hero .eyebrow");
+  const labelText = window.HEQILIAO_CONFIG?.studioLabel;
+  if(studioLabel && labelText) studioLabel.textContent = labelText;
+});
